@@ -110,6 +110,8 @@ namespace MusicGame
         {
             //sets up the grid of album art
             albumArtGrid.ItemsSource = albumArtList;
+            albumArtGrid.SetValue(InteractionEffectManager.IsInteractionEnabledProperty, true);
+            InteractionEffectManager.AllowedTypes.Add(typeof(RadDataBoundListBoxItem));
         }
         private void pickWinner()
         {
