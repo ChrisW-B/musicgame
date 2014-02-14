@@ -41,7 +41,8 @@ xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik
                         <telerikPrimitives:WrapVirtualizationStrategyDefinition Orientation="Horizontal"/>
                     </telerikPrimitives:RadDataBoundListBox.VirtualizationStrategyDefinition>
                 </telerikPrimitives:RadDataBoundListBox>
-                <TextBlock x:Name="SongName" Margin="0,5,0,0"/>
+                <TextBlock x:Name="resultText" Margin="0,5,0,0"/>
+                <TextBlock x:Name="Points"/>
             </StackPanel>
         </Grid>
     </Grid>

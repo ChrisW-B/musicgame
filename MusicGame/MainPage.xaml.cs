@@ -16,9 +16,11 @@ namespace MusicGame
 {
     public partial class MainPage : PhoneApplicationPage
     {
-        static const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
+        #region global variables
+        const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
         int numTimesWrong;
-
+        int points;
+        int timesPlayed;
         SongCollection allSongs;
         ObservableCollection<DataItemViewModel> albumArtList;
         ObservableCollection<Song> pickedSongs;
@@ -28,6 +30,7 @@ namespace MusicGame
         Random rand;
         MusicClient client;
         MediaLibrary songs;
+        #endregion
 
         // Constructor
         public MainPage()
@@ -38,6 +41,7 @@ namespace MusicGame
             pickSongList();
             pickWinner();
         }
+
         //Get library and other setup
         private void initialize()
         {
@@ -49,6 +53,8 @@ namespace MusicGame
             rand = new Random();
             songs = new MediaLibrary();
             numTimesWrong = 0;
+            timesPlayed = 0;
+            points = 0;
         }
         private void setUpSongList()
         {
@@ -58,6 +64,7 @@ namespace MusicGame
         //choose songs, and pick a winning song
         private void pickSongList()
         {
+            //picks a list of 12 albums/songs to display
             int numAlbums = songs.Albums.Count;
             if (numAlbums > 12)
             {
@@ -69,11 +76,12 @@ namespace MusicGame
             }
             else
             {
-                SongName.Text = "not enough albums to play!";
+                resultText.Text = "not enough albums to play!";
             }
         }
         private void pickSong()
         {
+            //picks an idividual song from the list of all songs in library
             int numSongs = allSongs.Count;
             int randNum = rand.Next(numSongs);
             Song song = allSongs[randNum];
@@ -100,16 +108,18 @@ namespace MusicGame
         }
         private void setAlbumArt()
         {
+            //sets up the grid of album art
             albumArtGrid.ItemsSource = albumArtList;
         }
         private void pickWinner()
         {
+            //picks a random song from the selected songs to be the winner
             winningSong = pickedSongs[rand.Next(pickedSongs.Count)];
             playSong();
         }
-        //check whether a album has already been picked (so no repeats)
         private bool prevSelected(Song song)
         {
+            //check whether a album has already been picked (so no repeats)
             foreach (Song pickedSong in pickedSongs)
             {
                 if (song.Album == pickedSong.Album)
@@ -119,11 +129,10 @@ namespace MusicGame
             }
             return false;
         }
-        //get the album covers to add to the list
         private BitmapImage getBitmap(Song song)
         {
+            //get the album covers to add to the list
             Stream albumArtStream = song.Album.GetAlbumArt();
-
             if (albumArtStream == null)
             {
                 return null;
@@ -134,7 +143,6 @@ namespace MusicGame
                 albumArt.SetSource(albumArtStream);
                 return albumArt;
             }
-
         }
 
         //get and play a sample of a song
@@ -142,6 +150,7 @@ namespace MusicGame
         //then limiting its time playing
         async private void playSong()
         {
+            //plays the winning song, unless there is a problem, in which it picks a new winner
             ListResponse<MusicItem> result = await client.SearchAsync(winningSong.Name + " " + winningSong.Artist.Name, Category.Track);
             //ListResponse<MusicItem> result = await client.SearchAsync("ode to chin switchfoot", Category.Track);
             if (result.Result != null && result.Count > 0)
@@ -165,6 +174,7 @@ namespace MusicGame
         }
         private bool performersAreArtists(Nokia.Music.Types.Artist[] artists, string p)
         {
+            //checks whether the performer from NokMixRadio is the same as the artist from XboxMusicLib
             p = p.ToLowerInvariant();
             foreach (Nokia.Music.Types.Artist nok in artists)
             {
@@ -178,18 +188,28 @@ namespace MusicGame
         }
         private void playForLimit(int secs)
         {
-            playTimer.Interval = new TimeSpan(0, 0, secs);
-            player.Play();
-            playTimer.Tick += delegate(object s, EventArgs args)
+            //limits the play time of a song to the seconds provided
+            if (secs > 25)
             {
-                playTimer.Stop();
-                player.Stop();
-                replaySong(secs);
-            };
-            playTimer.Start();
+                timeOut();
+            }
+            else
+            {
+                timesPlayed = (secs / 5)-1;
+                playTimer.Interval = new TimeSpan(0, 0, secs);
+                player.Play();
+                playTimer.Tick += delegate(object s, EventArgs args)
+                {
+                    playTimer.Stop();
+                    player.Stop();
+                    replaySong(secs);
+                };
+                playTimer.Start();
+            }
         }
         private void replaySong(int secs)
         {
+            //replays the song after a set amount of time, and ups the play time for next time
             replayTimer.Interval = new TimeSpan(0, 0, 5);
             replayTimer.Tick += delegate(object s, EventArgs args)
             {
@@ -202,6 +222,7 @@ namespace MusicGame
         //handle answers
         private void Image_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
+            //checks to see if the correct answer was selected
             if (((sender as Image).DataContext as DataItemViewModel).Song == winningSong)
             {
                 correctAns();
@@ -213,8 +234,11 @@ namespace MusicGame
         }
         private void wrongAns()
         {
-            SongName.Text = "Wrong answer!";
+            //handles incorrect answers
+            resultText.Text = "Wrong answer!";
+            points--;
             numTimesWrong++;
+            Points.Text = points.ToString();
             if (numTimesWrong > 2)
             {
                 newBoard();
@@ -222,12 +246,22 @@ namespace MusicGame
         }
         private void correctAns()
         {
-            SongName.Text = "Correct!";
+            //handles correct answers
+            resultText.Text = "Correct!";
+            points = points + (5 - timesPlayed);
+            newBoard();
+        }
+        private void timeOut()
+        {
+            resultText.Text = "Too long!";
             newBoard();
         }
         private void newBoard()
         {
+            //clears the current board and creates a new one
             numTimesWrong = 0;
+            timesPlayed = 0;
+            Points.Text = points.ToString();
             if (playTimer.IsEnabled)
             {
                 playTimer.Stop();
