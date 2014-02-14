@@ -49,7 +49,7 @@ namespace MusicGame
         {
             checkConnection();
         }
-        
+
 
         //Get library and other setup
         private void initialize()
@@ -184,6 +184,9 @@ namespace MusicGame
             {
                 BitmapImage albumArt = new BitmapImage();
                 albumArt.SetSource(albumArtStream);
+                albumArt.DecodePixelHeight = 200;
+                albumArt.DecodePixelWidth = 200;
+
                 return albumArt;
             }
         }
@@ -194,15 +197,16 @@ namespace MusicGame
         async private void playSong()
         {
             //plays the winning song, unless there is a problem, in which it picks a new winner
-            ListResponse<MusicItem> result = await client.SearchAsync(winningSong.Name + " " + winningSong.Artist.Name, Category.Track);
-            //ListResponse<MusicItem> result = await client.SearchAsync("ode to chin switchfoot", Category.Track);
+            player.Resources.Clear();
+            ListResponse<MusicItem> result = await getPossibleSong();
             if (result.Result != null && result.Count > 0)
             {
-                Response<Product> prod = await client.GetProductAsync(result[0].Id);
+                Response<Product> prod = await getSongData(result);
                 if (performersAreArtists(prod.Result.Performers, winningSong.Artist.Name))
                 {
-                    Uri songUri = client.GetTrackSampleUri(result[0].Id);
+                    Uri songUri = getSongUri(prod);
                     player.Source = songUri;
+                    player.MediaFailed += player_MediaFailed;
                     playForLimit(5);
                 }
                 else
@@ -215,6 +219,29 @@ namespace MusicGame
                 pickWinner();
             }
         }
+
+       async void player_MediaFailed(object sender, System.Windows.ExceptionRoutedEventArgs e)
+        {
+            MessageBoxClosedEventArgs res = await RadMessageBox.ShowAsync("This app needs data to work, please make sure you are connected to wifi or a network. Would you like to check now?", "Cannot get song", MessageBoxButtons.YesNo);
+            if (res.Result == DialogResult.OK)
+            {
+                await Launcher.LaunchUriAsync(new Uri("ms-settings-wifi:"));
+            }
+        }
+        //breakup nokia music requests
+        private Uri getSongUri(Response<Product> prod)
+        {
+            return client.GetTrackSampleUri(prod.Result.Id);
+        }
+        async private Task<Response<Product>> getSongData(ListResponse<MusicItem> result)
+        {
+            return await client.GetProductAsync(result[0].Id);
+        }
+        async private Task<ListResponse<MusicItem>> getPossibleSong()
+        {
+            return await client.SearchAsync(winningSong.Name + " " + winningSong.Artist.Name, Category.Track, null, null, null, 0, 1);
+        }
+
         private bool performersAreArtists(Nokia.Music.Types.Artist[] artists, string p)
         {
             //checks whether the performer from NokMixRadio is the same as the artist from XboxMusicLib
@@ -316,6 +343,7 @@ namespace MusicGame
                 replayTimer.Interval = new TimeSpan(0, 0, 5);
             }
             player.Stop();
+            player.Resources.Clear();
             albumArtList.Clear();
             pickedSongs.Clear();
             pickSongList();
