@@ -7,10 +7,14 @@ using Nokia.Music.Types;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Telerik.Windows.Controls;
+using Windows.System;
 
 namespace MusicGame
 {
@@ -41,6 +45,11 @@ namespace MusicGame
             pickSongList();
             pickWinner();
         }
+        protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
+        {
+            checkConnection();
+        }
+        
 
         //Get library and other setup
         private void initialize()
@@ -59,6 +68,38 @@ namespace MusicGame
         private void setUpSongList()
         {
             allSongs = songs.Songs;
+        }
+
+        //check to make sure we have data
+        private Task<bool> isConnected()
+        {
+            var completed = new TaskCompletionSource<bool>();
+            WebClient client = new WebClient();
+            client.DownloadStringCompleted += (s, e) =>
+            {
+                if (e.Error == null && !e.Cancelled)
+                {
+                    completed.TrySetResult(true);
+                }
+                else
+                {
+                    completed.TrySetResult(false);
+                }
+            };
+            client.DownloadStringAsync(new Uri("http://www.google.com/"));
+            return completed.Task;
+        }
+        async private void checkConnection()
+        {
+            bool connected = await isConnected();
+            if (!connected)
+            {
+                MessageBoxClosedEventArgs res = await RadMessageBox.ShowAsync("This app needs data to work, please make sure you are connected to wifi or a network. Would you like to check now?", "Cannot get song", MessageBoxButtons.YesNo);
+                if (res.Result == DialogResult.OK)
+                {
+                    await Launcher.LaunchUriAsync(new Uri("ms-settings-wifi:"));
+                }
+            }
         }
 
         //choose songs, and pick a winning song
@@ -197,7 +238,7 @@ namespace MusicGame
             }
             else
             {
-                timesPlayed = (secs / 5)-1;
+                timesPlayed = (secs / 5) - 1;
                 playTimer.Interval = new TimeSpan(0, 0, secs);
                 player.Play();
                 playTimer.Tick += delegate(object s, EventArgs args)
