@@ -43,13 +43,8 @@ namespace MusicGame
             initialize();
             setUpSongList();
             pickSongList();
-            pickWinner();
+            checkConnectionAndRun();
         }
-        protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
-        {
-            checkConnection();
-        }
-
 
         //Get library and other setup
         private void initialize()
@@ -73,6 +68,7 @@ namespace MusicGame
         //check to make sure we have data
         private Task<bool> isConnected()
         {
+            
             var completed = new TaskCompletionSource<bool>();
             WebClient client = new WebClient();
             client.DownloadStringCompleted += (s, e) =>
@@ -89,8 +85,12 @@ namespace MusicGame
             client.DownloadStringAsync(new Uri("http://www.google.com/"));
             return completed.Task;
         }
-        async private void checkConnection()
+        async private void checkConnectionAndRun()
         {
+            ProgressBar progBar = new ProgressBar();
+            progBar.IsIndeterminate = true;
+            progBar.IsEnabled = true;
+            ContentPanel.Children.Add(progBar);
             bool connected = await isConnected();
             if (!connected)
             {
@@ -100,6 +100,11 @@ namespace MusicGame
                     await Launcher.LaunchUriAsync(new Uri("ms-settings-wifi:"));
                 }
             }
+            else
+            {
+                pickWinner();
+            }
+            ContentPanel.Children.Remove(progBar);
         }
 
         //choose songs, and pick a winning song
@@ -219,8 +224,7 @@ namespace MusicGame
                 pickWinner();
             }
         }
-
-       async void player_MediaFailed(object sender, System.Windows.ExceptionRoutedEventArgs e)
+        async void player_MediaFailed(object sender, System.Windows.ExceptionRoutedEventArgs e)
         {
             MessageBoxClosedEventArgs res = await RadMessageBox.ShowAsync("This app needs data to work, please make sure you are connected to wifi or a network. Would you like to check now?", "Cannot get song", MessageBoxButtons.YesNo);
             if (res.Result == DialogResult.OK)
@@ -228,20 +232,6 @@ namespace MusicGame
                 await Launcher.LaunchUriAsync(new Uri("ms-settings-wifi:"));
             }
         }
-        //breakup nokia music requests
-        private Uri getSongUri(Response<Product> prod)
-        {
-            return client.GetTrackSampleUri(prod.Result.Id);
-        }
-        async private Task<Response<Product>> getSongData(ListResponse<MusicItem> result)
-        {
-            return await client.GetProductAsync(result[0].Id);
-        }
-        async private Task<ListResponse<MusicItem>> getPossibleSong()
-        {
-            return await client.SearchAsync(winningSong.Name + " " + winningSong.Artist.Name, Category.Track, null, null, null, 0, 1);
-        }
-
         private bool performersAreArtists(Nokia.Music.Types.Artist[] artists, string p)
         {
             //checks whether the performer from NokMixRadio is the same as the artist from XboxMusicLib
@@ -288,6 +278,20 @@ namespace MusicGame
             };
             replayTimer.Start();
         }
+        //breakup nokia music requests
+        private Uri getSongUri(Response<Product> prod)
+        {
+            return client.GetTrackSampleUri(prod.Result.Id);
+        }
+        async private Task<Response<Product>> getSongData(ListResponse<MusicItem> result)
+        {
+            return await client.GetProductAsync(result[0].Id);
+        }
+        async private Task<ListResponse<MusicItem>> getPossibleSong()
+        {
+            return await client.SearchAsync(winningSong.Name + " " + winningSong.Artist.Name, Category.Track, null, null, null, 0, 1);
+        }
+        
 
         //handle answers
         private void Image_Tap(object sender, System.Windows.Input.GestureEventArgs e)

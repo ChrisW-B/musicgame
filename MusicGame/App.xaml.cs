@@ -7,6 +7,10 @@ using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using MusicGame.Resources;
+using Telerik.Windows.Controls;
+using System.Threading.Tasks;
+using System.Net;
+using Windows.System;
 
 namespace MusicGame
 {
