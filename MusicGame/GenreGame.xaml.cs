@@ -1,0 +1,262 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Navigation;
+using Microsoft.Phone.Controls;
+using Microsoft.Phone.Shell;
+using Nokia.Music;
+using Nokia.Music.Types;
+using System.Collections.ObjectModel;
+using MusicGame.ViewModels;
+using Telerik.Windows.Controls;
+using System.Windows.Media.Imaging;
+using System.Threading.Tasks;
+using System.Windows.Threading;
+
+namespace MusicGame
+{
+    public partial class GenreGame : PhoneApplicationPage
+    {
+        MusicClient client;
+        Random rand;
+        ListResponse<Product> topSongs;
+        ObservableCollection<Product> pickedSongs;
+        ObservableCollection<DataItemViewModel> albumArtList;
+        Product winningSong;
+        int timesPlayed;
+        int points;
+        int numTimesWrong;
+        DispatcherTimer playTimer;
+        DispatcherTimer replayTimer;
+        const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
+
+        public GenreGame()
+        {
+            InitializeComponent();
+            setup();
+        }
+
+        private void setup()
+        {
+            client = new MusicClient(MUSIC_API_KEY);
+            rand = new Random();
+            pickedSongs = new ObservableCollection<Product>();
+            albumArtList = new ObservableCollection<DataItemViewModel>();
+            replayTimer = new DispatcherTimer();
+            playTimer = new DispatcherTimer();
+            numTimesWrong = 0;
+            timesPlayed = 0;
+            points = 0;
+        }
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            if (this.NavigationContext.QueryString.ContainsKey("genre") && this.NavigationContext.QueryString.ContainsKey("name"))
+            {
+                String genre = this.NavigationContext.QueryString["genre"];
+                String name = this.NavigationContext.QueryString["name"];
+                Genre nokGenre = pickGenre(genre, name);
+                setupGenre(nokGenre);
+            }
+        }
+
+        private Genre pickGenre(string genre, string name)
+        {
+            Genre nokGenre = new Genre();
+            nokGenre.Id = genre;
+            nokGenre.Name = name;
+            return nokGenre;
+        }
+
+
+        async private void setupGenre(Genre nokGenre)
+        {
+            topSongs = await client.GetTopProductsForGenreAsync(nokGenre, Category.Track, 0, 150);
+            startGame();
+        }
+
+        private void startGame()
+        {
+            pickSongs();
+            pickWinner();
+        }
+
+        private void pickSongs()
+        {
+
+            for (int i = 0; i < 12; i++)
+            {
+                pickSong();
+            }
+            setAlbumArt();
+
+        }
+
+        private void playWinner()
+        {
+            player.Resources.Clear();
+            Uri songUri = client.GetTrackSampleUri(winningSong.Id);
+            player.Source = songUri;
+            playForLimit(5);
+        }
+        private void playForLimit(int secs)
+        {
+            //limits the play time of a song to the seconds provided
+            if (secs > 25)
+            {
+                timeOut();
+            }
+            else
+            {
+                timesPlayed = (secs / 5) - 1;
+                playTimer.Interval = new TimeSpan(0, 0, secs);
+                player.Play();
+                playTimer.Tick += delegate(object s, EventArgs args)
+                {
+                    playTimer.Stop();
+                    player.Stop();
+                    replaySong(secs);
+                };
+                playTimer.Start();
+            }
+        }
+        private void replaySong(int secs)
+        {
+            //replays the song after a set amount of time, and ups the play time for next time
+            replayTimer.Interval = new TimeSpan(0, 0, 5);
+            replayTimer.Tick += delegate(object s, EventArgs args)
+            {
+                replayTimer.Stop();
+                playForLimit(secs + 5);
+            };
+            replayTimer.Start();
+        }
+
+        private void pickWinner()
+        {
+            //picks a random song from the selected songs to be the winner
+            winningSong = pickedSongs[rand.Next(pickedSongs.Count)];
+            playWinner();
+        }
+
+
+        private void setAlbumArt()
+        {
+            //sets up the grid of album art
+            albumArtGrid.ItemsSource = albumArtList;
+            albumArtGrid.SetValue(InteractionEffectManager.IsInteractionEnabledProperty, true);
+            InteractionEffectManager.AllowedTypes.Add(typeof(RadDataBoundListBoxItem));
+        }
+
+        private bool onList(Product prod)
+        {
+            foreach (Product picked in pickedSongs)
+            {
+                if (prod.Id == picked.Id)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+
+        private void pickSong()
+        {
+            //picks an idividual song from the list of all songs in library
+            Product prod = topSongs[rand.Next(topSongs.Count)];
+            BitmapImage albumArt = getBitmap(prod);
+            if (albumArt != null)
+            {
+                if (!onList(prod))
+                {
+                    pickedSongs.Add(prod);
+                    DataItemViewModel album = new DataItemViewModel();
+                    album.ImageSource = albumArt;
+                    album.Prod = prod;
+                    albumArtList.Add(album);
+                }
+                else
+                {
+                    pickSong();
+                }
+            }
+            else
+            {
+                pickSong();
+            }
+        }
+
+
+        private BitmapImage getBitmap(Product prod)
+        {
+            return new BitmapImage(prod.Thumb320Uri);
+        }
+
+
+        private void Image_Tap(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+            //checks to see if the correct answer was selected
+            if (((sender as Image).DataContext as DataItemViewModel).Prod == winningSong)
+            {
+                correctAns();
+            }
+            else
+            {
+                wrongAns();
+            }
+        }
+        private void wrongAns()
+        {
+            //handles incorrect answers
+            resultText.Text = "Wrong answer!";
+            points--;
+            numTimesWrong++;
+            Points.Text = points.ToString();
+            if (numTimesWrong > 2)
+            {
+                newBoard();
+            }
+        }
+        private void correctAns()
+        {
+            //handles correct answers
+            resultText.Text = "Correct!";
+            points = points + (5 - timesPlayed);
+            newBoard();
+        }
+        private void timeOut()
+        {
+            resultText.Text = "Too long!";
+            newBoard();
+        }
+        private void newBoard()
+        {
+            //clears the current board and creates a new one
+            numTimesWrong = 0;
+            timesPlayed = 0;
+            Points.Text = points.ToString();
+            if (playTimer.IsEnabled)
+            {
+                playTimer.Stop();
+                playTimer.Interval = new TimeSpan(0, 0, 5);
+            }
+            if (replayTimer.IsEnabled)
+            {
+                replayTimer.Stop();
+                replayTimer.Interval = new TimeSpan(0, 0, 5);
+            }
+            player.Stop();
+            player.Resources.Clear();
+            albumArtList.Clear();
+            pickedSongs.Clear();
+            pickSongs();
+            pickWinner();
+        }
+    }
+
+}
