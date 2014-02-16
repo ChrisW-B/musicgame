@@ -17,7 +17,7 @@ namespace MusicGame
 
         private void myMusicGame_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
+            NavigationService.Navigate(new Uri("/MyMusic.xaml", UriKind.Relative));
         }
         private void genreGame_Click(object sender, RoutedEventArgs e)
         {

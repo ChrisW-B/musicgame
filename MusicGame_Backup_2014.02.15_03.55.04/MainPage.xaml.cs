@@ -43,7 +43,11 @@ namespace MusicGame
             initialize();
             setUpSongList();
             pickSongList();
-            checkConnectionAndRun();
+            pickWinner();
+        }
+        protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
+        {
+            checkConnection();
         }
 
         //Get library and other setup
@@ -68,7 +72,6 @@ namespace MusicGame
         //check to make sure we have data
         private Task<bool> isConnected()
         {
-            
             var completed = new TaskCompletionSource<bool>();
             WebClient client = new WebClient();
             client.DownloadStringCompleted += (s, e) =>
@@ -85,12 +88,8 @@ namespace MusicGame
             client.DownloadStringAsync(new Uri("http://www.google.com/"));
             return completed.Task;
         }
-        async private void checkConnectionAndRun()
+        async private void checkConnection()
         {
-            ProgressBar progBar = new ProgressBar();
-            progBar.IsIndeterminate = true;
-            progBar.IsEnabled = true;
-            ContentPanel.Children.Add(progBar);
             bool connected = await isConnected();
             if (!connected)
             {
@@ -100,11 +99,6 @@ namespace MusicGame
                     await Launcher.LaunchUriAsync(new Uri("ms-settings-wifi:"));
                 }
             }
-            else
-            {
-                pickWinner();
-            }
-            ContentPanel.Children.Remove(progBar);
         }
 
         //choose songs, and pick a winning song
