@@ -49,6 +49,11 @@ namespace MusicGame
             pickSongList();
             checkConnectionAndRun();
         }
+        private enum ProgBarStatus
+        {
+            On,
+            Off
+        }
 
         //Get library and other setup
         private void initialize()
@@ -91,7 +96,7 @@ namespace MusicGame
         }
         async private void checkConnectionAndRun()
         {
-            toggleProgBar();
+            toggleProgBar(ProgBarStatus.On);
             
             bool connected = await isConnected();
             if (!connected)
@@ -106,12 +111,12 @@ namespace MusicGame
             {
                 pickWinner();
             }
-            toggleProgBar();
+            toggleProgBar(ProgBarStatus.Off);
         }
 
-        private void toggleProgBar()
+        private void toggleProgBar(ProgBarStatus stat)
         {
-            if (!ContentPanel.Children.Contains(grid))
+            if (stat == ProgBarStatus.On)
             {
                 progBar = new ProgressBar();
                 grid = new Grid();
@@ -120,6 +125,7 @@ namespace MusicGame
                 text.TextAlignment = TextAlignment.Center;
                 text.HorizontalAlignment = HorizontalAlignment.Center;
                 text.VerticalAlignment = VerticalAlignment.Center;
+                text.Foreground =new SolidColorBrush(Colors.White);
                 progBar.IsIndeterminate = true;
                 progBar.IsEnabled = true;
                 Thickness pad = new Thickness(0,0,0,40);
@@ -131,7 +137,7 @@ namespace MusicGame
                 grid.Children.Add(progBar);
                 grid.Children.Add(text);
             }
-            else
+            else if (ContentPanel.Children.Contains(grid))
             {
                 progBar.IsIndeterminate = false;
                 grid.Children.Remove(progBar);
@@ -239,10 +245,11 @@ namespace MusicGame
                 Response<Product> prod = await getSongData(result);
                 if (performersAreArtists(prod.Result.Performers, winningSong.Artist.Name))
                 {
+                    toggleProgBar(ProgBarStatus.On);
                     Uri songUri = getSongUri(prod);
                     player.Source = songUri;
-                    player.MediaFailed += player_MediaFailed;
-                    playForLimit(5);
+                    player.MediaOpened += player_MediaOpened;
+                    
                 }
                 else
                 {
@@ -254,13 +261,11 @@ namespace MusicGame
                 pickWinner();
             }
         }
-        async void player_MediaFailed(object sender, System.Windows.ExceptionRoutedEventArgs e)
+
+        void player_MediaOpened(object sender, RoutedEventArgs e)
         {
-            MessageBoxClosedEventArgs res = await RadMessageBox.ShowAsync("This app needs data to work, please make sure you are connected to wifi or a network. Would you like to check now?", "Cannot get song", MessageBoxButtons.YesNo);
-            if (res.Result == DialogResult.OK)
-            {
-                await Launcher.LaunchUriAsync(new Uri("ms-settings-wifi:"));
-            }
+            toggleProgBar(ProgBarStatus.Off);
+            playForLimit(5);
         }
         private bool performersAreArtists(Nokia.Music.Types.Artist[] artists, string p)
         {

@@ -15,6 +15,7 @@ using Telerik.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using System.Windows.Media;
 
 namespace MusicGame
 {
@@ -22,7 +23,7 @@ namespace MusicGame
     {
         MusicClient client;
         Random rand;
-        ListResponse<Product> topSongs;
+        ObservableCollection<Product> topSongs;
         ObservableCollection<Product> pickedSongs;
         ObservableCollection<DataItemViewModel> albumArtList;
         Product winningSong;
@@ -31,6 +32,13 @@ namespace MusicGame
         int numTimesWrong;
         DispatcherTimer playTimer;
         DispatcherTimer replayTimer;
+        Grid grid;
+        ProgressBar progBar;
+        private enum ProgBarStatus
+        {
+            On,
+            Off
+        }
         const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
 
         public GenreGame()
@@ -45,6 +53,7 @@ namespace MusicGame
             rand = new Random();
             pickedSongs = new ObservableCollection<Product>();
             albumArtList = new ObservableCollection<DataItemViewModel>();
+            topSongs = new ObservableCollection<Product>();
             replayTimer = new DispatcherTimer();
             playTimer = new DispatcherTimer();
             numTimesWrong = 0;
@@ -63,6 +72,7 @@ namespace MusicGame
             }
         }
 
+        //creates the genre
         private Genre pickGenre(string genre, string name)
         {
             Genre nokGenre = new Genre();
@@ -71,35 +81,55 @@ namespace MusicGame
             return nokGenre;
         }
 
-
+        //gets the list of top songs from a genre
         async private void setupGenre(Genre nokGenre)
         {
-            topSongs = await client.GetTopProductsForGenreAsync(nokGenre, Category.Track, 0, 150);
+            await getTopMusic(nokGenre);
             startGame();
         }
 
+        async private Task getTopMusic(Genre nokGenre)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                ListResponse<Product> songPage = await client.GetTopProductsForGenreAsync(nokGenre, Category.Track,i);
+                ListResponse<Product> singlePage = await client.GetTopProductsForGenreAsync(nokGenre, Category.Single, i);
+                foreach (Product prod in songPage)
+                {
+                    topSongs.Add(prod);
+                }
+                foreach (Product prod in singlePage)
+                {
+                    topSongs.Add(prod);
+                }
+            }
+        }
+
+        //general game starter
         private void startGame()
         {
             pickSongs();
             pickWinner();
         }
 
-        private void pickSongs()
+        //Pick and play the winning song
+        private void pickWinner()
         {
-
-            for (int i = 0; i < 12; i++)
-            {
-                pickSong();
-            }
-            setAlbumArt();
-
+            //picks a random song from the selected songs to be the winner
+            winningSong = pickedSongs[rand.Next(pickedSongs.Count)];
+            playWinner();
         }
-
         private void playWinner()
         {
+            toggleProgBar(ProgBarStatus.On);
             player.Resources.Clear();
             Uri songUri = client.GetTrackSampleUri(winningSong.Id);
             player.Source = songUri;
+            player.MediaOpened += player_Loaded;
+        }
+        void player_Loaded(object sender, RoutedEventArgs e)
+        {
+            toggleProgBar(ProgBarStatus.Off);
             playForLimit(5);
         }
         private void playForLimit(int secs)
@@ -118,6 +148,7 @@ namespace MusicGame
                 {
                     playTimer.Stop();
                     player.Stop();
+                    player.Position = new TimeSpan(0, 0, 0);
                     replaySong(secs);
                 };
                 playTimer.Start();
@@ -134,37 +165,48 @@ namespace MusicGame
             };
             replayTimer.Start();
         }
-
-        private void pickWinner()
+        private void toggleProgBar(ProgBarStatus stat)
         {
-            //picks a random song from the selected songs to be the winner
-            winningSong = pickedSongs[rand.Next(pickedSongs.Count)];
-            playWinner();
-        }
-
-
-        private void setAlbumArt()
-        {
-            //sets up the grid of album art
-            albumArtGrid.ItemsSource = albumArtList;
-            albumArtGrid.SetValue(InteractionEffectManager.IsInteractionEnabledProperty, true);
-            InteractionEffectManager.AllowedTypes.Add(typeof(RadDataBoundListBoxItem));
-        }
-
-        private bool onList(Product prod)
-        {
-            foreach (Product picked in pickedSongs)
+            if (stat == ProgBarStatus.On)
             {
-                if (prod.Id == picked.Id)
-                {
-                    return true;
-                }
+                progBar = new ProgressBar();
+                grid = new Grid();
+                TextBlock text = new TextBlock();
+                text.Text = "loading song";
+                text.TextAlignment = TextAlignment.Center;
+                text.HorizontalAlignment = HorizontalAlignment.Center;
+                text.VerticalAlignment = VerticalAlignment.Center;
+                text.Foreground = new SolidColorBrush(Colors.White);
+                progBar.IsIndeterminate = true;
+                progBar.IsEnabled = true;
+                Thickness pad = new Thickness(0, 0, 0, 40);
+                progBar.Padding = pad;
+                SolidColorBrush brush = new SolidColorBrush(Colors.Black);
+                brush.Opacity = .7;
+                grid.Background = brush;
+                ContentPanel.Children.Add(grid);
+                grid.Children.Add(progBar);
+                grid.Children.Add(text);
             }
-            return false;
+            else if (ContentPanel.Children.Contains(grid))
+            {
+                progBar.IsIndeterminate = false;
+                grid.Children.Remove(progBar);
+                ContentPanel.Children.Remove(grid);
+            }
         }
 
+        //Get a list of 12 songs with album art
+        private void pickSongs()
+        {
 
+            for (int i = 0; i < 12; i++)
+            {
+                pickSong();
+            }
+            setAlbumArt();
 
+        }
         private void pickSong()
         {
             //picks an idividual song from the list of all songs in library
@@ -190,14 +232,30 @@ namespace MusicGame
                 pickSong();
             }
         }
-
-
         private BitmapImage getBitmap(Product prod)
         {
             return new BitmapImage(prod.Thumb320Uri);
         }
+        private void setAlbumArt()
+        {
+            //sets up the grid of album art
+            albumArtGrid.ItemsSource = albumArtList;
+            albumArtGrid.SetValue(InteractionEffectManager.IsInteractionEnabledProperty, true);
+            InteractionEffectManager.AllowedTypes.Add(typeof(RadDataBoundListBoxItem));
+        }
+        private bool onList(Product prod)
+        {
+            foreach (Product picked in pickedSongs)
+            {
+                if (picked.TakenFrom.Name == prod.TakenFrom.Name)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
-
+        //check correctness
         private void Image_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
             //checks to see if the correct answer was selected
