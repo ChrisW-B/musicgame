@@ -19,7 +19,7 @@ using System.Windows.Media;
 
 namespace MusicGame
 {
-    public partial class GenreGame : PhoneApplicationPage
+    public partial class GenreGameAlbum : PhoneApplicationPage
     {
         MusicClient client;
         Random rand;
@@ -41,7 +41,7 @@ namespace MusicGame
         }
         const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
 
-        public GenreGame()
+        public GenreGameAlbum()
         {
             InitializeComponent();
             setup();
@@ -329,7 +329,6 @@ namespace MusicGame
             pickSongs();
             pickWinner();
         }
-
         private void reInitialize()
         {
             albumArtGrid.ItemsSource = null;

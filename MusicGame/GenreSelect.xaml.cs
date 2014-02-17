@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Navigation;
 using System.Windows.Threading;
 using Telerik.Windows.Controls;
 using Windows.System;
@@ -17,10 +18,27 @@ namespace MusicGame
     public partial class GenreSelect : PhoneApplicationPage
     {
         const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
+        bool isVoiceGame;
         public GenreSelect()
         {
             InitializeComponent();
             checkConnectionAndRun();
+        }
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            isVoiceGame = false;
+            if (this.NavigationContext.QueryString.ContainsKey("voice"))
+            {
+                if (this.NavigationContext.QueryString["voice"] == "0")
+                {
+                    isVoiceGame = false;
+                }
+                else
+                {
+                    isVoiceGame = true;
+                }
+            }
         }
  
         async private void checkConnectionAndRun()
@@ -82,7 +100,14 @@ namespace MusicGame
             Button button = (sender as Button);
             String buttonName = button.Content.ToString();
             String buttonTag = button.Tag.ToString();
-            NavigationService.Navigate(new Uri("/GenreGame.xaml?genre=" + buttonTag + "&name=" + buttonName , UriKind.Relative));
+            if (isVoiceGame)
+            {
+                NavigationService.Navigate(new Uri("/GenreGameVoice.xaml?genre=" + buttonTag + "&name=" + buttonName, UriKind.Relative));
+            }
+            else
+            {
+                NavigationService.Navigate(new Uri("/GenreGameAlbum.xaml?genre=" + buttonTag + "&name=" + buttonName, UriKind.Relative));
+            }
         }
 
     }

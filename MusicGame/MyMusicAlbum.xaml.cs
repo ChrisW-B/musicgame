@@ -20,7 +20,7 @@ using Windows.System;
 
 namespace MusicGame
 {
-    public partial class MyMusic : PhoneApplicationPage
+    public partial class MyMusicAlbum : PhoneApplicationPage
     {
         #region global variables
         const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
@@ -41,13 +41,13 @@ namespace MusicGame
         #endregion
 
         // Constructor
-        public MyMusic()
+        public MyMusicAlbum()
         {
             InitializeComponent();
             initialize();
             setUpSongList();
             pickSongList();
-            checkConnectionAndRun();
+            
         }
         private enum ProgBarStatus
         {
@@ -157,10 +157,11 @@ namespace MusicGame
                     pickSong();
                 }
                 setAlbumArt();
+                checkConnectionAndRun();
             }
             else
             {
-                resultText.Text = "not enough albums to play!";
+                albumArtGrid.EmptyContent = "Not enough songs to play!" + "\n" + "Try adding some more albums to your phone," + "\n" + "or simply play the top music of" + "\n" + "Nokia MixRadio with Nokia MixRadio genres!";
             }
         }
         private void pickSong()
@@ -392,7 +393,6 @@ namespace MusicGame
             pickedSongs.Clear();
             reInitialize();
             pickSongList();
-            pickWinner();
         }
         private void reInitialize()
         {

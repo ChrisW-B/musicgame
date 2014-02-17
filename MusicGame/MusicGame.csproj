@@ -93,18 +93,30 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GenreGame.xaml.cs">
-      <DependentUpon>GenreGame.xaml</DependentUpon>
+    <Compile Include="CategorySelect.xaml.cs">
+      <DependentUpon>CategorySelect.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GenreGameAlbum.xaml.cs">
+      <DependentUpon>GenreGameAlbum.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GenreGameVoice.xaml.cs">
+      <DependentUpon>GenreGameVoice.xaml</DependentUpon>
     </Compile>
     <Compile Include="GenreSelect.xaml.cs">
       <DependentUpon>GenreSelect.xaml</DependentUpon>
     </Compile>
+    <Compile Include="HighScores.xaml.cs">
+      <DependentUpon>HighScores.xaml</DependentUpon>
+    </Compile>
     <Compile Include="LocalizedStrings.cs" />
-    <Compile Include="MyMusic.xaml.cs">
-      <DependentUpon>MyMusic.xaml</DependentUpon>
+    <Compile Include="MyMusicAlbum.xaml.cs">
+      <DependentUpon>MyMusicAlbum.xaml</DependentUpon>
     </Compile>
     <Compile Include="MenuPage.xaml.cs">
       <DependentUpon>MenuPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MyMusicVoice.xaml.cs">
+      <DependentUpon>MyMusicVoice.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\AppResources.Designer.cs">
@@ -119,7 +131,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
-    <Page Include="GenreGame.xaml">
+    <Page Include="CategorySelect.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GenreGameAlbum.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GenreGameVoice.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -127,11 +147,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MyMusic.xaml">
+    <Page Include="HighScores.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MyMusicAlbum.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MenuPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MyMusicVoice.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
