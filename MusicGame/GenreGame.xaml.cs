@@ -90,19 +90,14 @@ namespace MusicGame
 
         async private Task getTopMusic(Genre nokGenre)
         {
-            for (int i = 0; i < 5; i++)
+
+            ListResponse<Product> songPage = await client.GetTopProductsForGenreAsync(nokGenre, Category.Track, 0, 100);
+
+            foreach (Product prod in songPage)
             {
-                ListResponse<Product> songPage = await client.GetTopProductsForGenreAsync(nokGenre, Category.Track,i);
-                ListResponse<Product> singlePage = await client.GetTopProductsForGenreAsync(nokGenre, Category.Single, i);
-                foreach (Product prod in songPage)
-                {
-                    topSongs.Add(prod);
-                }
-                foreach (Product prod in singlePage)
-                {
-                    topSongs.Add(prod);
-                }
+                topSongs.Add(prod);
             }
+
         }
 
         //general game starter
@@ -259,13 +254,26 @@ namespace MusicGame
         private void Image_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
             //checks to see if the correct answer was selected
-            if (((sender as Image).DataContext as DataItemViewModel).Prod == winningSong)
+            DataItemViewModel selected = ((sender as Image).DataContext as DataItemViewModel);
+            if (selected.Prod == winningSong)
             {
                 correctAns();
             }
             else
             {
+                removeFromList(selected);
                 wrongAns();
+            }
+        }
+
+        private void removeFromList(DataItemViewModel selected)
+        {
+            foreach (DataItemViewModel item in albumArtList)
+            {
+                if (selected.Prod == item.Prod)
+                {
+                    albumArtList.Remove(item);
+                }
             }
         }
         private void wrongAns()
