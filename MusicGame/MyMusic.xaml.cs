@@ -249,7 +249,7 @@ namespace MusicGame
                     Uri songUri = getSongUri(prod);
                     player.Source = songUri;
                     player.MediaOpened += player_MediaOpened;
-                    
+                    player.MediaFailed += player_MediaFailed;
                 }
                 else
                 {
@@ -261,7 +261,11 @@ namespace MusicGame
                 pickWinner();
             }
         }
-
+        void player_MediaFailed(object sender, ExceptionRoutedEventArgs e)
+        {
+            toggleProgBar(ProgBarStatus.Off);
+            resultText.Text = "Opening failed!";
+        }
         void player_MediaOpened(object sender, RoutedEventArgs e)
         {
             toggleProgBar(ProgBarStatus.Off);
@@ -331,12 +335,14 @@ namespace MusicGame
         private void Image_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
             //checks to see if the correct answer was selected
-            if (((sender as Image).DataContext as DataItemViewModel).Song == winningSong)
+            DataItemViewModel item = ((sender as Image).DataContext as DataItemViewModel);
+            if (item.Song == winningSong)
             {
                 correctAns();
             }
             else
             {
+                removeFromList(item);
                 wrongAns();
             }
         }
@@ -384,8 +390,34 @@ namespace MusicGame
             player.Resources.Clear();
             albumArtList.Clear();
             pickedSongs.Clear();
+            reInitialize();
             pickSongList();
             pickWinner();
+        }
+        private void reInitialize()
+        {
+            
+            player.Source = null;
+            albumArtList = null;
+            pickedSongs = null;
+            albumArtGrid.ItemsSource = null;
+
+            albumArtList = new ObservableCollection<DataItemViewModel>();
+            pickedSongs = new ObservableCollection<Song>();
+        }
+        private void removeFromList(DataItemViewModel selected)
+        {
+            int i = 0;
+            foreach (DataItemViewModel item in albumArtList)
+            {
+                if (selected.Song.Name == item.Song.Name)
+                {
+                    break;
+                }
+                i++;
+            }
+            albumArtList.RemoveAt(i);
+            pickedSongs.RemoveAt(i);
         }
     }
 }

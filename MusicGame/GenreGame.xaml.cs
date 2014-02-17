@@ -255,6 +255,7 @@ namespace MusicGame
         {
             //checks to see if the correct answer was selected
             DataItemViewModel selected = ((sender as Image).DataContext as DataItemViewModel);
+            albumArtGrid.SelectedItem = selected;
             if (selected.Prod == winningSong)
             {
                 correctAns();
@@ -268,13 +269,17 @@ namespace MusicGame
 
         private void removeFromList(DataItemViewModel selected)
         {
+            int i = 0;
             foreach (DataItemViewModel item in albumArtList)
             {
-                if (selected.Prod == item.Prod)
+                if (selected.Prod.Name == item.Prod.Name)
                 {
-                    albumArtList.Remove(item);
+                    break;
                 }
+                i++;
             }
+            albumArtList.RemoveAt(i);
+            pickedSongs.RemoveAt(i);
         }
         private void wrongAns()
         {
@@ -320,8 +325,19 @@ namespace MusicGame
             player.Resources.Clear();
             albumArtList.Clear();
             pickedSongs.Clear();
+            reInitialize();
             pickSongs();
             pickWinner();
+        }
+
+        private void reInitialize()
+        {
+            albumArtGrid.ItemsSource = null;
+            albumArtList = null;
+            pickedSongs = null;
+            player.Source = null;
+            albumArtList = new ObservableCollection<DataItemViewModel>();
+            pickedSongs = new ObservableCollection<Product>();
         }
     }
 
