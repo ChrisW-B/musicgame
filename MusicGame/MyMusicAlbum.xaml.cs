@@ -46,8 +46,7 @@ namespace MusicGame
             InitializeComponent();
             initialize();
             setUpSongList();
-            pickSongList();
-            
+            pickSongList();  
         }
         private enum ProgBarStatus
         {

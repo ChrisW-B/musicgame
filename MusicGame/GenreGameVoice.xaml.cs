@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using Microsoft.Phone.Controls;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Navigation;
-using Microsoft.Phone.Controls;
-using Microsoft.Phone.Shell;
+using Windows.Phone.Speech.Recognition;
+using System;
+using Windows.Phone.Speech.Synthesis;
 
 namespace MusicGame
 {
@@ -15,6 +11,16 @@ namespace MusicGame
         public GenreGameVoice()
         {
             InitializeComponent();
+        }
+
+        private async void recognizeThis_Click(object sender, RoutedEventArgs e)
+        {
+            SpeechRecognizerUI recognizer = new SpeechRecognizerUI();
+            SpeechRecognitionUIResult result = await recognizer.RecognizeWithUIAsync();
+            if (result.ResultStatus == SpeechRecognitionUIStatus.Succeeded)
+            {
+                youSaid.Text = result.RecognitionResult.Text;
+            }
         }
     }
 }

@@ -27,9 +27,10 @@
         </StackPanel>
 
         <!--ContentPanel - place additional content here-->
-        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
-
-        </Grid>
+        <StackPanel x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
+            <Button x:Name ="recognizeThis" Content="Talk to me" Click="recognizeThis_Click" ></Button>
+            <TextBlock x:Name="youSaid"></TextBlock>
+        </StackPanel>
     </Grid>
 
 </phone:PhoneApplicationPage>

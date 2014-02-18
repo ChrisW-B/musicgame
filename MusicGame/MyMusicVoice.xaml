@@ -27,9 +27,13 @@
         </StackPanel>
 
         <!--ContentPanel - place additional content here-->
-        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
-
-        </Grid>
+        <StackPanel x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
+            <MediaElement x:Name="player"></MediaElement>
+            <Button x:Name ="recognizeThis" Content="Talk to me" Click="recognizeThis_Click" ></Button>
+            <TextBlock x:Name="resultText"></TextBlock>
+            <TextBlock x:Name="Points"></TextBlock>
+            <Button x:Name="giveUp" Content="Skip this Song" Tap="giveUp_Tap"></Button>
+        </StackPanel>
     </Grid>
 
 </phone:PhoneApplicationPage>
