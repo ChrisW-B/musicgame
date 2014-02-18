@@ -35,6 +35,7 @@ namespace MusicGame
         MediaLibrary songs;
         ProgressBar progBar;
         Grid grid;
+        DispatcherTimer playTimer;
         #endregion
 
         public MyMusicVoice()
@@ -57,6 +58,7 @@ namespace MusicGame
             client = new MusicClient(MUSIC_API_KEY);
             rand = new Random();
             songs = new MediaLibrary();
+            playTimer = new DispatcherTimer();
             numTimesWrong = 0;
             timesPlayed = 0;
             points = 0;
@@ -194,25 +196,30 @@ namespace MusicGame
         private void playForLimit()
         {
             numTimesWrong = 0;
-            player.CurrentStateChanged += player_CurrentStateChanged;
+            timesPlayed = 0;
+            runTimer();
             player.Play();
-
         }
 
-        void player_CurrentStateChanged(object sender, RoutedEventArgs e)
+        private void runTimer()
         {
-            if(((sender as MediaElement).Position.TotalSeconds >= 25)){
-                timeOut();
-            }
-            if ((sender as MediaElement).Position.TotalSeconds == 0)
+            playTimer.Interval = new TimeSpan(0, 0, 1);
+            int numTicks = 25;
+            playTimer.Tick += delegate(object s, EventArgs args)
             {
-                timesPlayed = 0;
-                numTimesWrong = 0;
-            }
-            else if (((sender as MediaElement).Position.TotalSeconds % 5) == 0)
-            {
-                timesPlayed++;
-            }
+                timer.Text = numTicks.ToString();
+                if ((numTicks % 5) == 0)
+                {
+                    timesPlayed = numTicks / 5;
+                }
+                if (numTicks == 0)
+                {
+                    playTimer.Stop();
+                    timeOut();
+                }
+                numTicks--;
+            };
+            playTimer.Start();
         }
         //breakup nokia music requests
         private Uri getSongUri(Response<Product> prod)
@@ -291,17 +298,19 @@ namespace MusicGame
             points--;
             numTimesWrong++;
             Points.Text = points.ToString();
+            player.Play();
+            playTimer.Start();
             if (numTimesWrong > 2)
             {
                 newBoard();
             }
-            player.Play();
+
         }
         private void correctAns()
         {
             //handles correct answers
             resultText.Text = "Correct!";
-            points = points + (5 - timesPlayed);
+            points += timesPlayed;
             newBoard();
         }
         private void timeOut()
@@ -315,24 +324,32 @@ namespace MusicGame
             numTimesWrong = 0;
             timesPlayed = 0;
             Points.Text = points.ToString();
-            player.Stop();
             player.Resources.Clear();
             reInitialize();
             pickWinner();
         }
         private void reInitialize()
         {
+            playTimer.Stop();
+            playTimer = null;
             player.Source = null;
+            playTimer = new DispatcherTimer();
         }
 
         private async void recognizeThis_Click(object sender, RoutedEventArgs e)
         {
-            player.Stop();
+            player.Pause();
+            playTimer.Stop();
             SpeechRecognizerUI recognizer = new SpeechRecognizerUI();
             SpeechRecognitionUIResult result = await recognizer.RecognizeWithUIAsync();
             if (result.ResultStatus == SpeechRecognitionUIStatus.Succeeded)
             {
                 checkAnswer(result.RecognitionResult.Text);
+            }
+            else if (result.ResultStatus == SpeechRecognitionUIStatus.Cancelled)
+            {
+                player.Play();
+                playTimer.Start();
             }
         }
 
