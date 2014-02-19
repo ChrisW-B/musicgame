@@ -193,10 +193,6 @@
     <Reference Include="SharpGIS.GZipWebClient">
       <HintPath>..\packages\SharpGIS.GZipWebClient.1.4.0.0\lib\wp71\SharpGIS.GZipWebClient.dll</HintPath>
     </Reference>
-    <Reference Include="Telerik.Windows.Controls.Chart, Version=2013.3.1317.3040, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Telerik\UI for Windows Phone 8 Q3 2013\Binaries\WindowsPhone\Telerik.Windows.Controls.Chart.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Telerik.Windows.Controls.Primitives, Version=2013.3.1317.3040, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Telerik\UI for Windows Phone 8 Q3 2013\Binaries\WindowsPhone\Telerik.Windows.Controls.Primitives.dll</HintPath>
       <Private>True</Private>

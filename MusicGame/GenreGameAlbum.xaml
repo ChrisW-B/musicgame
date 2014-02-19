@@ -8,14 +8,83 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:telerikCore="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Core"
     xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Primitives"
-    xmlns:viewModels="clr-namespace:MusicGame.ViewModels" 
+    xmlns:viewModels="clr-namespace:MusicGame.ViewModels"
+     xmlns:BusyIndicator="clr-namespace:Telerik.Windows.Controls.BusyIndicator;assembly=Telerik.Windows.Controls.Primitives"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d" d:DesignHeight="728" d:DesignWidth="480"
     shell:SystemTray.IsVisible="False">
+    <phone:PhoneApplicationPage.Resources>
+        
+        <Style x:Key="RadBusyIndicatorStyle" TargetType="telerikPrimitives:RadBusyIndicator">
+            <Setter Property="Foreground" Value="{StaticResource PhoneAccentBrush}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="300, 300, 300, 300"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="telerikPrimitives:RadBusyIndicator">
+                        <Border x:Name="PART_LayoutRoot" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition From="NotRunning" To="Running">
+                                            <Storyboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Duration="0:0:0.5" From="0" To="1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="PART_LayoutRoot"/>
+                                                </Storyboard>
+                                            </Storyboard>
+                                        </VisualTransition>
+                                        <VisualTransition From="Running" To="NotRunning">
+                                            <Storyboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Duration="0:0:0.5" From="1" To="0" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="PART_LayoutRoot"/>
+                                                </Storyboard>
+                                            </Storyboard>
+                                        </VisualTransition>
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="NotRunning">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="PART_LayoutRoot">
+                                                <DiscreteDoubleKeyFrame KeyTime="0" Value="0"/>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="IsHitTestVisible" Storyboard.TargetName="PART_LayoutRoot">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="False"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Running">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="PART_LayoutRoot">
+                                                <DiscreteDoubleKeyFrame KeyTime="0" Value="1"/>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="IsHitTestVisible" Storyboard.TargetName="PART_LayoutRoot">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="True"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
 
+                                <BusyIndicator:BusyIndicatorAnimation x:Name="PART_Animation" Grid.Column="1" Foreground="{TemplateBinding Foreground}" IsRunning="{TemplateBinding IsRunning}" Grid.Row="0" Style="{TemplateBinding IndicatorAnimationStyle}" VerticalAlignment="Center"/>
+                                <ContentPresenter x:Name="PART_InfoContent" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="0"/>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </phone:PhoneApplicationPage.Resources>
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" telerikCore:RadAnimationManager.IsAnimationEnabled="True">
 
@@ -57,8 +126,21 @@
                         </telerikCore:RadFadeAnimation>
                     </telerikPrimitives:RadDataBoundListBox.ItemRemovedAnimation>
                 </telerikPrimitives:RadDataBoundListBox>
-                <TextBlock x:Name="resultText" Margin="0,5,0,0"/>
-                <TextBlock x:Name="Points"/>
+                <Grid>
+                    <StackPanel Margin="0,0,0,0">
+                        <TextBlock x:Name="resultText" Margin="0,5,0,0"/>
+                        <TextBlock x:Name="Points"/>
+                    </StackPanel>
+                    <telerikPrimitives:RadBusyIndicator AnimationStyle="AnimationStyle2"
+				Content="0"                            
+				IsRunning="True"
+				x:Name="timer" Style="{StaticResource RadBusyIndicatorStyle}" RenderTransformOrigin="1,1">
+                        <telerikPrimitives:RadBusyIndicator.RenderTransform>
+                            <CompositeTransform ScaleX="1" ScaleY="1"/>
+                        </telerikPrimitives:RadBusyIndicator.RenderTransform>
+                    </telerikPrimitives:RadBusyIndicator>
+                </Grid>
+                
             </StackPanel>
         </Grid>
     </Grid>

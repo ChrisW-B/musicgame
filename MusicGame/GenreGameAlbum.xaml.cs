@@ -30,14 +30,20 @@ namespace MusicGame
         int timesPlayed;
         int points;
         int numTimesWrong;
-        DispatcherTimer playTimer;
-        DispatcherTimer replayTimer;
+        int numTicks;
+        DispatcherTimer playTime;
         Grid grid;
         ProgressBar progBar;
         private enum ProgBarStatus
         {
             On,
             Off
+        }
+        private enum TimerStatus
+        {
+            On,
+            Off,
+            Pause
         }
         const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
 
@@ -54,12 +60,14 @@ namespace MusicGame
             pickedSongs = new ObservableCollection<Product>();
             albumArtList = new ObservableCollection<DataItemViewModel>();
             topSongs = new ObservableCollection<Product>();
-            replayTimer = new DispatcherTimer();
-            playTimer = new DispatcherTimer();
+            playTime = new DispatcherTimer();
+            playTime.Interval = new TimeSpan(0, 0, 1);
+            playTime.Tick += playTime_Tick;
             numTimesWrong = 0;
             timesPlayed = 0;
             points = 0;
         }
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
@@ -106,60 +114,6 @@ namespace MusicGame
             pickSongs();
             pickWinner();
         }
-
-        //Pick and play the winning song
-        private void pickWinner()
-        {
-            //picks a random song from the selected songs to be the winner
-            winningSong = pickedSongs[rand.Next(pickedSongs.Count)];
-            playWinner();
-        }
-        private void playWinner()
-        {
-            toggleProgBar(ProgBarStatus.On);
-            player.Resources.Clear();
-            Uri songUri = client.GetTrackSampleUri(winningSong.Id);
-            player.Source = songUri;
-            player.MediaOpened += player_Loaded;
-        }
-        void player_Loaded(object sender, RoutedEventArgs e)
-        {
-            toggleProgBar(ProgBarStatus.Off);
-            playForLimit(5);
-        }
-        private void playForLimit(int secs)
-        {
-            //limits the play time of a song to the seconds provided
-            if (secs > 25)
-            {
-                timeOut();
-            }
-            else
-            {
-                timesPlayed = (secs / 5) - 1;
-                playTimer.Interval = new TimeSpan(0, 0, secs);
-                player.Play();
-                playTimer.Tick += delegate(object s, EventArgs args)
-                {
-                    playTimer.Stop();
-                    player.Stop();
-                    player.Position = new TimeSpan(0, 0, 0);
-                    replaySong(secs);
-                };
-                playTimer.Start();
-            }
-        }
-        private void replaySong(int secs)
-        {
-            //replays the song after a set amount of time, and ups the play time for next time
-            replayTimer.Interval = new TimeSpan(0, 0, 5);
-            replayTimer.Tick += delegate(object s, EventArgs args)
-            {
-                replayTimer.Stop();
-                playForLimit(secs + 5);
-            };
-            replayTimer.Start();
-        }
         private void toggleProgBar(ProgBarStatus stat)
         {
             if (stat == ProgBarStatus.On)
@@ -190,6 +144,75 @@ namespace MusicGame
                 ContentPanel.Children.Remove(grid);
             }
         }
+
+        //Pick and play the winning song
+        private void pickWinner()
+        {
+            //picks a random song from the selected songs to be the winner
+            winningSong = pickedSongs[rand.Next(pickedSongs.Count)];
+            playWinner();
+        }
+        private void playWinner()
+        {
+            toggleProgBar(ProgBarStatus.On);
+            player.Resources.Clear();
+            Uri songUri = client.GetTrackSampleUri(winningSong.Id);
+            player.Source = songUri;
+            player.MediaOpened += player_MediaOpened;
+            player.MediaFailed += player_MediaFailed;
+        }
+        void player_MediaFailed(object sender, ExceptionRoutedEventArgs e)
+        {
+            toggleProgBar(ProgBarStatus.Off);
+            resultText.Text = "Opening failed!";
+        }
+        void player_MediaOpened(object sender, RoutedEventArgs e)
+        {
+            toggleProgBar(ProgBarStatus.Off);
+            playForLimit();
+        }
+        private void playForLimit()
+        {
+            numTimesWrong = 0;
+            timesPlayed = 0;
+            numTicks = 25;
+            toggleClock(TimerStatus.On);
+            player.Play();
+        }
+
+        private void toggleClock(TimerStatus stat)
+        {
+            if (stat == TimerStatus.On)
+            {
+                playTime.Start();
+            }
+            else if (stat == TimerStatus.Off)
+            {
+                numTicks = 25;
+                playTime.Stop();
+            }
+            else
+            {
+                playTime.Stop();
+            }
+        }
+
+        void playTime_Tick(object sender, EventArgs e)
+        {
+            timer.Content = numTicks;
+            numTicks--;
+            if (numTicks % 5 == 0)
+            {
+                timesPlayed++;
+            }
+            if (numTicks < 0)
+            {
+                toggleClock(TimerStatus.Off);
+                timeOut();
+            }
+
+        }
+        
 
         //Get a list of 12 songs with album art
         private void pickSongs()
@@ -311,16 +334,6 @@ namespace MusicGame
             numTimesWrong = 0;
             timesPlayed = 0;
             Points.Text = points.ToString();
-            if (playTimer.IsEnabled)
-            {
-                playTimer.Stop();
-                playTimer.Interval = new TimeSpan(0, 0, 5);
-            }
-            if (replayTimer.IsEnabled)
-            {
-                replayTimer.Stop();
-                replayTimer.Interval = new TimeSpan(0, 0, 5);
-            }
             player.Stop();
             player.Resources.Clear();
             albumArtList.Clear();
