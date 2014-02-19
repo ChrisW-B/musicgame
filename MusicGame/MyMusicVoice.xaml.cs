@@ -225,9 +225,10 @@ namespace MusicGame
             {
                 playTime.Start();
             }
-            else if(stat == TimerStatus.Off)
+            else if (stat == TimerStatus.Off)
             {
                 numTicks = 25;
+                timer.Content = numTicks;
                 playTime.Stop();
             }
             else
@@ -239,8 +240,7 @@ namespace MusicGame
         void playTime_Tick(object sender, EventArgs e)
         {
             timer.Content = numTicks;
-            numTicks--;
-            if (numTicks % 5 == 0)
+            if (numTicks % 5 == 0 && numTicks != 25)
             {
                 timesPlayed++;
             }
@@ -249,7 +249,7 @@ namespace MusicGame
                 toggleClock(TimerStatus.Off);
                 timeOut();
             }
-            
+            numTicks--;
         }
         //breakup nokia music requests
         private Uri getSongUri(Response<Product> prod)

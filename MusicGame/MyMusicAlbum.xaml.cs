@@ -27,19 +27,24 @@ namespace MusicGame
         int numTimesWrong;
         int points;
         int timesPlayed;
+        int numTicks;
         SongCollection allSongs;
         ObservableCollection<DataItemViewModel> albumArtList;
         ObservableCollection<Song> pickedSongs;
         Song winningSong;
-        DispatcherTimer playTimer;
-        DispatcherTimer replayTimer;
+        DispatcherTimer playTime;
         Random rand;
         MusicClient client;
         MediaLibrary songs;
         ProgressBar progBar;
         Grid grid;
         #endregion
-
+        private enum TimerStatus
+        {
+            On,
+            Off,
+            Pause
+        }
         // Constructor
         public MyMusicAlbum()
         {
@@ -59,8 +64,9 @@ namespace MusicGame
         {
             pickedSongs = new ObservableCollection<Song>();
             albumArtList = new ObservableCollection<DataItemViewModel>();
-            replayTimer = new DispatcherTimer();
-            playTimer = new DispatcherTimer();
+            playTime = new DispatcherTimer();
+            playTime.Interval = new TimeSpan(0, 0, 1);
+            playTime.Tick += playTime_Tick;
             client = new MusicClient(MUSIC_API_KEY);
             rand = new Random();
             songs = new MediaLibrary();
@@ -261,16 +267,6 @@ namespace MusicGame
                 pickWinner();
             }
         }
-        void player_MediaFailed(object sender, ExceptionRoutedEventArgs e)
-        {
-            toggleProgBar(ProgBarStatus.Off);
-            resultText.Text = "Opening failed!";
-        }
-        void player_MediaOpened(object sender, RoutedEventArgs e)
-        {
-            toggleProgBar(ProgBarStatus.Off);
-            playForLimit(5);
-        }
         private bool performersAreArtists(Nokia.Music.Types.Artist[] artists, string p)
         {
             //checks whether the performer from NokMixRadio is the same as the artist from XboxMusicLib
@@ -285,38 +281,58 @@ namespace MusicGame
             }
             return false;
         }
-        private void playForLimit(int secs)
+        void player_MediaFailed(object sender, ExceptionRoutedEventArgs e)
         {
-            //limits the play time of a song to the seconds provided
-            if (secs > 25)
+            toggleProgBar(ProgBarStatus.Off);
+            resultText.Text = "Opening failed!";
+        }
+        void player_MediaOpened(object sender, RoutedEventArgs e)
+        {
+            toggleProgBar(ProgBarStatus.Off);
+            playForLimit();
+        }
+        private void playForLimit()
+        {
+            numTimesWrong = 0;
+            timesPlayed = 0;
+            numTicks = 25;
+            toggleClock(TimerStatus.On);
+            player.Play();
+        }
+
+        private void toggleClock(TimerStatus stat)
+        {
+            if (stat == TimerStatus.On)
             {
-                timeOut();
+                playTime.Start();
+            }
+            else if (stat == TimerStatus.Off)
+            {
+                numTicks = 25;
+                timer.Content = numTicks;
+                playTime.Stop();
             }
             else
             {
-                timesPlayed = (secs / 5) - 1;
-                playTimer.Interval = new TimeSpan(0, 0, secs);
-                player.Play();
-                playTimer.Tick += delegate(object s, EventArgs args)
-                {
-                    playTimer.Stop();
-                    player.Stop();
-                    replaySong(secs);
-                };
-                playTimer.Start();
+                playTime.Stop();
             }
         }
-        private void replaySong(int secs)
+
+        void playTime_Tick(object sender, EventArgs e)
         {
-            //replays the song after a set amount of time, and ups the play time for next time
-            replayTimer.Interval = new TimeSpan(0, 0, 5);
-            replayTimer.Tick += delegate(object s, EventArgs args)
+            timer.Content = numTicks;
+            if (numTicks % 5 == 0 && numTicks!=25)
             {
-                replayTimer.Stop();
-                playForLimit(secs + 5);
-            };
-            replayTimer.Start();
+                timesPlayed++;
+            }
+            if (numTicks < 0)
+            {
+                toggleClock(TimerStatus.Off);
+                timeOut();
+            }
+            numTicks--;
         }
+        
         //breakup nokia music requests
         private Uri getSongUri(Response<Product> prod)
         {
@@ -376,16 +392,7 @@ namespace MusicGame
             numTimesWrong = 0;
             timesPlayed = 0;
             Points.Text = points.ToString();
-            if (playTimer.IsEnabled)
-            {
-                playTimer.Stop();
-                playTimer.Interval = new TimeSpan(0, 0, 5);
-            }
-            if (replayTimer.IsEnabled)
-            {
-                replayTimer.Stop();
-                replayTimer.Interval = new TimeSpan(0, 0, 5);
-            }
+            toggleClock(TimerStatus.Off);
             player.Stop();
             player.Resources.Clear();
             albumArtList.Clear();

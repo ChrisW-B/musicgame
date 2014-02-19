@@ -50,10 +50,10 @@ namespace MusicGame
         public GenreGameAlbum()
         {
             InitializeComponent();
-            setup();
+            initialize();
         }
 
-        private void setup()
+        private void initialize()
         {
             client = new MusicClient(MUSIC_API_KEY);
             rand = new Random();
@@ -61,7 +61,7 @@ namespace MusicGame
             albumArtList = new ObservableCollection<DataItemViewModel>();
             topSongs = new ObservableCollection<Product>();
             playTime = new DispatcherTimer();
-            playTime.Interval = new TimeSpan(0, 0, 1);
+            playTime.Interval = new TimeSpan(0, 0, 1);   
             playTime.Tick += playTime_Tick;
             numTimesWrong = 0;
             timesPlayed = 0;
@@ -189,6 +189,7 @@ namespace MusicGame
             else if (stat == TimerStatus.Off)
             {
                 numTicks = 25;
+                timer.Content = numTicks;
                 playTime.Stop();
             }
             else
@@ -200,8 +201,7 @@ namespace MusicGame
         void playTime_Tick(object sender, EventArgs e)
         {
             timer.Content = numTicks;
-            numTicks--;
-            if (numTicks % 5 == 0)
+            if (numTicks % 5 == 0 && numTicks != 25)
             {
                 timesPlayed++;
             }
@@ -210,7 +210,7 @@ namespace MusicGame
                 toggleClock(TimerStatus.Off);
                 timeOut();
             }
-
+            numTicks--;
         }
         
 
