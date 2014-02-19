@@ -110,7 +110,6 @@ xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik
                     <telerikPrimitives:RadDataBoundListBox.VirtualizationStrategyDefinition>
                         <telerikPrimitives:WrapVirtualizationStrategyDefinition Orientation="Vertical"/>
                     </telerikPrimitives:RadDataBoundListBox.VirtualizationStrategyDefinition>
-
                     <telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
                         <telerikCore:RadFadeAnimation Duration="0:0:0.5" StartOpacity="0" EndOpacity="1">
                             <telerikCore:RadFadeAnimation.Easing>

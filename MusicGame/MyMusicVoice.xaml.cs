@@ -1,23 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
-using Microsoft.Phone.Shell;
 using Windows.Phone.Speech.Recognition;
 using Microsoft.Xna.Framework.Media;
 using System.Collections.ObjectModel;
 using System.Windows.Threading;
-using MusicGame.ViewModels;
 using Nokia.Music;
 using System.Threading.Tasks;
 using Telerik.Windows.Controls;
 using Windows.System;
 using System.Windows.Media;
 using Nokia.Music.Types;
+using System.Windows.Input;
+using System.IO;
+using System.Windows.Media.Imaging;
+using System.IO.IsolatedStorage;
 
 namespace MusicGame
 {
@@ -28,8 +28,10 @@ namespace MusicGame
         const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
         int numTimesWrong;
         int points;
+        int roundPoints;
         int timesPlayed;
         int numTicks;
+        bool gameOver;
         Song winningSong;
         Random rand;
         MusicClient client;
@@ -37,6 +39,11 @@ namespace MusicGame
         ProgressBar progBar;
         DispatcherTimer playTime;
         Grid grid;
+        Uri prodUri;
+        Uri albumUri;
+        bool speaking;
+        ObservableCollection<SongData> winningSongList;
+        IsolatedStorageSettings store;
         #endregion
 
         public MyMusicVoice()
@@ -62,6 +69,9 @@ namespace MusicGame
         //Get library and other setup
         private void initialize()
         {
+            gameOver = true;
+            store = IsolatedStorageSettings.ApplicationSettings;
+            winningSongList = new ObservableCollection<SongData>();
             client = new MusicClient(MUSIC_API_KEY);
             rand = new Random();
             songs = new MediaLibrary();
@@ -170,6 +180,8 @@ namespace MusicGame
                 Response<Product> prod = await getSongData(result);
                 if (performersAreArtists(prod.Result.Performers, winningSong.Artist.Name))
                 {
+                    prodUri = prod.Result.AppToAppUri;
+                    albumUri = prod.Result.Thumb320Uri;
                     toggleProgBar(ProgBarStatus.On);
                     Uri songUri = getSongUri(prod);
                     player.Source = songUri;
@@ -330,6 +342,7 @@ namespace MusicGame
             player.Play();
             if (numTimesWrong > 2)
             {
+                roundPoints = 0;
                 newBoard();
             }
 
@@ -338,9 +351,12 @@ namespace MusicGame
         {
             //handles correct answers
             resultText.Text = "Correct!";
-            points += (5-timesPlayed);
+            roundPoints = (5 - timesPlayed);
+            points += roundPoints;
             newBoard();
         }
+
+        
         private void timeOut()
         {
             resultText.Text = "Too long!";
@@ -349,38 +365,84 @@ namespace MusicGame
         private void newBoard()
         {
             //clears the current board and creates a new one
-            numTimesWrong = 0;
-            timesPlayed = 0;
-            Points.Text = points.ToString();
-            player.Resources.Clear();
-            reInitialize();
-            pickWinner();
+            bool isRight = false;
+            if (roundPoints > 0)
+            {
+                isRight = true;
+            }
+            winningSongList.Add(new SongData() { albumUri = albumUri, points = roundPoints, correct = isRight, seconds = 25 - numTicks, songName = winningSong.Name, uri = prodUri });
+            if (winningSongList.Count > 5)
+            {
+                store["results"] = winningSongList;
+                store.Save();
+                if (gameOver)
+                {
+                    NavigationService.Navigate(new Uri("/ResultsPage.xaml", UriKind.Relative));
+                    gameOver = false;
+                }
+            }
+            else
+            {
+                yourAnswer.Text = "";
+                numTimesWrong = 0;
+                timesPlayed = 0;
+                Points.Text = points.ToString();
+                player.Resources.Clear();
+                reInitialize();
+                pickWinner();
+            }
         }
         private void reInitialize()
         {
             player.Source = null;
         }
 
-        private async void recognizeThis_Click(object sender, RoutedEventArgs e)
+        private void giveUp_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
+            newBoard();
+        }
+        private void go_Tap(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+            checkAnswer(yourAnswer.Text);
+        }
+        private void yourAnswer_Tap(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+            player.Pause();
+            toggleClock(TimerStatus.Pause);
+        }
+        private void yourAnswer_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (!speaking)
+            {
+                player.Play();
+                toggleClock(TimerStatus.On);
+            }
+        }
+        private void yourAnswer_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                this.Focus();
+                checkAnswer(yourAnswer.Text);
+            }
+        }
+        private async void RadTextBox_ActionButtonTap(object sender, EventArgs e)
+        {
+            speaking = true;
             player.Pause();
             toggleClock(TimerStatus.Pause);
             SpeechRecognizerUI recognizer = new SpeechRecognizerUI();
             SpeechRecognitionUIResult result = await recognizer.RecognizeWithUIAsync();
+            speaking = false;
             if (result.ResultStatus == SpeechRecognitionUIStatus.Succeeded)
             {
-                checkAnswer(result.RecognitionResult.Text);
+                yourAnswer.Text = result.RecognitionResult.Text;
             }
             else if (result.ResultStatus == SpeechRecognitionUIStatus.Cancelled)
             {
                 toggleClock(TimerStatus.On);
                 player.Play();
             }
-        }
-
-        private void giveUp_Tap(object sender, System.Windows.Input.GestureEventArgs e)
-        {
-            newBoard();
         }
 
 

@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
-using Microsoft.Phone.Shell;
 using Nokia.Music;
 using Nokia.Music.Types;
 using System.Collections.ObjectModel;
@@ -16,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using System.Windows.Media;
+using System.IO.IsolatedStorage;
 
 namespace MusicGame
 {
@@ -26,6 +23,12 @@ namespace MusicGame
         ObservableCollection<Product> topSongs;
         ObservableCollection<Product> pickedSongs;
         ObservableCollection<DataItemViewModel> albumArtList;
+        ObservableCollection<SongData> winningSongList;
+        bool gameOver;
+        Uri prodUri;
+        Uri albumUri;
+        int roundPoints;
+        IsolatedStorageSettings store;
         Product winningSong;
         int timesPlayed;
         int points;
@@ -59,6 +62,8 @@ namespace MusicGame
             rand = new Random();
             pickedSongs = new ObservableCollection<Product>();
             albumArtList = new ObservableCollection<DataItemViewModel>();
+            winningSongList = new ObservableCollection<SongData>();
+            store = IsolatedStorageSettings.ApplicationSettings;
             topSongs = new ObservableCollection<Product>();
             playTime = new DispatcherTimer();
             playTime.Interval = new TimeSpan(0, 0, 1);   
@@ -66,6 +71,7 @@ namespace MusicGame
             numTimesWrong = 0;
             timesPlayed = 0;
             points = 0;
+            gameOver = true;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -93,7 +99,7 @@ namespace MusicGame
         async private void setupGenre(Genre nokGenre)
         {
             await getTopMusic(nokGenre);
-            startGame();
+            pickWinner();
         }
 
         async private Task getTopMusic(Genre nokGenre)
@@ -150,6 +156,8 @@ namespace MusicGame
         {
             //picks a random song from the selected songs to be the winner
             winningSong = pickedSongs[rand.Next(pickedSongs.Count)];
+            prodUri = winningSong.AppToAppUri;
+            albumUri = winningSong.Thumb200Uri;
             playWinner();
         }
         private void playWinner()
@@ -313,6 +321,7 @@ namespace MusicGame
             Points.Text = points.ToString();
             if (numTimesWrong > 2)
             {
+                roundPoints = 0;
                 newBoard();
             }
         }
@@ -320,27 +329,48 @@ namespace MusicGame
         {
             //handles correct answers
             resultText.Text = "Correct!";
-            points = points + (5 - timesPlayed);
+            roundPoints = 5 - timesPlayed;
+            points+=roundPoints;
             newBoard();
         }
         private void timeOut()
         {
+            roundPoints = 0;
             resultText.Text = "Too long!";
             newBoard();
         }
         private void newBoard()
         {
             //clears the current board and creates a new one
-            numTimesWrong = 0;
-            timesPlayed = 0;
-            Points.Text = points.ToString();
-            player.Stop();
-            player.Resources.Clear();
-            albumArtList.Clear();
-            pickedSongs.Clear();
-            reInitialize();
-            pickSongs();
-            pickWinner();
+            bool isRight = false;
+            if (roundPoints > 0)
+            {
+                isRight = true;
+            }
+            winningSongList.Add(new SongData() { albumUri = albumUri, points = roundPoints, correct = isRight, seconds = 25 - numTicks, songName = winningSong.Name, uri = prodUri });
+            if (winningSongList.Count > 5)
+            {
+                store["results"] = winningSongList;
+                store.Save();
+                if (gameOver)
+                {
+                    NavigationService.Navigate(new Uri("/ResultsPage.xaml", UriKind.Relative));
+                    gameOver = false;
+                }
+            }
+            else
+            {
+                numTimesWrong = 0;
+                timesPlayed = 0;
+                Points.Text = points.ToString();
+                player.Stop();
+                player.Resources.Clear();
+                albumArtList.Clear();
+                pickedSongs.Clear();
+                reInitialize();
+                pickSongs();
+                pickWinner();
+            }
         }
         private void reInitialize()
         {

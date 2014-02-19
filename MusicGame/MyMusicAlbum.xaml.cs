@@ -7,6 +7,7 @@ using Nokia.Music.Types;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.IO.IsolatedStorage;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
@@ -28,6 +29,7 @@ namespace MusicGame
         int points;
         int timesPlayed;
         int numTicks;
+        int roundPoints;
         SongCollection allSongs;
         ObservableCollection<DataItemViewModel> albumArtList;
         ObservableCollection<Song> pickedSongs;
@@ -38,6 +40,11 @@ namespace MusicGame
         MediaLibrary songs;
         ProgressBar progBar;
         Grid grid;
+        ObservableCollection<SongData> winningSongList;
+        IsolatedStorageSettings store;
+        Uri prodUri;
+        Uri albumUri;
+        bool gameOver;
         #endregion
         private enum TimerStatus
         {
@@ -62,7 +69,10 @@ namespace MusicGame
         //Get library and other setup
         private void initialize()
         {
+            gameOver = true;
             pickedSongs = new ObservableCollection<Song>();
+            winningSongList = new ObservableCollection<SongData>();
+            store = IsolatedStorageSettings.ApplicationSettings;
             albumArtList = new ObservableCollection<DataItemViewModel>();
             playTime = new DispatcherTimer();
             playTime.Interval = new TimeSpan(0, 0, 1);
@@ -251,6 +261,8 @@ namespace MusicGame
                 Response<Product> prod = await getSongData(result);
                 if (performersAreArtists(prod.Result.Performers, winningSong.Artist.Name))
                 {
+                    prodUri = prod.Result.AppToAppUri;
+                    albumUri = prod.Result.Thumb320Uri;
                     toggleProgBar(ProgBarStatus.On);
                     Uri songUri = getSongUri(prod);
                     player.Source = songUri;
@@ -371,6 +383,7 @@ namespace MusicGame
             Points.Text = points.ToString();
             if (numTimesWrong > 2)
             {
+                roundPoints = 0;
                 newBoard();
             }
         }
@@ -378,27 +391,63 @@ namespace MusicGame
         {
             //handles correct answers
             resultText.Text = "Correct!";
-            points = points + (5 - timesPlayed);
+            roundPoints = (5 - timesPlayed);
+            points +=roundPoints;
             newBoard();
         }
         private void timeOut()
         {
+            roundPoints = 0;
             resultText.Text = "Too long!";
             newBoard();
         }
         private void newBoard()
         {
             //clears the current board and creates a new one
-            numTimesWrong = 0;
-            timesPlayed = 0;
-            Points.Text = points.ToString();
-            toggleClock(TimerStatus.Off);
-            player.Stop();
-            player.Resources.Clear();
-            albumArtList.Clear();
-            pickedSongs.Clear();
-            reInitialize();
-            pickSongList();
+            bool isRight = false;
+            if (roundPoints > 0)
+            {
+                isRight = true;
+            }
+            winningSongList.Add(new SongData() { albumUri = albumUri, points = roundPoints, correct = isRight, seconds = 25 - numTicks, songName = winningSong.Name, uri = prodUri });
+            if (winningSongList.Count > 5)
+            {
+                store["results"] = winningSongList;
+                store.Save();
+                if (gameOver)
+                {
+                    NavigationService.Navigate(new Uri("/ResultsPage.xaml", UriKind.Relative));
+                    gameOver = false;
+                }
+            }
+            else
+            {
+                numTimesWrong = 0;
+                timesPlayed = 0;
+                Points.Text = points.ToString();
+                toggleClock(TimerStatus.Off);
+                player.Stop();
+                player.Resources.Clear();
+                albumArtList.Clear();
+                pickedSongs.Clear();
+                reInitialize();
+                pickSongList();
+            }
+        }
+        private System.Windows.Media.Imaging.BitmapImage getAlbumArt(Stream stream)
+        {
+            if (stream == null)
+            {
+                return null;
+            }
+            else
+            {
+                BitmapImage albumArt = new BitmapImage();
+                albumArt.SetSource(stream);
+                albumArt.DecodePixelHeight = 200;
+                albumArt.DecodePixelWidth = 200;
+                return albumArt;
+            }
         }
         private void reInitialize()
         {
