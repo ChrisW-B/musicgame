@@ -35,6 +35,7 @@ namespace MusicGame
         DispatcherTimer playTime;
         Grid grid;
         ProgressBar progBar;
+        bool isRight;
         private enum ProgBarStatus
         {
             On,
@@ -64,11 +65,12 @@ namespace MusicGame
             store = IsolatedStorageSettings.ApplicationSettings;
             topSongs = new ObservableCollection<Product>();
             playTime = new DispatcherTimer();
-            playTime.Interval = new TimeSpan(0, 0, 1);   
+            playTime.Interval = new TimeSpan(0, 0, 1);
             playTime.Tick += playTime_Tick;
             numTimesWrong = 0;
             timesPlayed = 0;
             points = 0;
+            roundPoints = 0;
             gameOver = true;
         }
 
@@ -230,7 +232,7 @@ namespace MusicGame
             }
             numTicks--;
         }
-        
+
 
         //Get a list of 12 songs with album art
         private void pickSongs()
@@ -296,15 +298,18 @@ namespace MusicGame
         {
             //checks to see if the correct answer was selected
             DataItemViewModel selected = ((sender as Image).DataContext as DataItemViewModel);
-            albumArtGrid.SelectedItem = selected;
-            if (selected.Prod == winningSong)
+            if (selected.Title != MUSIC_API_KEY)
             {
-                correctAns();
-            }
-            else
-            {
-                removeFromList(selected);
-                wrongAns();
+                albumArtGrid.SelectedItem = selected;
+                if (selected.Prod == winningSong)
+                {
+                    correctAns();
+                }
+                else
+                {
+                    removeFromList(selected);
+                    wrongAns();
+                }
             }
         }
 
@@ -313,24 +318,33 @@ namespace MusicGame
             int i = 0;
             foreach (DataItemViewModel item in albumArtList)
             {
-                if (selected.Prod.Name == item.Prod.Name)
+                if (item.Title != MUSIC_API_KEY)
                 {
-                    break;
+                    if (selected.Prod.Name == item.Prod.Name)
+                    {
+                        break;
+                    }
                 }
                 i++;
             }
             albumArtList.RemoveAt(i);
-            pickedSongs.RemoveAt(i);
+            //creates blank tile to prevent shifts
+            DataItemViewModel empty = new DataItemViewModel();
+            //API key unlikely to be song title
+            empty.Title = MUSIC_API_KEY;
+            albumArtList.Insert(i, empty);
         }
         private void wrongAns()
         {
             //handles incorrect answers
             resultText.Text = "Wrong answer!";
+            roundPoints--;
             points--;
             numTimesWrong++;
             Points.Text = points.ToString();
             if (numTimesWrong > 2)
             {
+                isRight = false;
                 roundPoints = 0;
                 newBoard();
             }
@@ -339,26 +353,21 @@ namespace MusicGame
         {
             //handles correct answers
             resultText.Text = "Correct!";
-            roundPoints = (5 - timesPlayed);
-            points += roundPoints;
+            roundPoints += (5 - timesPlayed);
+            points += (5 - timesPlayed);
             newBoard();
         }
         private void timeOut()
         {
-            roundPoints = 0;
+            isRight = false;
             resultText.Text = "Too long!";
             newBoard();
         }
         private void newBoard()
         {
             //clears the current board and creates a new one
+            winningSongList.Add(new SongData() { albumUri = winningSong.Thumb200Uri, points = roundPoints, correct = isRight, seconds = (25 - numTicks), songName = winningSong.Name, uri = winningSong.AppToAppUri });
             toggleClock(TimerStatus.Off);
-            bool isRight = false;
-            if (roundPoints > 0)
-            {
-                isRight = true;
-            }
-            winningSongList.Add(new SongData() { albumUri = winningSong.Thumb200Uri, points = roundPoints, correct = isRight, seconds = 25 - numTicks, songName = winningSong.Name, uri = winningSong.AppToAppUri });
             if (winningSongList.Count > 5)
             {
                 store["results"] = winningSongList;
@@ -372,6 +381,7 @@ namespace MusicGame
             else
             {
                 numTimesWrong = 0;
+                roundPoints = 0;
                 timesPlayed = 0;
                 Points.Text = points.ToString();
                 player.Stop();

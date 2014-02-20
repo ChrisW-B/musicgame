@@ -24,9 +24,9 @@ xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik
         <Grid.Resources>
             <DataTemplate x:Key="SongData">
                 <StackPanel Orientation="Horizontal" telerikCore:RadAnimationManager.IsAnimationEnabled="True" Tap="StackPanel_Tap">
-                    <Image Width="120" Height="120" x:Name="art" Source="{Binding albumCover}">
+                    <Image Width="80" Height="80" x:Name="art" Source="{Binding albumCover}">
                     </Image>
-                    <StackPanel Orientation="Vertical" Margin="10,0,0,0">
+                    <StackPanel Orientation="Vertical" Margin="20,0,0,0">
                         <TextBlock Text="{Binding songName}"></TextBlock>
                         <TextBlock Text="{Binding seconds}"></TextBlock>
                         <TextBlock Text="{Binding points}"></TextBlock>

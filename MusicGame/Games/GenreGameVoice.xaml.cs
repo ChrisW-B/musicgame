@@ -32,6 +32,7 @@ namespace MusicGame
         int numTimesWrong;
         int numTicks;
         bool speaking;
+        bool isRight;
         DispatcherTimer playTime;
         Grid grid;
         ProgressBar progBar;
@@ -111,26 +112,7 @@ namespace MusicGame
             numTimesWrong = 0;
             timesPlayed = 0;
             points = 0;
-        }
-        //check to make sure we have data
-        private Task<bool> isConnected()
-        {
-
-            var completed = new TaskCompletionSource<bool>();
-            WebClient client = new WebClient();
-            client.DownloadStringCompleted += (s, e) =>
-            {
-                if (e.Error == null && !e.Cancelled)
-                {
-                    completed.TrySetResult(true);
-                }
-                else
-                {
-                    completed.TrySetResult(false);
-                }
-            };
-            client.DownloadStringAsync(new Uri("http://www.google.com/"));
-            return completed.Task;
+            roundPoints = 0;
         }
 
         private void toggleProgBar(ProgBarStatus stat)
@@ -163,8 +145,6 @@ namespace MusicGame
                 ContentPanel.Children.Remove(grid);
             }
         }
-
-
 
         //get and play a sample of a song
         //first ensuring that it is the right song
@@ -331,11 +311,13 @@ namespace MusicGame
             //handles incorrect answers
             resultText.Text = "Wrong answer!";
             points--;
+            roundPoints--;
             numTimesWrong++;
             Points.Text = points.ToString();
             player.Play();
             if (numTimesWrong > 2)
             {
+                isRight = false;
                 roundPoints = 0;
                 newBoard();
             }
@@ -343,27 +325,23 @@ namespace MusicGame
         private void correctAns()
         {
             //handles correct answers
+            isRight = true;
             resultText.Text = "Correct!";
-            roundPoints = (5 - timesPlayed);
-            points += roundPoints;
+            roundPoints += (5 - timesPlayed);
+            points += (5 - timesPlayed);
             newBoard();
         }
         private void timeOut()
         {
-            roundPoints = 0;
+            isRight = false;
             resultText.Text = "Too long!";
             newBoard();
         }
         private void newBoard()
         {
             //clears the current board and creates a new one
+            winningSongList.Add(new SongData() { albumUri = winningSong.Thumb200Uri, points = roundPoints, correct = isRight, seconds = (25 - numTicks), songName = winningSong.Name, uri = winningSong.AppToAppUri });
             toggleClock(TimerStatus.Off);
-            bool isRight = false;
-            if (roundPoints > 0)
-            {
-                isRight = true;
-            }
-            winningSongList.Add(new SongData() { albumUri = winningSong.Thumb200Uri, points = roundPoints, correct = isRight, seconds = 25 - numTicks, songName = winningSong.Name, uri = winningSong.AppToAppUri });
             if (winningSongList.Count > 5)
             {
                 store["results"] = winningSongList;
@@ -374,13 +352,17 @@ namespace MusicGame
                     gameOver = false;
                 }
             }
-            yourAnswer.Text = "";
-            numTimesWrong = 0;
-            timesPlayed = 0;
-            Points.Text = points.ToString();
-            player.Resources.Clear();
-            reInitialize();
-            pickWinner();
+            else
+            {
+                yourAnswer.Text = "";
+                numTimesWrong = 0;
+                timesPlayed = 0;
+                roundPoints = 0;
+                Points.Text = points.ToString();
+                player.Resources.Clear();
+                reInitialize();
+                pickWinner();
+            }
         }
         private void reInitialize()
         {

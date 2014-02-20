@@ -23,16 +23,6 @@ namespace MusicGame
             client = new MusicClient(MUSIC_API_KEY);
             getResults();
         }
-        class SongDataWithPicture
-        {
-            public Uri albumUri { get; set; }
-            public int seconds { get; set; }
-            public string songName { get; set; }
-            public bool correct { get; set; }
-            public Uri uri { get; set; }
-            public int points { get; set; }
-            public BitmapImage albumCover {get; set;}
-        }
 
         private void getResults()
         {
@@ -54,11 +44,11 @@ namespace MusicGame
                 {
                     albumUri = song.albumUri,
                     albumCover = getAlbumArt(song.albumUri),
-                    seconds = song.seconds,
+                    seconds = song.seconds +" seconds",
                     songName = song.songName,
                     correct = song.correct,
                     uri = song.uri,
-                    points = song.points
+                    points = song.points +" points"
                 };
                 source.Add(data);
             }

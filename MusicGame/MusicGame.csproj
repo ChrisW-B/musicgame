@@ -129,7 +129,7 @@
     <Compile Include="ResultsPage.xaml.cs">
       <DependentUpon>ResultsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SongData.cs" />
+    <Compile Include="ViewModels\SongData.cs" />
     <Compile Include="ViewModels\DataItemViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

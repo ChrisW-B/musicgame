@@ -30,6 +30,7 @@ namespace MusicGame
         int timesPlayed;
         int numTicks;
         bool gameOver;
+        bool isRight;
         Song winningSong;
         Random rand;
         MusicClient client;
@@ -79,6 +80,7 @@ namespace MusicGame
             numTimesWrong = 0;
             timesPlayed = 0;
             points = 0;
+            roundPoints = 0;
         }
         //check to make sure we have data
         private Task<bool> isConnected()
@@ -355,12 +357,14 @@ namespace MusicGame
         {
             //handles incorrect answers
             resultText.Text = "Wrong answer!";
+            roundPoints--;
             points--;
             numTimesWrong++;
             Points.Text = points.ToString();
             player.Play();
             if (numTimesWrong > 2)
             {
+                isRight = false;
                 roundPoints = 0;
                 newBoard();
             }
@@ -369,28 +373,25 @@ namespace MusicGame
         private void correctAns()
         {
             //handles correct answers
+            isRight = true;
             resultText.Text = "Correct!";
-            roundPoints = (5 - timesPlayed);
-            points += roundPoints;
+            roundPoints += (5 - timesPlayed);
+            points += (5 - timesPlayed);
             newBoard();
         }
 
-        
+
         private void timeOut()
         {
+            isRight = false;
             resultText.Text = "Too long!";
             newBoard();
         }
         private void newBoard()
         {
             //clears the current board and creates a new one
-            toggleClock(TimerStatus.Off);
-            bool isRight = false;
-            if (roundPoints > 0)
-            {
-                isRight = true;
-            }
             winningSongList.Add(new SongData() { albumUri = albumUri, points = roundPoints, correct = isRight, seconds = 25 - numTicks, songName = winningSong.Name, uri = prodUri });
+            toggleClock(TimerStatus.Off);
             if (winningSongList.Count > 5)
             {
                 store["results"] = winningSongList;
@@ -404,6 +405,7 @@ namespace MusicGame
             else
             {
                 yourAnswer.Text = "";
+                roundPoints = 0;
                 numTimesWrong = 0;
                 timesPlayed = 0;
                 Points.Text = points.ToString();

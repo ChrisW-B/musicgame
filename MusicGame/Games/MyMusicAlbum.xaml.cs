@@ -28,6 +28,7 @@ namespace MusicGame
         int timesPlayed;
         int numTicks;
         int roundPoints;
+        bool isRight;
         SongCollection allSongs;
         ObservableCollection<DataItemViewModel> albumArtList;
         ObservableCollection<Song> pickedSongs;
@@ -56,7 +57,7 @@ namespace MusicGame
             InitializeComponent();
             initialize();
             setUpSongList();
-            pickSongList();  
+            pickSongList();
         }
         private enum ProgBarStatus
         {
@@ -81,6 +82,7 @@ namespace MusicGame
             numTimesWrong = 0;
             timesPlayed = 0;
             points = 0;
+            roundPoints = 0;
         }
         private void setUpSongList()
         {
@@ -90,7 +92,7 @@ namespace MusicGame
         //check to make sure we have data
         private Task<bool> isConnected()
         {
-            
+
             var completed = new TaskCompletionSource<bool>();
             WebClient client = new WebClient();
             client.DownloadStringCompleted += (s, e) =>
@@ -110,7 +112,7 @@ namespace MusicGame
         async private void checkConnectionAndRun()
         {
             toggleProgBar(ProgBarStatus.On);
-            
+
             bool connected = await isConnected();
             if (!connected)
             {
@@ -138,10 +140,10 @@ namespace MusicGame
                 text.TextAlignment = TextAlignment.Center;
                 text.HorizontalAlignment = HorizontalAlignment.Center;
                 text.VerticalAlignment = VerticalAlignment.Center;
-                text.Foreground =new SolidColorBrush(Colors.White);
+                text.Foreground = new SolidColorBrush(Colors.White);
                 progBar.IsIndeterminate = true;
                 progBar.IsEnabled = true;
-                Thickness pad = new Thickness(0,0,0,40);
+                Thickness pad = new Thickness(0, 0, 0, 40);
                 progBar.Padding = pad;
                 SolidColorBrush brush = new SolidColorBrush(Colors.Black);
                 brush.Opacity = .7;
@@ -234,7 +236,7 @@ namespace MusicGame
             }
             return false;
         }
-       
+
         private bool prevSelected(Song song)
         {
             //check whether a album has already been picked (so no repeats)
@@ -354,7 +356,7 @@ namespace MusicGame
         void playTime_Tick(object sender, EventArgs e)
         {
             timer.Content = numTicks;
-            if (numTicks % 5 == 0 && numTicks!=25)
+            if (numTicks % 5 == 0 && numTicks != 25)
             {
                 timesPlayed++;
             }
@@ -365,7 +367,7 @@ namespace MusicGame
             }
             numTicks--;
         }
-        
+
         //breakup nokia music requests
         private Uri getSongUri(Response<Product> prod)
         {
@@ -385,25 +387,34 @@ namespace MusicGame
         {
             //checks to see if the correct answer was selected
             DataItemViewModel item = ((sender as Image).DataContext as DataItemViewModel);
-            if (item.Song == winningSong)
+            if (item.Title != MUSIC_API_KEY)
             {
-                correctAns();
+                if (item.Song == winningSong)
+                {
+                    correctAns();
+                }
+                else
+                {
+                    removeFromList(item);
+                    wrongAns();
+                }
             }
             else
             {
-                removeFromList(item);
-                wrongAns();
+                return;
             }
         }
         private void wrongAns()
         {
             //handles incorrect answers
             resultText.Text = "Wrong answer!";
+            roundPoints--;
             points--;
             numTimesWrong++;
             Points.Text = points.ToString();
             if (numTimesWrong > 2)
             {
+                isRight = false;
                 roundPoints = 0;
                 newBoard();
             }
@@ -411,13 +422,15 @@ namespace MusicGame
         private void correctAns()
         {
             //handles correct answers
+            isRight = true;
             resultText.Text = "Correct!";
-            roundPoints = (5 - timesPlayed);
-            points += roundPoints;
+            roundPoints += (5 - timesPlayed);
+            points += (5 - timesPlayed);
             newBoard();
         }
         private void timeOut()
         {
+            isRight = false;
             roundPoints = 0;
             resultText.Text = "Too long!";
             newBoard();
@@ -425,13 +438,8 @@ namespace MusicGame
         private void newBoard()
         {
             //clears the current board and creates a new one
-            toggleClock(TimerStatus.Off);
-            bool isRight = false;
-            if (roundPoints > 0)
-            {
-                isRight = true;
-            }
             winningSongList.Add(new SongData() { albumUri = albumUri, points = roundPoints, correct = isRight, seconds = 25 - numTicks, songName = winningSong.Name, uri = prodUri });
+            toggleClock(TimerStatus.Off);
             if (winningSongList.Count > 5)
             {
                 store["results"] = winningSongList;
@@ -446,6 +454,7 @@ namespace MusicGame
             {
                 numTimesWrong = 0;
                 timesPlayed = 0;
+                roundPoints = 0;
                 Points.Text = points.ToString();
                 toggleClock(TimerStatus.Off);
                 player.Stop();
@@ -473,7 +482,7 @@ namespace MusicGame
         }
         private void reInitialize()
         {
-            
+
             player.Source = null;
             albumArtList = null;
             pickedSongs = null;
@@ -487,14 +496,21 @@ namespace MusicGame
             int i = 0;
             foreach (DataItemViewModel item in albumArtList)
             {
-                if (selected.Song.Name == item.Song.Name)
+                if (item.Title != MUSIC_API_KEY)
                 {
-                    break;
+                    if (selected.Song.Name == item.Song.Name)
+                    {
+                        break;
+                    }
                 }
                 i++;
             }
             albumArtList.RemoveAt(i);
-            pickedSongs.RemoveAt(i);
+            //creates blank tile to prevent shifts
+            DataItemViewModel empty = new DataItemViewModel();
+            //API key unlikely to be song title
+            empty.Title = MUSIC_API_KEY;
+            albumArtList.Insert(i, empty);
         }
     }
 }
