@@ -2,14 +2,12 @@
 using Microsoft.Xna.Framework.Media;
 using MusicGame.ViewModels;
 using Nokia.Music;
-using Nokia.Music.Tasks;
 using Nokia.Music.Types;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -234,7 +232,7 @@ namespace MusicGame
                     return true;
                 }
             }
-            return true;
+            return false;
         }
        
         private bool prevSelected(Song song)
@@ -336,16 +334,19 @@ namespace MusicGame
         {
             if (stat == TimerStatus.On)
             {
+                timer.IsRunning = true;
                 playTime.Start();
             }
             else if (stat == TimerStatus.Off)
             {
+                timer.IsRunning = false;
                 numTicks = 25;
                 timer.Content = numTicks;
                 playTime.Stop();
             }
             else
             {
+                timer.IsRunning = false;
                 playTime.Stop();
             }
         }
@@ -412,7 +413,7 @@ namespace MusicGame
             //handles correct answers
             resultText.Text = "Correct!";
             roundPoints = (5 - timesPlayed);
-            points +=roundPoints;
+            points += roundPoints;
             newBoard();
         }
         private void timeOut()
@@ -424,6 +425,7 @@ namespace MusicGame
         private void newBoard()
         {
             //clears the current board and creates a new one
+            toggleClock(TimerStatus.Off);
             bool isRight = false;
             if (roundPoints > 0)
             {

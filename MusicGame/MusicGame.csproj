@@ -25,6 +25,8 @@
     <ValidateXaml>true</ValidateXaml>
     <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
     <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -96,10 +98,10 @@
     <Compile Include="CategorySelect.xaml.cs">
       <DependentUpon>CategorySelect.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GenreGameAlbum.xaml.cs">
+    <Compile Include="Games\GenreGameAlbum.xaml.cs">
       <DependentUpon>GenreGameAlbum.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GenreGameVoice.xaml.cs">
+    <Compile Include="Games\GenreGameVoice.xaml.cs">
       <DependentUpon>GenreGameVoice.xaml</DependentUpon>
     </Compile>
     <Compile Include="GenreSelect.xaml.cs">
@@ -109,13 +111,13 @@
       <DependentUpon>HighScores.xaml</DependentUpon>
     </Compile>
     <Compile Include="LocalizedStrings.cs" />
-    <Compile Include="MyMusicAlbum.xaml.cs">
+    <Compile Include="Games\MyMusicAlbum.xaml.cs">
       <DependentUpon>MyMusicAlbum.xaml</DependentUpon>
     </Compile>
     <Compile Include="MenuPage.xaml.cs">
       <DependentUpon>MenuPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MyMusicVoice.xaml.cs">
+    <Compile Include="Games\MyMusicVoice.xaml.cs">
       <DependentUpon>MyMusicVoice.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -139,11 +141,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="GenreGameAlbum.xaml">
+    <Page Include="Games\GenreGameAlbum.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="GenreGameVoice.xaml">
+    <Page Include="Games\GenreGameVoice.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -155,7 +157,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MyMusicAlbum.xaml">
+    <Page Include="Games\MyMusicAlbum.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -163,7 +165,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MyMusicVoice.xaml">
+    <Page Include="Games\MyMusicVoice.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -197,7 +199,8 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.5.0.8\lib\portable-net45+wp80+win8\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Nokia.Music.Wp8">
+    <Reference Include="Nokia.Music.Wp8, Version=3.2.0.1144, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NokiaMusic.3.2.0\lib\windowsphone8\Nokia.Music.Wp8.dll</HintPath>
     </Reference>
     <Reference Include="SharpGIS.GZipWebClient">
@@ -222,4 +225,5 @@
   </Target>
   -->
   <ProjectExtensions />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>

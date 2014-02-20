@@ -25,8 +25,6 @@ namespace MusicGame
         ObservableCollection<DataItemViewModel> albumArtList;
         ObservableCollection<SongData> winningSongList;
         bool gameOver;
-        Uri prodUri;
-        Uri albumUri;
         int roundPoints;
         IsolatedStorageSettings store;
         Product winningSong;
@@ -104,14 +102,12 @@ namespace MusicGame
 
         async private Task getTopMusic(Genre nokGenre)
         {
-
             ListResponse<Product> songPage = await client.GetTopProductsForGenreAsync(nokGenre, Category.Track, 0, 100);
-
             foreach (Product prod in songPage)
             {
                 topSongs.Add(prod);
             }
-
+            pickSongs();
         }
 
         private void toggleProgBar(ProgBarStatus stat)
@@ -156,8 +152,6 @@ namespace MusicGame
             }
             else
             {
-                prodUri = winningSong.AppToAppUri;
-                albumUri = winningSong.Thumb200Uri;
                 playWinner();
             }
         }
@@ -171,7 +165,7 @@ namespace MusicGame
                     return true;
                 }
             }
-            return true;
+            return false;
         }
         private void playWinner()
         {
@@ -205,16 +199,19 @@ namespace MusicGame
         {
             if (stat == TimerStatus.On)
             {
+                timer.IsRunning = true;
                 playTime.Start();
             }
             else if (stat == TimerStatus.Off)
             {
+                timer.IsRunning = false;
                 numTicks = 25;
                 timer.Content = numTicks;
                 playTime.Stop();
             }
             else
             {
+                timer.IsRunning = false;
                 playTime.Stop();
             }
         }
@@ -342,8 +339,8 @@ namespace MusicGame
         {
             //handles correct answers
             resultText.Text = "Correct!";
-            roundPoints = 5 - timesPlayed;
-            points+=roundPoints;
+            roundPoints = (5 - timesPlayed);
+            points += roundPoints;
             newBoard();
         }
         private void timeOut()
@@ -355,12 +352,13 @@ namespace MusicGame
         private void newBoard()
         {
             //clears the current board and creates a new one
+            toggleClock(TimerStatus.Off);
             bool isRight = false;
             if (roundPoints > 0)
             {
                 isRight = true;
             }
-            winningSongList.Add(new SongData() { albumUri = albumUri, points = roundPoints, correct = isRight, seconds = 25 - numTicks, songName = winningSong.Name, uri = prodUri });
+            winningSongList.Add(new SongData() { albumUri = winningSong.Thumb200Uri, points = roundPoints, correct = isRight, seconds = 25 - numTicks, songName = winningSong.Name, uri = winningSong.AppToAppUri });
             if (winningSongList.Count > 5)
             {
                 store["results"] = winningSongList;

@@ -115,7 +115,7 @@
                             <telerikPrimitives:RadTextBox.ActionButtonStyle>
                                 <Style TargetType="telerikPrimitives:RadImageButton">
                                     <Setter Property="ButtonType" Value="Custom"/>
-                                    <Setter Property="RestStateImageSource" Value="Assets/mic_light.png"/>
+                                    <Setter Property="RestStateImageSource" Value="/Assets/mic_light.png"/>
                                 </Style>
                             </telerikPrimitives:RadTextBox.ActionButtonStyle>
                         </telerikPrimitives:RadTextBox>

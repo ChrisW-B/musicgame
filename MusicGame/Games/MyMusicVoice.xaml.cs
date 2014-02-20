@@ -15,8 +15,6 @@ using Windows.System;
 using System.Windows.Media;
 using Nokia.Music.Types;
 using System.Windows.Input;
-using System.IO;
-using System.Windows.Media.Imaging;
 using System.IO.IsolatedStorage;
 
 namespace MusicGame
@@ -181,7 +179,7 @@ namespace MusicGame
                     return true;
                 }
             }
-            return true;
+            return false;
         }
 
 
@@ -253,16 +251,19 @@ namespace MusicGame
         {
             if (stat == TimerStatus.On)
             {
+                timer.IsRunning = true;
                 playTime.Start();
             }
             else if (stat == TimerStatus.Off)
             {
+                timer.IsRunning = false;
                 numTicks = 25;
                 timer.Content = numTicks;
                 playTime.Stop();
             }
             else
             {
+                timer.IsRunning = false;
                 playTime.Stop();
             }
         }
@@ -383,6 +384,7 @@ namespace MusicGame
         private void newBoard()
         {
             //clears the current board and creates a new one
+            toggleClock(TimerStatus.Off);
             bool isRight = false;
             if (roundPoints > 0)
             {
@@ -462,9 +464,5 @@ namespace MusicGame
                 player.Play();
             }
         }
-
-
-
-
     }
 }

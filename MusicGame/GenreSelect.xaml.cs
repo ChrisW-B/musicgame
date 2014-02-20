@@ -102,11 +102,11 @@ namespace MusicGame
             String buttonTag = button.Tag.ToString();
             if (isVoiceGame)
             {
-                NavigationService.Navigate(new Uri("Games/GenreGameVoice.xaml?genre=" + buttonTag + "&name=" + buttonName, UriKind.Relative));
+                NavigationService.Navigate(new Uri("/Games/GenreGameVoice.xaml?genre=" + buttonTag + "&name=" + buttonName, UriKind.Relative));
             }
             else
             {
-                NavigationService.Navigate(new Uri("Games/GenreGameAlbum.xaml?genre=" + buttonTag + "&name=" + buttonName, UriKind.Relative));
+                NavigationService.Navigate(new Uri("/Games/GenreGameAlbum.xaml?genre=" + buttonTag + "&name=" + buttonName, UriKind.Relative));
             }
         }
 

@@ -14,6 +14,7 @@ using System.Windows.Media;
 using Nokia.Music.Types;
 using System.Windows.Input;
 using System.IO.IsolatedStorage;
+using Telerik.Windows.Controls;
 
 namespace MusicGame
 {
@@ -35,8 +36,6 @@ namespace MusicGame
         Grid grid;
         ProgressBar progBar;
         int roundPoints;
-        Uri prodUri;
-        Uri albumUri;
         bool gameOver;
         IsolatedStorageSettings store;
         ObservableCollection<SongData> winningSongList;
@@ -87,17 +86,15 @@ namespace MusicGame
 
         async private Task getTopMusic(Genre nokGenre)
         {
-
             ListResponse<Product> songPage = await client.GetTopProductsForGenreAsync(nokGenre, Category.Track, 0, 100);
 
             foreach (Product prod in songPage)
             {
                 topSongs.Add(prod);
             }
-
         }
 
-       
+
 
         //Get library and other setup
         private void initialize()
@@ -135,7 +132,7 @@ namespace MusicGame
             client.DownloadStringAsync(new Uri("http://www.google.com/"));
             return completed.Task;
         }
-        
+
         private void toggleProgBar(ProgBarStatus stat)
         {
             if (stat == ProgBarStatus.On)
@@ -166,7 +163,7 @@ namespace MusicGame
                 ContentPanel.Children.Remove(grid);
             }
         }
-       
+
 
 
         //get and play a sample of a song
@@ -194,7 +191,7 @@ namespace MusicGame
                     return true;
                 }
             }
-            return true;
+            return false;
         }
         private void playWinner()
         {
@@ -242,16 +239,19 @@ namespace MusicGame
         {
             if (stat == TimerStatus.On)
             {
+                timer.IsRunning = true;
                 playTime.Start();
             }
             else if (stat == TimerStatus.Off)
             {
+                timer.IsRunning = false;
                 numTicks = 25;
                 timer.Content = numTicks;
                 playTime.Stop();
             }
             else
             {
+                timer.IsRunning = false;
                 playTime.Stop();
             }
         }
@@ -336,31 +336,34 @@ namespace MusicGame
             player.Play();
             if (numTimesWrong > 2)
             {
+                roundPoints = 0;
                 newBoard();
             }
-
         }
         private void correctAns()
         {
             //handles correct answers
             resultText.Text = "Correct!";
-            points += (5 - timesPlayed);
+            roundPoints = (5 - timesPlayed);
+            points += roundPoints;
             newBoard();
         }
         private void timeOut()
         {
+            roundPoints = 0;
             resultText.Text = "Too long!";
             newBoard();
         }
         private void newBoard()
         {
             //clears the current board and creates a new one
+            toggleClock(TimerStatus.Off);
             bool isRight = false;
             if (roundPoints > 0)
             {
                 isRight = true;
             }
-            winningSongList.Add(new SongData() { albumUri = albumUri, points = roundPoints, correct = isRight, seconds = 25 - numTicks, songName = winningSong.Name, uri = prodUri });
+            winningSongList.Add(new SongData() { albumUri = winningSong.Thumb200Uri, points = roundPoints, correct = isRight, seconds = 25 - numTicks, songName = winningSong.Name, uri = winningSong.AppToAppUri });
             if (winningSongList.Count > 5)
             {
                 store["results"] = winningSongList;
@@ -422,7 +425,7 @@ namespace MusicGame
             speaking = false;
             if (result.ResultStatus == SpeechRecognitionUIStatus.Succeeded)
             {
-                yourAnswer.Text = result.RecognitionResult.Text;  
+                yourAnswer.Text = result.RecognitionResult.Text;
             }
             else if (result.ResultStatus == SpeechRecognitionUIStatus.Cancelled)
             {
