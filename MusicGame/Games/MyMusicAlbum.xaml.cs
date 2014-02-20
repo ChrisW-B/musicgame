@@ -1,91 +1,98 @@
-﻿using System;
-using System.Linq;
+﻿using Microsoft.Phone.Controls;
+using Microsoft.Xna.Framework.Media;
+using MusicGame.ViewModels;
+using Nokia.Music;
+using Nokia.Music.Tasks;
+using Nokia.Music.Types;
+using System;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.IO.IsolatedStorage;
 using System.Net;
+using System.Net.NetworkInformation;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.Phone.Controls;
-using Windows.Phone.Speech.Recognition;
-using Microsoft.Xna.Framework.Media;
-using System.Collections.ObjectModel;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using Nokia.Music;
-using System.Threading.Tasks;
 using Telerik.Windows.Controls;
 using Windows.System;
-using System.Windows.Media;
-using Nokia.Music.Types;
-using System.Windows.Input;
-using System.IO;
-using System.Windows.Media.Imaging;
-using System.IO.IsolatedStorage;
 
 namespace MusicGame
 {
-    public partial class MyMusicVoice : PhoneApplicationPage
+    public partial class MyMusicAlbum : PhoneApplicationPage
     {
-
         #region global variables
         const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
         int numTimesWrong;
         int points;
-        int roundPoints;
         int timesPlayed;
         int numTicks;
-        bool gameOver;
+        int roundPoints;
+        SongCollection allSongs;
+        ObservableCollection<DataItemViewModel> albumArtList;
+        ObservableCollection<Song> pickedSongs;
         Song winningSong;
+        DispatcherTimer playTime;
         Random rand;
         MusicClient client;
         MediaLibrary songs;
         ProgressBar progBar;
-        DispatcherTimer playTime;
         Grid grid;
-        Uri prodUri;
-        Uri albumUri;
-        bool speaking;
         ObservableCollection<SongData> winningSongList;
         IsolatedStorageSettings store;
+        Uri prodUri;
+        Uri albumUri;
+        bool gameOver;
         #endregion
-
-        public MyMusicVoice()
-        {
-            InitializeComponent();
-            initialize();
-            checkConnectionAndRun();
-        }
-
-
-        private enum ProgBarStatus
-        {
-            On,
-            Off
-        }
         private enum TimerStatus
         {
             On,
             Off,
             Pause
         }
+        // Constructor
+        public MyMusicAlbum()
+        {
+            InitializeComponent();
+            initialize();
+            setUpSongList();
+            pickSongList();  
+        }
+        private enum ProgBarStatus
+        {
+            On,
+            Off
+        }
 
         //Get library and other setup
         private void initialize()
         {
             gameOver = true;
-            store = IsolatedStorageSettings.ApplicationSettings;
+            pickedSongs = new ObservableCollection<Song>();
             winningSongList = new ObservableCollection<SongData>();
-            client = new MusicClient(MUSIC_API_KEY);
-            rand = new Random();
-            songs = new MediaLibrary();
+            store = IsolatedStorageSettings.ApplicationSettings;
+            albumArtList = new ObservableCollection<DataItemViewModel>();
             playTime = new DispatcherTimer();
             playTime.Interval = new TimeSpan(0, 0, 1);
             playTime.Tick += playTime_Tick;
+            client = new MusicClient(MUSIC_API_KEY);
+            rand = new Random();
+            songs = new MediaLibrary();
             numTimesWrong = 0;
             timesPlayed = 0;
             points = 0;
         }
+        private void setUpSongList()
+        {
+            allSongs = songs.Songs;
+        }
+
         //check to make sure we have data
         private Task<bool> isConnected()
         {
-
+            
             var completed = new TaskCompletionSource<bool>();
             WebClient client = new WebClient();
             client.DownloadStringCompleted += (s, e) =>
@@ -105,7 +112,7 @@ namespace MusicGame
         async private void checkConnectionAndRun()
         {
             toggleProgBar(ProgBarStatus.On);
-
+            
             bool connected = await isConnected();
             if (!connected)
             {
@@ -121,6 +128,7 @@ namespace MusicGame
             }
             toggleProgBar(ProgBarStatus.Off);
         }
+
         private void toggleProgBar(ProgBarStatus stat)
         {
             if (stat == ProgBarStatus.On)
@@ -132,10 +140,10 @@ namespace MusicGame
                 text.TextAlignment = TextAlignment.Center;
                 text.HorizontalAlignment = HorizontalAlignment.Center;
                 text.VerticalAlignment = VerticalAlignment.Center;
-                text.Foreground = new SolidColorBrush(Colors.White);
+                text.Foreground =new SolidColorBrush(Colors.White);
                 progBar.IsIndeterminate = true;
                 progBar.IsEnabled = true;
-                Thickness pad = new Thickness(0, 0, 0, 40);
+                Thickness pad = new Thickness(0,0,0,40);
                 progBar.Padding = pad;
                 SolidColorBrush brush = new SolidColorBrush(Colors.Black);
                 brush.Opacity = .7;
@@ -151,21 +159,114 @@ namespace MusicGame
                 ContentPanel.Children.Remove(grid);
             }
         }
-        private void pickWinner()
+
+        //choose songs, and pick a winning song
+        private void pickSongList()
         {
-            //picks a random song from the selected songs to be the winner
-            int numSongs = songs.Songs.Count;
-            if (numSongs > 10)
+            //picks a list of 12 albums/songs to display
+            int numAlbums = songs.Albums.Count;
+            if (numAlbums > 12)
             {
-                winningSong = songs.Songs[rand.Next(songs.Songs.Count)];
-                playSong();
+                for (int i = 0; i < 12; i++)
+                {
+                    pickSong();
+                }
+                setAlbumArt();
+                checkConnectionAndRun();
             }
             else
             {
-                resultText.Text = "Not enough songs!";
+                albumArtGrid.EmptyContent = "Not enough songs to play!" + "\n" + "Try adding some more albums to your phone," + "\n" + "or simply play the top music of" + "\n" + "Nokia MixRadio with Nokia MixRadio genres!";
+            }
+        }
+        private void pickSong()
+        {
+            //picks an idividual song from the list of all songs in library
+            Song song = allSongs[rand.Next(allSongs.Count)];
+            BitmapImage albumArt = getBitmap(song);
+            if (albumArt != null)
+            {
+                if (!prevSelected(song))
+                {
+                    pickedSongs.Add(song);
+                    DataItemViewModel album = new DataItemViewModel();
+                    album.ImageSource = albumArt;
+                    album.Song = song;
+                    albumArtList.Add(album);
+                }
+                else
+                {
+                    pickSong();
+                }
+            }
+            else
+            {
+                pickSong();
+            }
+        }
+        private void setAlbumArt()
+        {
+            //sets up the grid of album art
+            albumArtGrid.ItemsSource = albumArtList;
+            albumArtGrid.SetValue(InteractionEffectManager.IsInteractionEnabledProperty, true);
+            InteractionEffectManager.AllowedTypes.Add(typeof(RadDataBoundListBoxItem));
+        }
+        private void pickWinner()
+        {
+            //picks a random song from the selected songs to be the winner
+            winningSong = pickedSongs[rand.Next(pickedSongs.Count)];
+            if (alreadyPicked(winningSong))
+            {
+                pickWinner();
+            }
+            else
+            {
+                playSong();
             }
         }
 
+        private bool alreadyPicked(Song winningSong)
+        {
+            foreach (SongData song in winningSongList)
+            {
+                if (song.songName == winningSong.Name)
+                {
+                    return true;
+                }
+            }
+            return true;
+        }
+       
+        private bool prevSelected(Song song)
+        {
+            //check whether a album has already been picked (so no repeats)
+            foreach (Song pickedSong in pickedSongs)
+            {
+                if (song.Album == pickedSong.Album)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        private BitmapImage getBitmap(Song song)
+        {
+            //get the album covers to add to the list
+            Stream albumArtStream = song.Album.GetAlbumArt();
+            if (albumArtStream == null)
+            {
+                return null;
+            }
+            else
+            {
+                BitmapImage albumArt = new BitmapImage();
+                albumArt.SetSource(albumArtStream);
+                albumArt.DecodePixelHeight = 200;
+                albumArt.DecodePixelWidth = 200;
+
+                return albumArt;
+            }
+        }
 
         //get and play a sample of a song
         //first ensuring that it is the right song
@@ -198,16 +299,6 @@ namespace MusicGame
                 pickWinner();
             }
         }
-        void player_MediaFailed(object sender, ExceptionRoutedEventArgs e)
-        {
-            toggleProgBar(ProgBarStatus.Off);
-            resultText.Text = "Opening failed!";
-        }
-        void player_MediaOpened(object sender, RoutedEventArgs e)
-        {
-            toggleProgBar(ProgBarStatus.Off);
-            playForLimit();
-        }
         private bool performersAreArtists(Nokia.Music.Types.Artist[] artists, string p)
         {
             //checks whether the performer from NokMixRadio is the same as the artist from XboxMusicLib
@@ -221,6 +312,16 @@ namespace MusicGame
 
             }
             return false;
+        }
+        void player_MediaFailed(object sender, ExceptionRoutedEventArgs e)
+        {
+            toggleProgBar(ProgBarStatus.Off);
+            resultText.Text = "Opening failed!";
+        }
+        void player_MediaOpened(object sender, RoutedEventArgs e)
+        {
+            toggleProgBar(ProgBarStatus.Off);
+            playForLimit();
         }
         private void playForLimit()
         {
@@ -252,7 +353,7 @@ namespace MusicGame
         void playTime_Tick(object sender, EventArgs e)
         {
             timer.Content = numTicks;
-            if (numTicks % 5 == 0 && numTicks != 25)
+            if (numTicks % 5 == 0 && numTicks!=25)
             {
                 timesPlayed++;
             }
@@ -263,6 +364,7 @@ namespace MusicGame
             }
             numTicks--;
         }
+        
         //breakup nokia music requests
         private Uri getSongUri(Response<Product> prod)
         {
@@ -278,59 +380,19 @@ namespace MusicGame
         }
 
         //handle answers
-        private void checkAnswer(string songName)
+        private void Image_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
-            songName = removePunctuation(songName).ToUpperInvariant();
-            String winningName = removePunctuation(winningSong.Name).ToUpperInvariant();
-            if (songName == winningName)
+            //checks to see if the correct answer was selected
+            DataItemViewModel item = ((sender as Image).DataContext as DataItemViewModel);
+            if (item.Song == winningSong)
             {
                 correctAns();
             }
             else
             {
-                player.Play();
+                removeFromList(item);
                 wrongAns();
             }
-        }
-        private string removePunctuation(string songName)
-        {
-            while (songName.Contains('.'))
-            {
-                songName = songName.Replace('.', ' ');
-            }
-            while (songName.Contains(','))
-            {
-                songName = songName.Replace(',', ' ');
-            }
-            while (songName.Contains('!'))
-            {
-                songName = songName.Replace('!', ' ');
-            }
-            while (songName.Contains('?'))
-            {
-                songName = songName.Replace('?', ' ');
-            }
-            while (songName.Contains('/'))
-            {
-                songName = songName.Replace('/', ' ');
-            }
-            while (songName.Contains(')'))
-            {
-                songName = songName.Replace(')', ' ');
-            }
-            while (songName.Contains('('))
-            {
-                songName = songName.Replace('(', ' ');
-            }
-            while (songName.EndsWith(" "))
-            {
-                songName = songName.Remove(songName.Length - 1);
-            }
-            while (songName.Contains("  "))
-            {
-                songName = songName.Replace("  ", " ");
-            }
-            return songName;
         }
         private void wrongAns()
         {
@@ -339,26 +401,23 @@ namespace MusicGame
             points--;
             numTimesWrong++;
             Points.Text = points.ToString();
-            player.Play();
             if (numTimesWrong > 2)
             {
                 roundPoints = 0;
                 newBoard();
             }
-
         }
         private void correctAns()
         {
             //handles correct answers
             resultText.Text = "Correct!";
             roundPoints = (5 - timesPlayed);
-            points += roundPoints;
+            points +=roundPoints;
             newBoard();
         }
-
-        
         private void timeOut()
         {
+            roundPoints = 0;
             resultText.Text = "Too long!";
             newBoard();
         }
@@ -383,70 +442,57 @@ namespace MusicGame
             }
             else
             {
-                yourAnswer.Text = "";
                 numTimesWrong = 0;
                 timesPlayed = 0;
                 Points.Text = points.ToString();
+                toggleClock(TimerStatus.Off);
+                player.Stop();
                 player.Resources.Clear();
+                albumArtList.Clear();
+                pickedSongs.Clear();
                 reInitialize();
-                pickWinner();
+                pickSongList();
+            }
+        }
+        private System.Windows.Media.Imaging.BitmapImage getAlbumArt(Stream stream)
+        {
+            if (stream == null)
+            {
+                return null;
+            }
+            else
+            {
+                BitmapImage albumArt = new BitmapImage();
+                albumArt.SetSource(stream);
+                albumArt.DecodePixelHeight = 200;
+                albumArt.DecodePixelWidth = 200;
+                return albumArt;
             }
         }
         private void reInitialize()
         {
+            
             player.Source = null;
-        }
+            albumArtList = null;
+            pickedSongs = null;
+            albumArtGrid.ItemsSource = null;
 
-        private void giveUp_Tap(object sender, System.Windows.Input.GestureEventArgs e)
-        {
-            newBoard();
+            albumArtList = new ObservableCollection<DataItemViewModel>();
+            pickedSongs = new ObservableCollection<Song>();
         }
-        private void go_Tap(object sender, System.Windows.Input.GestureEventArgs e)
+        private void removeFromList(DataItemViewModel selected)
         {
-            checkAnswer(yourAnswer.Text);
-        }
-        private void yourAnswer_Tap(object sender, System.Windows.Input.GestureEventArgs e)
-        {
-            player.Pause();
-            toggleClock(TimerStatus.Pause);
-        }
-        private void yourAnswer_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (!speaking)
+            int i = 0;
+            foreach (DataItemViewModel item in albumArtList)
             {
-                player.Play();
-                toggleClock(TimerStatus.On);
+                if (selected.Song.Name == item.Song.Name)
+                {
+                    break;
+                }
+                i++;
             }
+            albumArtList.RemoveAt(i);
+            pickedSongs.RemoveAt(i);
         }
-        private void yourAnswer_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                this.Focus();
-                checkAnswer(yourAnswer.Text);
-            }
-        }
-        private async void RadTextBox_ActionButtonTap(object sender, EventArgs e)
-        {
-            speaking = true;
-            player.Pause();
-            toggleClock(TimerStatus.Pause);
-            SpeechRecognizerUI recognizer = new SpeechRecognizerUI();
-            SpeechRecognitionUIResult result = await recognizer.RecognizeWithUIAsync();
-            speaking = false;
-            if (result.ResultStatus == SpeechRecognitionUIStatus.Succeeded)
-            {
-                yourAnswer.Text = result.RecognitionResult.Text;
-            }
-            else if (result.ResultStatus == SpeechRecognitionUIStatus.Cancelled)
-            {
-                toggleClock(TimerStatus.On);
-                player.Play();
-            }
-        }
-
-
-
-
     }
 }

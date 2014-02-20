@@ -38,11 +38,11 @@ namespace MusicGame
         {
             if (isVoiceGame)
             {
-                NavigationService.Navigate(new Uri("/MyMusicVoice.xaml", UriKind.Relative));
+                NavigationService.Navigate(new Uri("Games/MyMusicVoice.xaml", UriKind.Relative));
             }
             else
             {
-                NavigationService.Navigate(new Uri("/MyMusicAlbum.xaml", UriKind.Relative));
+                NavigationService.Navigate(new Uri("Games/MyMusicAlbum.xaml", UriKind.Relative));
             }
         }
         private void genreGame_Click(object sender, RoutedEventArgs e)
