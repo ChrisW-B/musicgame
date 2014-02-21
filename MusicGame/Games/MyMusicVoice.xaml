@@ -11,7 +11,8 @@
     x:Class="MusicGame.MyMusicVoice"
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d"
-    shell:SystemTray.IsVisible="True">
+    shell:SystemTray.IsVisible="False"
+    Foreground="White">
 
     <phone:PhoneApplicationPage.Resources>
         <Style x:Key="RadBusyIndicatorStyle1" TargetType="telerikPrimitives:RadBusyIndicator">
@@ -87,21 +88,19 @@
     <phone:PhoneApplicationPage.FontSize>
         <StaticResource ResourceKey="PhoneFontSizeNormal"/>
     </phone:PhoneApplicationPage.FontSize>
-    <phone:PhoneApplicationPage.Foreground>
-        <StaticResource ResourceKey="PhoneForegroundBrush"/>
-    </phone:PhoneApplicationPage.Foreground>
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        <Image Grid.RowSpan="2"  Source="/Assets/bg1.png" Stretch="UniformToFill"/>
         <Grid x:Name="ContentPanel" Grid.Row="1">
             <Grid>
                 <MediaElement x:Name="player"/>
                 <telerikPrimitives:RadBusyIndicator AnimationStyle="AnimationStyle2"
 				Content="0" ContentPosition="Top"                             
-				IsRunning="True"
+				IsRunning="False"
 				x:Name="timer" Style="{StaticResource RadBusyIndicatorStyle1}" RenderTransformOrigin="0.5,0.5">
                     <telerikPrimitives:RadBusyIndicator.RenderTransform>
                         <CompositeTransform ScaleX="5" ScaleY="5"/>
@@ -115,18 +114,17 @@
                             <telerikPrimitives:RadTextBox.ActionButtonStyle>
                                 <Style TargetType="telerikPrimitives:RadImageButton">
                                     <Setter Property="ButtonType" Value="Custom"/>
-                                    <Setter Property="RestStateImageSource" Value="/Assets/mic_light.png"/>
+                                    <Setter Property="RestStateImageSource" Value="/Assets/mic_dark.png"/>
                                 </Style>
                             </telerikPrimitives:RadTextBox.ActionButtonStyle>
                         </telerikPrimitives:RadTextBox>
                     </Grid>
                     <StackPanel Orientation="Horizontal">
-                        <Button Content="Go" x:Name="go" Tap="go_Tap" Width="240"></Button>
-                        <Button x:Name="giveUp" Content="Skip this Song" Tap="giveUp_Tap" Width="240"/>
+                        <Button Content="Go" x:Name="go" BorderBrush="White" Foreground="White" Tap="go_Tap" Width="240"></Button>
+                        <Button x:Name="giveUp" Content="Skip this Song" Tap="giveUp_Tap" BorderBrush="White" Foreground="White" Width="240"/>
                     </StackPanel>
                 </StackPanel>
             </Grid>
         </Grid>
     </Grid>
-
 </phone:PhoneApplicationPage>

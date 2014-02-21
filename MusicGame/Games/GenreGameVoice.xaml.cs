@@ -166,7 +166,7 @@ namespace MusicGame
         {
             foreach (SongData song in winningSongList)
             {
-                if (song.uri == winningSong.AppToAppUri)
+                if (song.uri == winningSong.WebUri)
                 {
                     return true;
                 }
@@ -318,7 +318,6 @@ namespace MusicGame
             if (numTimesWrong > 2)
             {
                 isRight = false;
-                roundPoints = 0;
                 newBoard();
             }
         }
@@ -340,7 +339,7 @@ namespace MusicGame
         private void newBoard()
         {
             //clears the current board and creates a new one
-            winningSongList.Add(new SongData() { albumUri = winningSong.Thumb200Uri, points = roundPoints, correct = isRight, seconds = (25 - numTicks), songName = winningSong.Name, uri = winningSong.AppToAppUri });
+            winningSongList.Add(new SongData() { albumUri = winningSong.Thumb200Uri, points = roundPoints, correct = isRight, seconds = (25 - numTicks), songName = winningSong.Name, uri = winningSong.WebUri });
             toggleClock(TimerStatus.Off);
             if (winningSongList.Count > 5)
             {

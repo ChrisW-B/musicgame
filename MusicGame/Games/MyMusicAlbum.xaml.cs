@@ -281,7 +281,7 @@ namespace MusicGame
                 Response<Product> prod = await getSongData(result);
                 if (performersAreArtists(prod.Result.Performers, winningSong.Artist.Name))
                 {
-                    prodUri = prod.Result.AppToAppUri;
+                    prodUri = prod.Result.WebUri;
                     albumUri = prod.Result.Thumb320Uri;
                     toggleProgBar(ProgBarStatus.On);
                     Uri songUri = getSongUri(prod);
@@ -415,7 +415,6 @@ namespace MusicGame
             if (numTimesWrong > 2)
             {
                 isRight = false;
-                roundPoints = 0;
                 newBoard();
             }
         }

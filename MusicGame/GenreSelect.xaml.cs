@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 using Telerik.Windows.Controls;
@@ -91,6 +92,8 @@ namespace MusicGame
                 button.Click += button_Click;
                 button.Content = genre.Name;
                 button.Tag = genre.Id;
+                button.BorderBrush = new SolidColorBrush(Colors.White);
+                button.Foreground = new SolidColorBrush(Colors.White);
                 sPanel.Children.Add(button);
             }
         }
