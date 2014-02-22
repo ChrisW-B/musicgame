@@ -384,6 +384,7 @@ namespace MusicGame
         {
             isRight = false;
             resultText.Text = "Too long!";
+            numTicks = 0;
             newBoard();
         }
         private void newBoard()
@@ -397,7 +398,7 @@ namespace MusicGame
                 store.Save();
                 if (gameOver)
                 {
-                    NavigationService.Navigate(new Uri("/ResultsPage.xaml", UriKind.Relative));
+                    NavigationService.Navigate(new Uri("/ResultsPage.xaml?style=voice&genre=MyMusic", UriKind.Relative));
                     gameOver = false;
                 }
             }

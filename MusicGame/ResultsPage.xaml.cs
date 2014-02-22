@@ -17,15 +17,30 @@ namespace MusicGame
         ObservableCollection<SongDataWithPicture> source;
         const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
         MusicClient client;
-        public ResultsPage()
+        string gameStyle;
+        string gameGenre;
+
+        protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
         {
-            InitializeComponent();
+            base.OnNavigatedTo(e);
+            if (this.NavigationContext.QueryString.ContainsKey("style") && this.NavigationContext.QueryString.ContainsKey("genre"))
+            {
+                gameStyle = this.NavigationContext.QueryString["style"];
+                gameGenre = this.NavigationContext.QueryString["genre"];
+            }
             client = new MusicClient(MUSIC_API_KEY);
             getResults();
         }
 
+        public ResultsPage()
+        {
+            InitializeComponent();
+            
+        }
+
         private void getResults()
         {
+            //gets the results from isolated storage from last game play
             store = IsolatedStorageSettings.ApplicationSettings;
             results = new ObservableCollection<SongData>();
             source = new ObservableCollection<SongDataWithPicture>();
@@ -38,7 +53,9 @@ namespace MusicGame
 
         private void setupResults()
         {
+            //organizes the results
             double score = 0;
+            int time = 0;
             foreach (SongData song in results)
             {
                 SongDataWithPicture data = new SongDataWithPicture()
@@ -52,6 +69,7 @@ namespace MusicGame
                     points = song.points + " points"
                 };
                 score += song.points;
+                time += song.seconds;
                 source.Add(data);
             }
             resultsList.ItemsSource = source;
@@ -64,16 +82,128 @@ namespace MusicGame
             }
             else
             {
-               percent = 0;
+                percent = 0;
             }
-
             this.percentage.Text = percent + "%";
             resultsList.SetValue(InteractionEffectManager.IsInteractionEnabledProperty, true);
             InteractionEffectManager.AllowedTypes.Add(typeof(SongDataWithPicture));
+            saveResults(score, time);
         }
+
+        private void saveResults(double score, int time)
+        {
+            if (store.Contains("HighScoreList"))
+            {
+                HighScoreResults highScoreList = (HighScoreResults)store["HighScoreList"];
+                if (gameStyle == "album")
+                {
+                    if (highScoreList.albumList != null)
+                    {
+                        bool foundGenre = false;
+                        foreach (ScoreGenre sg in highScoreList.albumList)
+                        {
+                            if (sg.genre == gameGenre)
+                            {
+                                int i = 0;
+                                while (score < sg.scoreList[i].points)
+                                {
+                                    i++;
+                                    if (i == sg.scoreList.Count)
+                                    {
+                                        break;
+                                    }
+                                }
+                                if (i == sg.scoreList.Count)
+                                {
+                                    sg.scoreList.Add(new Scores() { points = score, totalTime = time });
+                                }
+                                else
+                                {
+                                    sg.scoreList.Insert(i, new Scores() { points = score, totalTime = time });
+                                }
+                                foundGenre = true;
+                            }
+                        }
+                        if (!foundGenre)
+                        {
+                            ScoreGenre sg = new ScoreGenre();
+                            sg.genre = gameGenre;
+                            sg.scoreList = new ObservableCollection<Scores>();
+                            sg.scoreList.Add(new Scores() { points = score, totalTime = time });
+                            highScoreList.albumList.Add(sg);
+                        }
+                    }
+                    else
+                    {
+                        highScoreList.albumList = new ObservableCollection<ScoreGenre>();
+                        ScoreGenre sg = new ScoreGenre();
+                        sg.genre = gameGenre;
+                        sg.scoreList = new ObservableCollection<Scores>();
+                        sg.scoreList.Add(new Scores() { points = score, totalTime = time });
+                        highScoreList.albumList.Add(sg);
+                    }
+                }
+                else
+                {
+                    if (highScoreList.voiceList != null)
+                    {
+                        bool foundGenre = false;
+                        foreach (ScoreGenre sg in highScoreList.voiceList)
+                        {
+                            if (sg.genre == gameGenre)
+                            {
+                                int i = 0;
+                                while (score < sg.scoreList[i].points)
+                                {
+                                    i++;
+                                    if (i == sg.scoreList.Count)
+                                    {
+                                        break;
+                                    }
+                                }
+                                if (i == sg.scoreList.Count)
+                                {
+                                    sg.scoreList.Add(new Scores() { points = score, totalTime = time });
+                                }
+                                else
+                                {
+                                    sg.scoreList.Insert(i, new Scores() { points = score, totalTime = time });
+                                }
+                                foundGenre = true;
+                            }
+                        }
+                        if (!foundGenre)
+                        {
+                            ScoreGenre sg = new ScoreGenre();
+                            sg.genre = gameGenre;
+                            sg.scoreList = new ObservableCollection<Scores>();
+                            sg.scoreList.Add(new Scores() { points = score, totalTime = time });
+                            highScoreList.albumList.Add(sg);
+                        }
+                    }
+                    else
+                    {
+                        highScoreList.albumList = new ObservableCollection<ScoreGenre>();
+                        ScoreGenre sg = new ScoreGenre();
+                        sg.genre = gameGenre;
+                        sg.scoreList = new ObservableCollection<Scores>();
+                        sg.scoreList.Add(new Scores() { points = score, totalTime = time });
+                        highScoreList.albumList.Add(sg);
+                    }
+                }
+                store["HighScoreList"] = highScoreList;
+            }
+            else
+            {
+                store["HighScoreList"] = new HighScoreResults();
+                saveResults(score, time);
+            }
+        }
+
 
         private BitmapImage getAlbumArt(Uri uri)
         {
+            //downloads album art for results
             BitmapImage albumArt = new BitmapImage(uri);
             albumArt.DecodePixelHeight = 200;
             albumArt.DecodePixelWidth = 200;
@@ -82,6 +212,7 @@ namespace MusicGame
 
         private async void StackPanel_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
+            //opens result in browser
             await Launcher.LaunchUriAsync(((sender as StackPanel).DataContext as SongDataWithPicture).uri);
         }
         protected override void OnBackKeyPress(System.ComponentModel.CancelEventArgs e)

@@ -35,6 +35,7 @@ xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik
             </DataTemplate>
         </Grid.Resources>
         <Image Grid.RowSpan="2"  Source="/Assets/bg1.png" Stretch="UniformToFill"/>
+        <Grid Grid.RowSpan="2" Background="Black" Opacity=".5"></Grid>
         <!--TitlePanel contains the name of the application and page title-->
         <StackPanel Grid.Row="0" Margin="12,17,0,28" Orientation="Horizontal">
             <TextBlock Text="total" Foreground="White" Style="{StaticResource PhoneTextTitle1Style}"/>

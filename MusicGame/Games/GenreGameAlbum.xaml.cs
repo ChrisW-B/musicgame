@@ -35,6 +35,7 @@ namespace MusicGame
         DispatcherTimer playTime;
         Grid grid;
         ProgressBar progBar;
+        String genre;
         bool isRight;
         private enum ProgBarStatus
         {
@@ -72,6 +73,7 @@ namespace MusicGame
             points = 0;
             roundPoints = 0;
             gameOver = true;
+
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -79,7 +81,7 @@ namespace MusicGame
             base.OnNavigatedTo(e);
             if (this.NavigationContext.QueryString.ContainsKey("genre") && this.NavigationContext.QueryString.ContainsKey("name"))
             {
-                String genre = this.NavigationContext.QueryString["genre"];
+                genre = this.NavigationContext.QueryString["genre"];
                 String name = this.NavigationContext.QueryString["name"];
                 Genre nokGenre = pickGenre(genre, name);
                 setupGenre(nokGenre);
@@ -360,6 +362,7 @@ namespace MusicGame
         {
             isRight = false;
             resultText.Text = "Too long!";
+            numTicks = 0;
             newBoard();
         }
         private void newBoard()
@@ -373,7 +376,7 @@ namespace MusicGame
                 store.Save();
                 if (gameOver)
                 {
-                    NavigationService.Navigate(new Uri("/ResultsPage.xaml", UriKind.Relative));
+                    NavigationService.Navigate(new Uri("/ResultsPage.xaml?style=album&genre="+genre, UriKind.Relative));
                     gameOver = false;
                 }
             }

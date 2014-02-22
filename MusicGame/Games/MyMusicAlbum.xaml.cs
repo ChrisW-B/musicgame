@@ -445,7 +445,7 @@ namespace MusicGame
                 store.Save();
                 if (gameOver)
                 {
-                    NavigationService.Navigate(new Uri("/ResultsPage.xaml", UriKind.Relative));
+                    NavigationService.Navigate(new Uri("/ResultsPage.xaml?style=album&genre=MyMusic", UriKind.Relative));
                     gameOver = false;
                 }
             }
