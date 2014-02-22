@@ -118,9 +118,11 @@ namespace MusicGame
 
             // Create the frame but don't set it as RootVisual yet; this allows the splash
             // screen to remain active until the application is ready to render.
+            RadSwivelTransition trans = new RadSwivelTransition();
+            trans.PlayMode = TransitionPlayMode.Simultaneously;
             RootFrame = new RadPhoneApplicationFrame
             {
-                Transition = new RadSlideTransition()
+                Transition = trans
             };
 
             RootFrame.Navigated += CompleteInitializePhoneApplication;

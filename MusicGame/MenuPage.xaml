@@ -31,11 +31,18 @@
         </StackPanel>
 
         <!--ContentPanel - place additional content here-->
-        <StackPanel x:Name="ContentPanel" Grid.Row="1"  Margin="12,0,12,0">
-            <Button x:Name="sayIt" Content="Name that Song!" Click="sayIt_Click" Foreground="White" BorderBrush="White"></Button>
-            <Button x:Name="albumPick" Content="Which album?" Click="albumPick_Click" Foreground="White" BorderBrush="White"></Button>
-            <Button x:Name="scores" Content="High Scores" Click="scores_Click" Foreground="White" BorderBrush="White"></Button>
-        </StackPanel>
-    </Grid>
+        <Grid Margin="0,115,0,10" Grid.RowSpan="2">
+            <StackPanel x:Name="ContentPanel" Grid.Row="1"  Margin="12,0,12,0">
+                <Button x:Name="sayIt" Content="Name that Song!" Click="sayIt_Click" Foreground="White" BorderBrush="White"></Button>
+                <Button x:Name="albumPick" Content="Pick an Album!" Click="albumPick_Click" Foreground="White" BorderBrush="White"></Button>
+                <Button x:Name="scores" Content="High Scores" Click="scores_Click" Foreground="White" BorderBrush="White"></Button>
+            </StackPanel>
+            <StackPanel VerticalAlignment="Bottom" Margin="12,0">
+                <StackPanel Orientation="Vertical" VerticalAlignment="Bottom">
+                    <Button x:Name="about" Content="About" Click="about_Click" Foreground="White" BorderBrush="White"></Button>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
 
+    </Grid>
 </phone:PhoneApplicationPage>

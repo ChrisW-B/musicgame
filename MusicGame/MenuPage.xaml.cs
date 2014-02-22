@@ -86,5 +86,10 @@ namespace MusicGame
         {
             NavigationService.Navigate(new Uri("/CategorySelect.xaml?voice=0", UriKind.Relative));
         }
+
+        private void about_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new Uri("/AboutPage.xaml", UriKind.Relative));
+        }
     }
 }
