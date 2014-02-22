@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Deployment xmlns="http://schemas.microsoft.com/windowsphone/2012/deployment" AppPlatformVersion="8.0">
   <DefaultLanguage xmlns="" code="en-US" />
-  <App xmlns="" ProductID="{6af1bb1e-3d2d-4d16-9859-0f0e5a26bc2a}" Title="MusicGame" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal" Author="MusicGame author" Description="Sample description" Publisher="MusicGame" PublisherID="{3dda354f-aa57-4ded-b26a-748952b64874}">
-    <IconPath IsRelative="true" IsResource="false">Assets\ApplicationIcon.png</IconPath>
+  <App xmlns="" ProductID="{6af1bb1e-3d2d-4d16-9859-0f0e5a26bc2a}" Title="What's Spinning?" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.games" Author="CB_27" Description="Sample description" Publisher="MusicGame" PublisherID="{3dda354f-aa57-4ded-b26a-748952b64874}">
+    <IconPath IsRelative="true" IsResource="false">Assets\tile.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_NETWORKING" />
       <Capability Name="ID_CAP_MEDIALIB_AUDIO" />
@@ -17,21 +17,22 @@
     <Tokens>
       <PrimaryToken TokenID="MusicGameToken" TaskName="_default">
         <TemplateFlip>
-          <SmallImageURI IsRelative="true" IsResource="false">tile.png</SmallImageURI>
+          <SmallImageURI IsRelative="true" IsResource="false">Assets\tileSmall.png</SmallImageURI>
           <Count>0</Count>
-          <BackgroundImageURI IsRelative="true" IsResource="false">tile.png</BackgroundImageURI>
-          <Title>MusicGame</Title>
+          <BackgroundImageURI IsRelative="true" IsResource="false">Assets\tilelarge.png</BackgroundImageURI>
+          <Title>
+          </Title>
           <BackContent>
           </BackContent>
-          <BackBackgroundImageURI>
+          <BackBackgroundImageURI IsRelative="true" IsResource="false">
           </BackBackgroundImageURI>
           <BackTitle>
           </BackTitle>
-          <LargeBackgroundImageURI IsRelative="true" IsResource="false">tile.png</LargeBackgroundImageURI>
+          <LargeBackgroundImageURI IsRelative="true" IsResource="false">Assets\tilelarge.png</LargeBackgroundImageURI>
           <LargeBackContent />
           <LargeBackBackgroundImageURI IsRelative="true" IsResource="false">
           </LargeBackBackgroundImageURI>
-          <DeviceLockImageURI>
+          <DeviceLockImageURI IsRelative="true" IsResource="false">
           </DeviceLockImageURI>
           <HasLarge>True</HasLarge>
         </TemplateFlip>
