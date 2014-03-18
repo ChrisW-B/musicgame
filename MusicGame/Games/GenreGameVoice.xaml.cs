@@ -186,7 +186,7 @@ namespace MusicGame
         void player_MediaFailed(object sender, ExceptionRoutedEventArgs e)
         {
             toggleProgBar(ProgBarStatus.Off);
-            resultText.Text = "Opening failed!";
+           
         }
         void player_MediaOpened(object sender, RoutedEventArgs e)
         {
@@ -310,7 +310,7 @@ namespace MusicGame
         private void wrongAns()
         {
             //handles incorrect answers
-            resultText.Text = "Wrong answer!";
+            
             points--;
             roundPoints--;
             numTimesWrong++;
@@ -326,7 +326,7 @@ namespace MusicGame
         {
             //handles correct answers
             isRight = true;
-            resultText.Text = "Correct!";
+            
             roundPoints += (5 - timesPlayed);
             points += (5 - timesPlayed);
             newBoard();
@@ -334,7 +334,6 @@ namespace MusicGame
         private void timeOut()
         {
             isRight = false;
-            resultText.Text = "Too long!";
             numTicks = 0;
             newBoard();
         }

@@ -107,8 +107,14 @@
                     </telerikPrimitives:RadBusyIndicator.RenderTransform>
                 </telerikPrimitives:RadBusyIndicator>
                 <StackPanel VerticalAlignment="Bottom">
-                    <TextBlock x:Name="resultText"/>
-                    <TextBlock x:Name="Points"/>
+                    <Grid VerticalAlignment="Bottom" Height="80">
+                        <Grid Margin="10" VerticalAlignment="Center" HorizontalAlignment="Left">
+                            <TextBlock FontSize="30" x:Name="roundNum" Text="1/6"></TextBlock>
+                        </Grid>
+                        <Grid Margin="10" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock FontSize="30" x:Name="Points" Text="0/30"></TextBlock>
+                        </Grid>
+                    </Grid>
                     <Grid>
                         <telerikPrimitives:RadTextBox InputScope="Text"  ActionButtonVisibility="Visible" ActionButtonTap="RadTextBox_ActionButtonTap" x:Name="yourAnswer" Tap="yourAnswer_Tap" KeyDown="yourAnswer_KeyDown" LostFocus="yourAnswer_LostFocus" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
                             <telerikPrimitives:RadTextBox.ActionButtonStyle>

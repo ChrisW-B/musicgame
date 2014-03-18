@@ -91,7 +91,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
+
         <Grid.Resources>
             <DataTemplate x:Key="DataBoundListBoxItemTemplate">
                 <Grid Margin="0,0,0,0">
@@ -127,18 +127,26 @@
                     </telerikPrimitives:RadDataBoundListBox.ItemRemovedAnimation>
                 </telerikPrimitives:RadDataBoundListBox>
                 <Grid VerticalAlignment="Bottom" Height="160">
-                    <StackPanel Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Bottom">
-                        <TextBlock x:Name="resultText" Margin="0,5,0,0"/>
-                        <TextBlock x:Name="Points"/>
-                    </StackPanel>
-                    <telerikPrimitives:RadBusyIndicator AnimationStyle="AnimationStyle2"
+
+                    <Grid Margin="10" VerticalAlignment="Center" HorizontalAlignment="Left">
+                        <TextBlock FontSize="30" x:Name="roundNum" Text="1/6"></TextBlock>
+                    </Grid>
+
+                    <Grid Margin="10" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <telerikPrimitives:RadBusyIndicator AnimationStyle="AnimationStyle2"
 				Content="0"                            
 				IsRunning="False"
 				x:Name="timer" Style="{StaticResource RadBusyIndicatorStyle}" RenderTransformOrigin="1,1" HorizontalAlignment="Right" Margin="0,54,0,0">
-                        <telerikPrimitives:RadBusyIndicator.RenderTransform>
-                            <CompositeTransform ScaleX="1.5" ScaleY="1.5"/>
-                        </telerikPrimitives:RadBusyIndicator.RenderTransform>
-                    </telerikPrimitives:RadBusyIndicator>
+                            <telerikPrimitives:RadBusyIndicator.RenderTransform>
+                                <CompositeTransform ScaleX="1.5" ScaleY="1.5"/>
+                            </telerikPrimitives:RadBusyIndicator.RenderTransform>
+                        </telerikPrimitives:RadBusyIndicator>
+                    </Grid>
+
+                    <Grid Margin="10" VerticalAlignment="Center" HorizontalAlignment="Right">
+                        <TextBlock FontSize="30" x:Name="Points" Text="0/30"></TextBlock>
+                    </Grid>
+
                 </Grid>
             </Grid>
         </Grid>

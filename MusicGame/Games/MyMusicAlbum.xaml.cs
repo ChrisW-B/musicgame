@@ -171,7 +171,6 @@ namespace MusicGame
                 {
                     pickSong();
                 }
-                setAlbumArt();
                 checkConnectionAndRun();
             }
             else
@@ -207,6 +206,7 @@ namespace MusicGame
         private void setAlbumArt()
         {
             //sets up the grid of album art
+            albumArtGrid.ItemsSource = null;
             albumArtGrid.ItemsSource = albumArtList;
             albumArtGrid.SetValue(InteractionEffectManager.IsInteractionEnabledProperty, true);
             InteractionEffectManager.AllowedTypes.Add(typeof(RadDataBoundListBoxItem));
@@ -275,6 +275,7 @@ namespace MusicGame
         {
             //plays the winning song, unless there is a problem, in which it picks a new winner
             player.Resources.Clear();
+            setAlbumArt();
             ListResponse<MusicItem> result = await getPossibleSong();
             if (result.Result != null && result.Count > 0)
             {
@@ -316,7 +317,6 @@ namespace MusicGame
         void player_MediaFailed(object sender, ExceptionRoutedEventArgs e)
         {
             toggleProgBar(ProgBarStatus.Off);
-            resultText.Text = "Opening failed!";
         }
         void player_MediaOpened(object sender, RoutedEventArgs e)
         {
@@ -407,11 +407,10 @@ namespace MusicGame
         private void wrongAns()
         {
             //handles incorrect answers
-            resultText.Text = "Wrong answer!";
             roundPoints--;
             points--;
             numTimesWrong++;
-            Points.Text = points.ToString();
+            Points.Text = points.ToString() +"/30 points";
             if (numTimesWrong > 2)
             {
                 isRight = false;
@@ -422,7 +421,6 @@ namespace MusicGame
         {
             //handles correct answers
             isRight = true;
-            resultText.Text = "Correct!";
             roundPoints += (5 - timesPlayed);
             points += (5 - timesPlayed);
             newBoard();
@@ -431,7 +429,6 @@ namespace MusicGame
         {
             isRight = false;
             roundPoints = 0;
-            resultText.Text = "Too long!";
             newBoard();
         }
         private void newBoard()
@@ -454,7 +451,8 @@ namespace MusicGame
                 numTimesWrong = 0;
                 timesPlayed = 0;
                 roundPoints = 0;
-                Points.Text = points.ToString();
+                Points.Text = points.ToString() +"/30 points";
+                roundNum.Text = "round "+ (winningSongList.Count +1 ) + "/6";
                 toggleClock(TimerStatus.Off);
                 player.Stop();
                 player.Resources.Clear();
@@ -481,12 +479,9 @@ namespace MusicGame
         }
         private void reInitialize()
         {
-
             player.Source = null;
             albumArtList = null;
             pickedSongs = null;
-            albumArtGrid.ItemsSource = null;
-
             albumArtList = new ObservableCollection<DataItemViewModel>();
             pickedSongs = new ObservableCollection<Song>();
         }
@@ -506,10 +501,11 @@ namespace MusicGame
             }
             albumArtList.RemoveAt(i);
             //creates blank tile to prevent shifts
-            DataItemViewModel empty = new DataItemViewModel();
+            DataItemViewModel wrong = new DataItemViewModel();
+            wrong.ImageSource = new BitmapImage(new Uri("/Assets/x.png", UriKind.Relative));
             //API key unlikely to be song title
-            empty.Title = MUSIC_API_KEY;
-            albumArtList.Insert(i, empty);
+            wrong.Title = MUSIC_API_KEY;
+            albumArtList.Insert(i, wrong);
         }
     }
 }

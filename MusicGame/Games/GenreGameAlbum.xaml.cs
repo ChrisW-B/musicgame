@@ -149,6 +149,7 @@ namespace MusicGame
         private void pickWinner()
         {
             //picks a random song from the selected songs to be the winner
+
             winningSong = pickedSongs[rand.Next(pickedSongs.Count)];
             if (alreadyPicked(winningSong))
             {
@@ -174,6 +175,7 @@ namespace MusicGame
         private void playWinner()
         {
             toggleProgBar(ProgBarStatus.On);
+            setAlbumArt();
             player.Resources.Clear();
             Uri songUri = client.GetTrackSampleUri(winningSong.Id);
             player.Source = songUri;
@@ -183,7 +185,6 @@ namespace MusicGame
         void player_MediaFailed(object sender, ExceptionRoutedEventArgs e)
         {
             toggleProgBar(ProgBarStatus.Off);
-            resultText.Text = "Opening failed!";
         }
         void player_MediaOpened(object sender, RoutedEventArgs e)
         {
@@ -239,13 +240,10 @@ namespace MusicGame
         //Get a list of 12 songs with album art
         private void pickSongs()
         {
-
             for (int i = 0; i < 12; i++)
             {
                 pickSong();
             }
-            setAlbumArt();
-
         }
         private void pickSong()
         {
@@ -279,6 +277,7 @@ namespace MusicGame
         private void setAlbumArt()
         {
             //sets up the grid of album art
+            albumArtGrid.ItemsSource = null;
             albumArtGrid.ItemsSource = albumArtList;
             albumArtGrid.SetValue(InteractionEffectManager.IsInteractionEnabledProperty, true);
             InteractionEffectManager.AllowedTypes.Add(typeof(RadDataBoundListBoxItem));
@@ -331,19 +330,19 @@ namespace MusicGame
             }
             albumArtList.RemoveAt(i);
             //creates blank tile to prevent shifts
-            DataItemViewModel empty = new DataItemViewModel();
+            DataItemViewModel wrong = new DataItemViewModel();
+            wrong.ImageSource = new BitmapImage(new Uri("/Assets/x.png", UriKind.Relative));
             //API key unlikely to be song title
-            empty.Title = MUSIC_API_KEY;
-            albumArtList.Insert(i, empty);
+            wrong.Title = MUSIC_API_KEY;
+            albumArtList.Insert(i, wrong);
         }
         private void wrongAns()
         {
             //handles incorrect answers
-            resultText.Text = "Wrong answer!";
             roundPoints--;
             points--;
             numTimesWrong++;
-            Points.Text = points.ToString();
+            Points.Text = points.ToString() + "/30 points";
             if (numTimesWrong > 2)
             {
                 isRight = false;
@@ -353,7 +352,6 @@ namespace MusicGame
         private void correctAns()
         {
             //handles correct answers
-            resultText.Text = "Correct!";
             roundPoints += (5 - timesPlayed);
             points += (5 - timesPlayed);
             newBoard();
@@ -361,7 +359,6 @@ namespace MusicGame
         private void timeOut()
         {
             isRight = false;
-            resultText.Text = "Too long!";
             numTicks = 0;
             newBoard();
         }
@@ -385,7 +382,8 @@ namespace MusicGame
                 numTimesWrong = 0;
                 roundPoints = 0;
                 timesPlayed = 0;
-                Points.Text = points.ToString();
+                Points.Text = points.ToString() + "/30 points";
+                roundNum.Text = "round " + (winningSongList.Count + 1) + "/6";
                 player.Stop();
                 player.Resources.Clear();
                 albumArtList.Clear();
@@ -397,7 +395,6 @@ namespace MusicGame
         }
         private void reInitialize()
         {
-            albumArtGrid.ItemsSource = null;
             albumArtList = null;
             pickedSongs = null;
             player.Source = null;

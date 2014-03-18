@@ -32,18 +32,21 @@ namespace MusicGame
 
         private void randomizeLiveTile()
         {
-            RadFlipTileData tileData = new RadFlipTileData()
+            if (albums.Count > 0)
             {
-                VisualElement = getAlbumArt(),
-                Title = "What's Spinning?",
-                BackVisualElement = getAlbumArt(),
-                MeasureMode = Telerik.Windows.Controls.MeasureMode.Element,
-                BackTitle = "What's Spinning?",
-                WideBackVisualElement = getAlbumArt(),
-                WideVisualElement = getAlbumArt(),
-                SmallVisualElement = getAlbumArt()
-            };
-            LiveTileHelper.CreateOrUpdateTile(tileData, new Uri("/", UriKind.Relative), true);
+                RadFlipTileData tileData = new RadFlipTileData()
+                {
+                    VisualElement = getAlbumArt(),
+                    Title = "What's Spinning?",
+                    BackVisualElement = getAlbumArt(),
+                    MeasureMode = Telerik.Windows.Controls.MeasureMode.Element,
+                    BackTitle = "What's Spinning?",
+                    WideBackVisualElement = getAlbumArt(),
+                    WideVisualElement = getAlbumArt(),
+                    SmallVisualElement = getAlbumArt()
+                };
+                LiveTileHelper.CreateOrUpdateTile(tileData, new Uri("/", UriKind.Relative), true);
+            }
         }
 
         private Image getAlbumArt()

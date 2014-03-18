@@ -6,17 +6,16 @@
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-   xmlns:telerikCore="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Core"
-xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Primitives"
-    xmlns:BusyIndicator="clr-namespace:Telerik.Windows.Controls.BusyIndicator;assembly=Telerik.Windows.Controls.Primitives"
-    xmlns:viewModels="clr-namespace:MusicGame.ViewModels" 
+    xmlns:telerikCore="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Core"
+    xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Primitives"
+    xmlns:viewModels="clr-namespace:MusicGame.ViewModels"
+     xmlns:BusyIndicator="clr-namespace:Telerik.Windows.Controls.BusyIndicator;assembly=Telerik.Windows.Controls.Primitives"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="White"
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d" d:DesignHeight="728" d:DesignWidth="480"
     shell:SystemTray.IsVisible="False">
-
     <phone:PhoneApplicationPage.Resources>
         <Style x:Key="RadBusyIndicatorStyle" TargetType="telerikPrimitives:RadBusyIndicator">
             <Setter Property="Foreground" Value="{StaticResource PhoneAccentBrush}"/>
@@ -85,7 +84,6 @@ xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik
             </Setter>
         </Style>
     </phone:PhoneApplicationPage.Resources>
-
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" telerikCore:RadAnimationManager.IsAnimationEnabled="True">
 
@@ -93,6 +91,7 @@ xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+
         <Grid.Resources>
             <DataTemplate x:Key="DataBoundListBoxItemTemplate">
                 <Grid Margin="0,0,0,0">
@@ -111,6 +110,7 @@ xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik
                     <telerikPrimitives:RadDataBoundListBox.VirtualizationStrategyDefinition>
                         <telerikPrimitives:WrapVirtualizationStrategyDefinition Orientation="Vertical"/>
                     </telerikPrimitives:RadDataBoundListBox.VirtualizationStrategyDefinition>
+
                     <telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
                         <telerikCore:RadFadeAnimation Duration="0:0:0.5" StartOpacity="0" EndOpacity="1">
                             <telerikCore:RadFadeAnimation.Easing>
@@ -127,18 +127,26 @@ xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik
                     </telerikPrimitives:RadDataBoundListBox.ItemRemovedAnimation>
                 </telerikPrimitives:RadDataBoundListBox>
                 <Grid VerticalAlignment="Bottom" Height="160">
-                    <StackPanel Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Bottom">
-                        <TextBlock x:Name="resultText" Margin="0,5,0,0"/>
-                        <TextBlock x:Name="Points"/>
-                    </StackPanel>
-                    <telerikPrimitives:RadBusyIndicator AnimationStyle="AnimationStyle2"
+
+                    <Grid Margin="10" VerticalAlignment="Center" HorizontalAlignment="Left">
+                        <TextBlock FontSize="30" x:Name="roundNum" Text="1/6"></TextBlock>
+                    </Grid>
+
+                    <Grid Margin="10" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <telerikPrimitives:RadBusyIndicator AnimationStyle="AnimationStyle2"
 				Content="0"                            
 				IsRunning="False"
 				x:Name="timer" Style="{StaticResource RadBusyIndicatorStyle}" RenderTransformOrigin="1,1" HorizontalAlignment="Right" Margin="0,54,0,0">
-                        <telerikPrimitives:RadBusyIndicator.RenderTransform>
-                            <CompositeTransform ScaleX="1.5" ScaleY="1.5"/>
-                        </telerikPrimitives:RadBusyIndicator.RenderTransform>
-                    </telerikPrimitives:RadBusyIndicator>
+                            <telerikPrimitives:RadBusyIndicator.RenderTransform>
+                                <CompositeTransform ScaleX="1.5" ScaleY="1.5"/>
+                            </telerikPrimitives:RadBusyIndicator.RenderTransform>
+                        </telerikPrimitives:RadBusyIndicator>
+                    </Grid>
+
+                    <Grid Margin="10" VerticalAlignment="Center" HorizontalAlignment="Right">
+                        <TextBlock FontSize="30" x:Name="Points" Text="0/30"></TextBlock>
+                    </Grid>
+
                 </Grid>
             </Grid>
         </Grid>
