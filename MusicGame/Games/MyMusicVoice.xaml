@@ -90,12 +90,15 @@
     </phone:PhoneApplicationPage.FontSize>
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        
         <Image Grid.RowSpan="2"  Source="/Assets/bg1.png" Stretch="UniformToFill"/>
         <Grid x:Name="ContentPanel" Grid.Row="1">
+            
             <Grid>
                 <MediaElement x:Name="player"/>
                 <telerikPrimitives:RadBusyIndicator AnimationStyle="AnimationStyle2"
@@ -109,10 +112,10 @@
                 <StackPanel VerticalAlignment="Bottom">
                     <Grid VerticalAlignment="Bottom" Height="80">
                         <Grid Margin="10" VerticalAlignment="Center" HorizontalAlignment="Left">
-                            <TextBlock FontSize="30" x:Name="roundNum" Text="1/6"></TextBlock>
+                            <TextBlock FontSize="30" x:Name="roundNum" Text="Round 1/6"></TextBlock>
                         </Grid>
                         <Grid Margin="10" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock FontSize="30" x:Name="Points" Text="0/30"></TextBlock>
+                            <TextBlock FontSize="30" x:Name="Points" Text="0/30 Points"></TextBlock>
                         </Grid>
                     </Grid>
                     <Grid>

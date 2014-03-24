@@ -342,7 +342,7 @@ namespace MusicGame
             roundPoints--;
             points--;
             numTimesWrong++;
-            Points.Text = points.ToString() + "/30 points";
+            Points.Text = points.ToString() + "/30 Points";
             if (numTimesWrong > 2)
             {
                 isRight = false;
@@ -382,8 +382,8 @@ namespace MusicGame
                 numTimesWrong = 0;
                 roundPoints = 0;
                 timesPlayed = 0;
-                Points.Text = points.ToString() + "/30 points";
-                roundNum.Text = "round " + (winningSongList.Count + 1) + "/6";
+                Points.Text = points.ToString() + "/30 Points";
+                roundNum.Text = "Round " + (winningSongList.Count + 1) + "/6";
                 player.Stop();
                 player.Resources.Clear();
                 albumArtList.Clear();

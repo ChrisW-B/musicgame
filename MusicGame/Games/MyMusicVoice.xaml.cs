@@ -353,7 +353,7 @@ namespace MusicGame
             roundPoints--;
             points--;
             numTimesWrong++;
-            Points.Text = points.ToString();
+            Points.Text = points.ToString() + "/30 Points";
             player.Play();
             if (numTimesWrong > 2)
             {
@@ -400,7 +400,8 @@ namespace MusicGame
                 roundPoints = 0;
                 numTimesWrong = 0;
                 timesPlayed = 0;
-                Points.Text = points.ToString();
+                roundNum.Text = "Round " + (winningSongList.Count + 1) + "/6";
+                Points.Text = points.ToString() + "/30 Points";
                 player.Resources.Clear();
                 reInitialize();
                 pickWinner();

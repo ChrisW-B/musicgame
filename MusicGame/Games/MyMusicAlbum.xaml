@@ -127,9 +127,14 @@
                     </telerikPrimitives:RadDataBoundListBox.ItemRemovedAnimation>
                 </telerikPrimitives:RadDataBoundListBox>
                 <Grid VerticalAlignment="Bottom" Height="160">
-
+                    <Grid.Background>
+                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                            <GradientStop Offset="0.0" />
+                            <GradientStop Color="Black" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Grid.Background>
                     <Grid Margin="10" VerticalAlignment="Center" HorizontalAlignment="Left">
-                        <TextBlock FontSize="30" x:Name="roundNum" Text="1/6"></TextBlock>
+                        <TextBlock FontSize="30" x:Name="roundNum" Text="Round 1/6"></TextBlock>
                     </Grid>
 
                     <Grid Margin="10" VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -144,7 +149,7 @@
                     </Grid>
 
                     <Grid Margin="10" VerticalAlignment="Center" HorizontalAlignment="Right">
-                        <TextBlock FontSize="30" x:Name="Points" Text="0/30"></TextBlock>
+                        <TextBlock FontSize="30" x:Name="Points" Text="0/30 Points"></TextBlock>
                     </Grid>
 
                 </Grid>
