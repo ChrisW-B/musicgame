@@ -112,9 +112,9 @@ namespace MusicGame
             client.DownloadStringAsync(new Uri("http://www.google.com/"));
             return completed.Task;
         }
-        async private void checkConnectionAndRun()
+        async private Task checkConnectionAndRun()
         {
-            toggleProgBar(ProgBarStatus.On);
+            await toggleProgBar(ProgBarStatus.On);
             bool connected = await isConnected();
             if (!connected)
             {
@@ -128,9 +128,9 @@ namespace MusicGame
             {
                 pickWinner();
             }
-            toggleProgBar(ProgBarStatus.Off);
+            await toggleProgBar(ProgBarStatus.Off);
         }
-        private void toggleProgBar(ProgBarStatus stat)
+        async private Task toggleProgBar(ProgBarStatus stat)
         {
             if (winningSongList.Count == 0)
             {
@@ -166,27 +166,26 @@ namespace MusicGame
             {
                 if (stat == ProgBarStatus.On)
                 {
-                    displayData(isRight, AnsVisibility.On, lastWinningSong);
+                    await displayData(isRight, AnsVisibility.On, lastWinningSong);
                 }
                 else
                 {
-                    Thread.Sleep(new TimeSpan(0, 0, 1));
-                    displayData(isRight, AnsVisibility.Off, lastWinningSong);
+                    await displayData(isRight, AnsVisibility.Off, lastWinningSong);
                 }
             }
         }
-        private void displayData(bool win, AnsVisibility vis, Song song)
+        async private Task displayData(bool win, AnsVisibility vis, Song song)
         {
             if (vis == AnsVisibility.On)
             {
                 string winStat;
                 if (win)
                 {
-                    winStat = "Congratulations! ";
+                    winStat = "Congratulations! It ";
                 }
                 else
                 {
-                    winStat = "Nope ";
+                    winStat = "Nope, it ";
                 }
                 correctAnsGrid = new Grid();
                 StackPanel panel = new StackPanel();
@@ -203,7 +202,8 @@ namespace MusicGame
                 text.TextWrapping = TextWrapping.Wrap;
                 text.TextAlignment = TextAlignment.Center;
                 text.Foreground = new SolidColorBrush(Colors.White);
-                text.Text = winStat + ", it was " + song.Name + " by " + song.Artist;
+                text.Text = winStat + "was " + song.Name + " by " + song.Artist;
+                text.Padding = new Thickness(20, 20, 20, 20);
                 panel.Children.Add(text);
 
                 //show "loading" text
@@ -242,6 +242,7 @@ namespace MusicGame
             }
             else if (ContentPanel.Children.Contains(correctAnsGrid))
             {
+                await Task.Delay(new TimeSpan(0, 0, 2));
                 correctAnsGrid.Children.Clear();
                 ContentPanel.Children.Remove(correctAnsGrid);
                 progBar.IsIndeterminate = false;
@@ -251,7 +252,7 @@ namespace MusicGame
         private void pickWinner()
         {
             //picks a random song from the selected songs to be the winner
-            
+
             int numSongs = songs.Songs.Count;
             if (numSongs > 10)
             {
@@ -294,8 +295,9 @@ namespace MusicGame
                 {
                     prodUri = prod.Result.WebUri;
                     albumUri = prod.Result.Thumb320Uri;
-                    toggleProgBar(ProgBarStatus.On);
+                    await toggleProgBar(ProgBarStatus.On);
                     Uri songUri = getSongUri(prod);
+                    player.AutoPlay = false;
                     player.Source = songUri;
                     player.MediaOpened += player_MediaOpened;
                     player.MediaFailed += player_MediaFailed;
@@ -310,13 +312,13 @@ namespace MusicGame
                 pickWinner();
             }
         }
-        void player_MediaFailed(object sender, ExceptionRoutedEventArgs e)
+        async void player_MediaFailed(object sender, ExceptionRoutedEventArgs e)
         {
-            toggleProgBar(ProgBarStatus.Off);
+            await toggleProgBar(ProgBarStatus.Off);
         }
-        void player_MediaOpened(object sender, RoutedEventArgs e)
+        async void player_MediaOpened(object sender, RoutedEventArgs e)
         {
-            playForLimit();
+           await playForLimit();
         }
         private bool performersAreArtists(Nokia.Music.Types.Artist[] artists, string p)
         {
@@ -332,13 +334,13 @@ namespace MusicGame
             }
             return false;
         }
-        private void playForLimit()
+        async private Task playForLimit()
         {
             numTimesWrong = 0;
             timesPlayed = 0;
             numTicks = 25;
             toggleClock(TimerStatus.On);
-            toggleProgBar(ProgBarStatus.Off);
+            await toggleProgBar(ProgBarStatus.Off);
             player.Play();
         }
 
@@ -481,7 +483,7 @@ namespace MusicGame
             winningSongList.Add(new SongData() { albumUri = albumUri, points = roundPoints, correct = isRight, seconds = 25 - numTicks, songName = winningSong.Name, uri = prodUri });
             toggleClock(TimerStatus.Off);
             lastWinningSong = winningSong;
-            
+
             if (winningSongList.Count > 5)
             {
                 store["results"] = winningSongList;

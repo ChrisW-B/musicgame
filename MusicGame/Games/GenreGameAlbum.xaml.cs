@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 using System.Windows.Media;
 using System.IO.IsolatedStorage;
+using System.Threading;
 
 namespace MusicGame
 {
@@ -28,12 +29,14 @@ namespace MusicGame
         int roundPoints;
         IsolatedStorageSettings store;
         Product winningSong;
+        Product lastWinningSong;
         int timesPlayed;
         int points;
         int numTimesWrong;
         int numTicks;
         DispatcherTimer playTime;
         Grid grid;
+        Grid correctAnsGrid;
         ProgressBar progBar;
         String genre;
         bool isRight;
@@ -47,6 +50,11 @@ namespace MusicGame
             On,
             Off,
             Pause
+        }
+        private enum AnsVisibility
+        {
+            On,
+            Off
         }
         const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
 
@@ -114,34 +122,122 @@ namespace MusicGame
             pickSongs();
         }
 
-        private void toggleProgBar(ProgBarStatus stat)
+        async private Task toggleProgBar(ProgBarStatus stat)
         {
-            if (stat == ProgBarStatus.On)
+            if (winningSongList.Count == 0)
             {
-                progBar = new ProgressBar();
-                grid = new Grid();
+                if (stat == ProgBarStatus.On)
+                {
+                    progBar = new ProgressBar();
+                    grid = new Grid();
+                    TextBlock text = new TextBlock();
+                    text.Text = "loading song";
+                    text.TextAlignment = TextAlignment.Center;
+                    text.HorizontalAlignment = HorizontalAlignment.Center;
+                    text.VerticalAlignment = VerticalAlignment.Center;
+                    text.Foreground = new SolidColorBrush(Colors.White);
+                    progBar.IsIndeterminate = true;
+                    progBar.IsEnabled = true;
+                    Thickness pad = new Thickness(0, 0, 0, 40);
+                    progBar.Padding = pad;
+                    SolidColorBrush brush = new SolidColorBrush(Colors.Black);
+                    brush.Opacity = .7;
+                    grid.Background = brush;
+                    ContentPanel.Children.Add(grid);
+                    grid.Children.Add(progBar);
+                    grid.Children.Add(text);
+                }
+                else if (ContentPanel.Children.Contains(grid))
+                {
+                    progBar.IsIndeterminate = false;
+                    grid.Children.Remove(progBar);
+                    ContentPanel.Children.Remove(grid);
+                }
+            }
+            else
+            {
+                if (stat == ProgBarStatus.On)
+                {
+                    await displayData(isRight, AnsVisibility.On, lastWinningSong);
+                }
+                else
+                {
+                    await displayData(isRight, AnsVisibility.Off, lastWinningSong);
+                }
+            }
+        }
+        async private Task displayData(bool win, AnsVisibility vis, Product song)
+        {
+            if (vis == AnsVisibility.On)
+            {
+                string winStat;
+                if (win)
+                {
+                    winStat = "Congratulations! It ";
+                }
+                else
+                {
+                    winStat = "Nope, it ";
+                }
+                correctAnsGrid = new Grid();
+                StackPanel panel = new StackPanel();
+
+                //add background
+                SolidColorBrush backgroundColor = new SolidColorBrush(Colors.Black);
+                backgroundColor.Opacity = .7;
+                correctAnsGrid.Background = backgroundColor;
+
+                //show song name
                 TextBlock text = new TextBlock();
-                text.Text = "loading song";
+                text.HorizontalAlignment = System.Windows.HorizontalAlignment.Center;
+                text.VerticalAlignment = System.Windows.VerticalAlignment.Center;
+                text.TextWrapping = TextWrapping.Wrap;
                 text.TextAlignment = TextAlignment.Center;
-                text.HorizontalAlignment = HorizontalAlignment.Center;
-                text.VerticalAlignment = VerticalAlignment.Center;
                 text.Foreground = new SolidColorBrush(Colors.White);
+                text.Text = winStat + "was " + song.Name + " by " + song.Performers[0].Name;
+                text.Padding = new Thickness(20, 20, 20, 20);
+                panel.Children.Add(text);
+
+                //show "loading" text
+                TextBlock loadingText = new TextBlock();
+                loadingText.Text = "loading song";
+                loadingText.TextAlignment = TextAlignment.Center;
+                loadingText.HorizontalAlignment = HorizontalAlignment.Center;
+                loadingText.VerticalAlignment = VerticalAlignment.Center;
+                loadingText.Foreground = new SolidColorBrush(Colors.White);
+
+                //show progress bar
+                progBar = new ProgressBar();
                 progBar.IsIndeterminate = true;
                 progBar.IsEnabled = true;
                 Thickness pad = new Thickness(0, 0, 0, 40);
                 progBar.Padding = pad;
-                SolidColorBrush brush = new SolidColorBrush(Colors.Black);
-                brush.Opacity = .7;
-                grid.Background = brush;
-                ContentPanel.Children.Add(grid);
-                grid.Children.Add(progBar);
-                grid.Children.Add(text);
+
+                //show album art
+                Image img = new Image();
+                img.Height = 200;
+                img.Width = 200;
+                BitmapImage btmp = getBitmap(song);
+
+                if (btmp != null)
+                {
+                    img.Source = btmp;
+                    correctAnsGrid.Children.Add(img);
+                }
+
+                panel.Children.Add(loadingText);
+                panel.Children.Add(progBar);
+                panel.UpdateLayout();
+                correctAnsGrid.Children.Add(panel);
+                ContentPanel.Children.Add(correctAnsGrid);
+                this.ContentPanel.UpdateLayout();
             }
-            else if (ContentPanel.Children.Contains(grid))
+            else if (ContentPanel.Children.Contains(correctAnsGrid))
             {
+                await Task.Delay(new TimeSpan(0, 0, 2));
+                correctAnsGrid.Children.Clear();
+                ContentPanel.Children.Remove(correctAnsGrid);
                 progBar.IsIndeterminate = false;
-                grid.Children.Remove(progBar);
-                ContentPanel.Children.Remove(grid);
             }
         }
 
@@ -172,23 +268,24 @@ namespace MusicGame
             }
             return false;
         }
-        private void playWinner()
+        async private void playWinner()
         {
-            toggleProgBar(ProgBarStatus.On);
+            await toggleProgBar(ProgBarStatus.On);
             setAlbumArt();
             player.Resources.Clear();
             Uri songUri = client.GetTrackSampleUri(winningSong.Id);
+            player.AutoPlay = false;
             player.Source = songUri;
             player.MediaOpened += player_MediaOpened;
             player.MediaFailed += player_MediaFailed;
         }
-        void player_MediaFailed(object sender, ExceptionRoutedEventArgs e)
+        async void player_MediaFailed(object sender, ExceptionRoutedEventArgs e)
         {
-            toggleProgBar(ProgBarStatus.Off);
+            await toggleProgBar(ProgBarStatus.Off);
         }
-        void player_MediaOpened(object sender, RoutedEventArgs e)
+        async void player_MediaOpened(object sender, RoutedEventArgs e)
         {
-            toggleProgBar(ProgBarStatus.Off);
+            await toggleProgBar(ProgBarStatus.Off);
             playForLimit();
         }
         private void playForLimit()
@@ -352,6 +449,7 @@ namespace MusicGame
         private void correctAns()
         {
             //handles correct answers
+            isRight = true;
             roundPoints += (5 - timesPlayed);
             points += (5 - timesPlayed);
             newBoard();
@@ -367,13 +465,14 @@ namespace MusicGame
             //clears the current board and creates a new one
             winningSongList.Add(new SongData() { albumUri = winningSong.Thumb200Uri, points = roundPoints, correct = isRight, seconds = (25 - numTicks), songName = winningSong.Name, uri = winningSong.WebUri });
             toggleClock(TimerStatus.Off);
+            lastWinningSong = winningSong;
             if (winningSongList.Count > 5)
             {
                 store["results"] = winningSongList;
                 store.Save();
                 if (gameOver)
                 {
-                    NavigationService.Navigate(new Uri("/ResultsPage.xaml?style=album&genre="+genre, UriKind.Relative));
+                    NavigationService.Navigate(new Uri("/ResultsPage.xaml?style=album&genre=" + genre, UriKind.Relative));
                     gameOver = false;
                 }
             }
