@@ -514,6 +514,7 @@ namespace MusicGame
 
         private void giveUp_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
+            isRight = false;
             newBoard();
         }
         private void go_Tap(object sender, System.Windows.Input.GestureEventArgs e)
