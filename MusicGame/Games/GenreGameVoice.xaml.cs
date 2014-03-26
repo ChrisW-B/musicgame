@@ -133,7 +133,7 @@ namespace MusicGame
                     progBar = new ProgressBar();
                     grid = new Grid();
                     TextBlock text = new TextBlock();
-                    text.Text = "loading song";
+                    text.Text = "loading the next song";
                     text.TextAlignment = TextAlignment.Center;
                     text.HorizontalAlignment = HorizontalAlignment.Center;
                     text.VerticalAlignment = VerticalAlignment.Center;
@@ -202,7 +202,7 @@ namespace MusicGame
 
                 //show "loading" text
                 TextBlock loadingText = new TextBlock();
-                loadingText.Text = "loading song";
+                loadingText.Text = "loading the next song";
                 loadingText.TextAlignment = TextAlignment.Center;
                 loadingText.HorizontalAlignment = HorizontalAlignment.Center;
                 loadingText.VerticalAlignment = VerticalAlignment.Center;

@@ -144,7 +144,7 @@ namespace MusicGame
                     progBar = new ProgressBar();
                     grid = new Grid();
                     TextBlock text = new TextBlock();
-                    text.Text = "loading song";
+                    text.Text = "loading the next song";
                     text.TextAlignment = TextAlignment.Center;
                     text.HorizontalAlignment = HorizontalAlignment.Center;
                     text.VerticalAlignment = VerticalAlignment.Center;
@@ -213,7 +213,7 @@ namespace MusicGame
 
                 //show "loading" text
                 TextBlock loadingText = new TextBlock();
-                loadingText.Text = "loading song";
+                loadingText.Text = "loading the next song";
                 loadingText.TextAlignment = TextAlignment.Center;
                 loadingText.HorizontalAlignment = HorizontalAlignment.Center;
                 loadingText.VerticalAlignment = VerticalAlignment.Center;
@@ -269,7 +269,17 @@ namespace MusicGame
             }
             else
             {
-                albumArtGrid.EmptyContent = "Not enough songs to play!" + "\n" + "Try adding some more albums to your phone," + "\n" + "or simply play the top music of" + "\n" + "Nokia MixRadio with Nokia MixRadio genres!";
+                Grid grid = new Grid();
+                grid.Background = new SolidColorBrush(Colors.Black);
+                grid.Opacity = .7;
+                TextBlock text = new TextBlock() { Text = "Not enough songs! Try adding more songs to your phone, or just play with Nokia MixRadio!" };
+                text.HorizontalAlignment = System.Windows.HorizontalAlignment.Center;
+                text.VerticalAlignment = System.Windows.VerticalAlignment.Center;
+                text.FontSize = 20;
+                text.TextAlignment = TextAlignment.Center;
+                text.TextWrapping = TextWrapping.Wrap;
+                grid.Children.Add(text);
+                ContentPanel.Children.Add(grid);
             }
         }
         private void pickSong()

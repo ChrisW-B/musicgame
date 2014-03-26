@@ -102,7 +102,7 @@
             <Grid>
                 <MediaElement x:Name="player"/>
                 <telerikPrimitives:RadBusyIndicator AnimationStyle="AnimationStyle2"
-				Content="0" ContentPosition="Top"                             
+				Content="0" ContentPosition="Top"                       
 				IsRunning="False"
 				x:Name="timer" Style="{StaticResource RadBusyIndicatorStyle1}" RenderTransformOrigin="0.5,0.5">
                     <telerikPrimitives:RadBusyIndicator.RenderTransform>
