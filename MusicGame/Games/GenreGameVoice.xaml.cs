@@ -38,12 +38,15 @@ namespace MusicGame
         DispatcherTimer playTime;
         Grid grid;
         Grid correctAnsGrid;
+        Grid wrongAnsGrid;
         ProgressBar progBar;
         int roundPoints;
         bool gameOver;
         IsolatedStorageSettings store;
         ObservableCollection<SongData> winningSongList;
         String genre;
+
+        bool openInNokiaMusic = true;
 
         #endregion
         private enum ProgBarStatus
@@ -408,7 +411,7 @@ namespace MusicGame
             }
             return songName;
         }
-        private void wrongAns()
+        async private void wrongAns()
         {
             //handles incorrect answers
 
@@ -422,6 +425,45 @@ namespace MusicGame
                 isRight = false;
                 newBoard();
             }
+            else
+            {
+                await displayWrongAns(AnsVisibility.On);
+                await displayWrongAns(AnsVisibility.Off);
+            }
+        }
+
+        async private Task displayWrongAns(AnsVisibility vis)
+        {
+            if (vis == AnsVisibility.On)
+            {
+                wrongAnsGrid = new Grid();
+
+                /*
+                //add background
+                SolidColorBrush backgroundColor = new SolidColorBrush(Colors.Black);
+                backgroundColor.Opacity = 0;
+                correctAnsGrid.Background = backgroundColor;
+                */
+                //show 'x'
+                Image img = new Image();
+                img.Height = 200;
+                img.Width = 200;
+                BitmapImage btmp = new BitmapImage(new Uri("/Assets/x.png", UriKind.Relative));
+                if (btmp != null)
+                {
+                    img.Source = btmp;
+                    wrongAnsGrid.Children.Add(img);
+                }
+                ContentPanel.Children.Add(wrongAnsGrid);
+                this.ContentPanel.UpdateLayout();
+            }
+            else if (ContentPanel.Children.Contains(wrongAnsGrid))
+            {
+                await Task.Delay(500);
+                wrongAnsGrid.Children.Clear();
+                ContentPanel.Children.Remove(wrongAnsGrid);
+            }
+
         }
         private void correctAns()
         {
@@ -440,7 +482,14 @@ namespace MusicGame
         private void newBoard()
         {
             //clears the current board and creates a new one
-            winningSongList.Add(new SongData() { albumUri = winningSong.Thumb200Uri, points = roundPoints, correct = isRight, seconds = (25 - numTicks), songName = winningSong.Name, uri = winningSong.WebUri });
+            if (openInNokiaMusic)
+            {
+                winningSongList.Add(new SongData() { albumUri = winningSong.Thumb200Uri, points = roundPoints, correct = isRight, seconds = (25 - numTicks), songName = winningSong.Name, uri = winningSong.AppToAppUri });
+            }
+            else
+            {
+                winningSongList.Add(new SongData() { albumUri = winningSong.Thumb200Uri, points = roundPoints, correct = isRight, seconds = (25 - numTicks), songName = winningSong.Name, uri = winningSong.WebUri });
+            }
             toggleClock(TimerStatus.Off);
             lastWinningSong = winningSong;
             if (winningSongList.Count > 5)
@@ -509,13 +558,20 @@ namespace MusicGame
             speaking = false;
             if (result.ResultStatus == SpeechRecognitionUIStatus.Succeeded)
             {
-                yourAnswer.Text = result.RecognitionResult.Text;
+                string antiCensorship = removeProfanityMarks(result.RecognitionResult.Text);
+                yourAnswer.Text = antiCensorship;
             }
             else if (result.ResultStatus == SpeechRecognitionUIStatus.Cancelled)
             {
                 toggleClock(TimerStatus.On);
                 player.Play();
             }
+        }
+        private string removeProfanityMarks(string p)
+        {
+            p = p.Replace("<profanity>", "");
+            p = p.Replace("</profanity>", "");
+            return p;
         }
     }
 }

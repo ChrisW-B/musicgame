@@ -40,6 +40,8 @@ namespace MusicGame
         ProgressBar progBar;
         String genre;
         bool isRight;
+
+        bool openInNokiaMusic = true;
         private enum ProgBarStatus
         {
             On,
@@ -374,7 +376,6 @@ namespace MusicGame
         private void setAlbumArt()
         {
             //sets up the grid of album art
-            albumArtGrid.ItemsSource = null;
             albumArtGrid.ItemsSource = albumArtList;
             albumArtGrid.SetValue(InteractionEffectManager.IsInteractionEnabledProperty, true);
             InteractionEffectManager.AllowedTypes.Add(typeof(RadDataBoundListBoxItem));
@@ -418,7 +419,7 @@ namespace MusicGame
             {
                 if (item.Title != MUSIC_API_KEY)
                 {
-                    if (selected.Prod.Name == item.Prod.Name)
+                    if (selected.Prod.Name == item.Prod.Name && selected.Prod.Duration == item.Prod.Duration)
                     {
                         break;
                     }
@@ -463,7 +464,14 @@ namespace MusicGame
         private void newBoard()
         {
             //clears the current board and creates a new one
-            winningSongList.Add(new SongData() { albumUri = winningSong.Thumb200Uri, points = roundPoints, correct = isRight, seconds = (25 - numTicks), songName = winningSong.Name, uri = winningSong.WebUri });
+            if (openInNokiaMusic)
+            {
+                winningSongList.Add(new SongData() { albumUri = winningSong.Thumb200Uri, points = roundPoints, correct = isRight, seconds = (25 - numTicks), songName = winningSong.Name, uri = winningSong.AppToAppUri });
+            }
+            else
+            {
+                winningSongList.Add(new SongData() { albumUri = winningSong.Thumb200Uri, points = roundPoints, correct = isRight, seconds = (25 - numTicks), songName = winningSong.Name, uri = winningSong.WebUri });
+            }
             toggleClock(TimerStatus.Off);
             lastWinningSong = winningSong;
             if (winningSongList.Count > 5)
@@ -494,9 +502,9 @@ namespace MusicGame
         }
         private void reInitialize()
         {
+            player.Source = null;
             albumArtList = null;
             pickedSongs = null;
-            player.Source = null;
             albumArtList = new ObservableCollection<DataItemViewModel>();
             pickedSongs = new ObservableCollection<Product>();
         }

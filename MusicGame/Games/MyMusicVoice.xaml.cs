@@ -42,11 +42,15 @@ namespace MusicGame
         DispatcherTimer playTime;
         Grid grid;
         Grid correctAnsGrid;
+        Grid wrongAnsGrid;
         Uri prodUri;
+        Uri nokiaMusicUri;
         Uri albumUri;
         bool speaking;
         ObservableCollection<SongData> winningSongList;
         IsolatedStorageSettings store;
+
+        bool openInNokiaMusic = true;
         #endregion
 
         public MyMusicVoice()
@@ -308,6 +312,7 @@ namespace MusicGame
                 if (performersAreArtists(prod.Result.Performers, winningSong.Artist.Name))
                 {
                     prodUri = prod.Result.WebUri;
+                    nokiaMusicUri = prod.Result.AppToAppUri;
                     albumUri = prod.Result.Thumb320Uri;
                     await toggleProgBar(ProgBarStatus.On);
                     Uri songUri = getSongUri(prod);
@@ -461,7 +466,7 @@ namespace MusicGame
             }
             return songName;
         }
-        private void wrongAns()
+        async private void wrongAns()
         {
             roundPoints--;
             points--;
@@ -472,6 +477,39 @@ namespace MusicGame
             {
                 isRight = false;
                 newBoard();
+            }
+            else
+            {
+                await displayWrongAns(AnsVisibility.On);
+                await displayWrongAns(AnsVisibility.Off); 
+            }
+
+        }
+
+        async private Task displayWrongAns(AnsVisibility vis)
+        {
+            if (vis == AnsVisibility.On)
+            {
+                wrongAnsGrid = new Grid();
+
+                //show 'x'
+                Image img = new Image();
+                img.Height = 200;
+                img.Width = 200;
+                BitmapImage btmp = new BitmapImage(new Uri("/Assets/x.png", UriKind.Relative));
+                if (btmp != null)
+                {
+                    img.Source = btmp;
+                    wrongAnsGrid.Children.Add(img);
+                }
+                ContentPanel.Children.Add(wrongAnsGrid);
+                this.ContentPanel.UpdateLayout();
+            }
+            else if (ContentPanel.Children.Contains(wrongAnsGrid))
+            {
+                await Task.Delay(500);
+                wrongAnsGrid.Children.Clear();
+                ContentPanel.Children.Remove(wrongAnsGrid);
             }
 
         }
@@ -494,7 +532,15 @@ namespace MusicGame
         private void newBoard()
         {
             //clears the current board and creates a new one
-            winningSongList.Add(new SongData() { albumUri = albumUri, points = roundPoints, correct = isRight, seconds = 25 - numTicks, songName = winningSong.Name, uri = prodUri });
+            
+            if (openInNokiaMusic)
+            {
+                winningSongList.Add(new SongData() { albumUri = albumUri, points = roundPoints, correct = isRight, seconds = 25 - numTicks, songName = winningSong.Name, uri = nokiaMusicUri });
+            }
+            else
+            {
+                winningSongList.Add(new SongData() { albumUri = albumUri, points = roundPoints, correct = isRight, seconds = 25 - numTicks, songName = winningSong.Name, uri = prodUri });
+            }
             toggleClock(TimerStatus.Off);
             lastWinningSong = winningSong;
 
@@ -566,13 +612,21 @@ namespace MusicGame
             speaking = false;
             if (result.ResultStatus == SpeechRecognitionUIStatus.Succeeded)
             {
-                yourAnswer.Text = result.RecognitionResult.Text;
+                string antiCensorship = removeProfanityMarks(result.RecognitionResult.Text);
+                yourAnswer.Text = antiCensorship;
             }
             else if (result.ResultStatus == SpeechRecognitionUIStatus.Cancelled)
             {
                 toggleClock(TimerStatus.On);
                 player.Play();
             }
+        }
+
+        private string removeProfanityMarks(string p)
+        {
+                p = p.Replace("<profanity>", "");
+                p = p.Replace("</profanity>", "");
+            return p;
         }
     }
 }

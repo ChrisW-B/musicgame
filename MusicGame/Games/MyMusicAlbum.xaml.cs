@@ -44,8 +44,11 @@ namespace MusicGame
         ObservableCollection<SongData> winningSongList;
         IsolatedStorageSettings store;
         Uri prodUri;
+        Uri nokiaMusicUri;
         Uri albumUri;
         bool gameOver;
+
+        bool openInNokiaMusic = true;
         #endregion
         private enum TimerStatus
         {
@@ -310,7 +313,6 @@ namespace MusicGame
         private void setAlbumArt()
         {
             //sets up the grid of album art
-            albumArtGrid.ItemsSource = null;
             albumArtGrid.ItemsSource = albumArtList;
             albumArtGrid.SetValue(InteractionEffectManager.IsInteractionEnabledProperty, true);
             InteractionEffectManager.AllowedTypes.Add(typeof(RadDataBoundListBoxItem));
@@ -379,14 +381,16 @@ namespace MusicGame
         {
             //plays the winning song, unless there is a problem, in which it picks a new winner
             player.Resources.Clear();
-            setAlbumArt();
+            
             ListResponse<MusicItem> result = await getPossibleSong();
             if (result.Result != null && result.Count > 0)
             {
                 Response<Product> prod = await getSongData(result);
                 if (performersAreArtists(prod.Result.Performers, winningSong.Artist.Name))
                 {
+                    setAlbumArt();
                     prodUri = prod.Result.WebUri;
+                    nokiaMusicUri = prod.Result.AppToAppUri;
                     albumUri = prod.Result.Thumb320Uri;
                     await toggleProgBar(ProgBarStatus.On);
                     Uri songUri = getSongUri(prod);
@@ -539,7 +543,14 @@ namespace MusicGame
         private void newBoard()
         {
             //clears the current board and creates a new one
-            winningSongList.Add(new SongData() { albumUri = albumUri, points = roundPoints, correct = isRight, seconds = 25 - numTicks, songName = winningSong.Name, uri = prodUri });
+            if (openInNokiaMusic)
+            {
+                winningSongList.Add(new SongData() { albumUri = albumUri, points = roundPoints, correct = isRight, seconds = 25 - numTicks, songName = winningSong.Name, uri = nokiaMusicUri });
+            }
+            else
+            {
+                winningSongList.Add(new SongData() { albumUri = albumUri, points = roundPoints, correct = isRight, seconds = 25 - numTicks, songName = winningSong.Name, uri = prodUri });
+            }
             toggleClock(TimerStatus.Off);
             lastWinningSong = winningSong;
             if (winningSongList.Count > 5)
@@ -598,7 +609,7 @@ namespace MusicGame
             {
                 if (item.Title != MUSIC_API_KEY)
                 {
-                    if (selected.Song.Name == item.Song.Name)
+                    if (selected.Song.Name == item.Song.Name && selected.Song.Artist == item.Song.Artist)
                     {
                         break;
                     }

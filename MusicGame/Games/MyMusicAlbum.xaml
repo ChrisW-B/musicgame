@@ -104,7 +104,7 @@
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="0,0,0,0">
             <MediaElement x:Name="player" AutoPlay="True"/>
             <Grid Margin="0,0,0,0">
-                <telerikPrimitives:RadDataBoundListBox x:Name="albumArtGrid" ScrollViewer.VerticalScrollBarVisibility="Disabled" Margin="0,0,0,0"
+                <telerikPrimitives:RadDataBoundListBox x:Name="albumArtGrid" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" Margin="0,0,0,0"
                                                   IsItemReorderEnabled="True"
                                                        ItemTemplate="{StaticResource DataBoundListBoxItemTemplate}" Height="640" EmptyContent="" ItemAddedAnimationInterval="0:0:0.05" VerticalAlignment="Top">
                     <telerikPrimitives:RadDataBoundListBox.VirtualizationStrategyDefinition>
