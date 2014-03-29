@@ -107,6 +107,7 @@
     <Compile Include="Games\GenreGameVoice.xaml.cs">
       <DependentUpon>GenreGameVoice.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Games\SongPicks.cs" />
     <Compile Include="GenreSelect.xaml.cs">
       <DependentUpon>GenreSelect.xaml</DependentUpon>
     </Compile>

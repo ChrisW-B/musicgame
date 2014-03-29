@@ -32,7 +32,7 @@ namespace MusicGame
         private bool isRight;
         private SongCollection allSongs;
         private ObservableCollection<DataItemViewModel> albumArtList;
-        private ObservableCollection<Song> pickedSongs;
+        private ObservableCollection<SongPicks> pickedSongs;
         private Song winningSong;
         private Song lastWinningSong;
         private DispatcherTimer playTime;
@@ -85,7 +85,7 @@ namespace MusicGame
         private void initialize()
         {
             gameOver = true;
-            pickedSongs = new ObservableCollection<Song>();
+            pickedSongs = new ObservableCollection<SongPicks>();
             winningSongList = new ObservableCollection<SongData>();
             store = IsolatedStorageSettings.ApplicationSettings;
             albumArtList = new ObservableCollection<DataItemViewModel>();
@@ -304,7 +304,7 @@ namespace MusicGame
             {
                 if (!prevSelected(song))
                 {
-                    pickedSongs.Add(song);
+                    pickedSongs.Add(new SongPicks {song =song, tried = false });
                     DataItemViewModel album = new DataItemViewModel();
                     album.ImageSource = albumArt;
                     album.Song = song;
@@ -331,8 +331,25 @@ namespace MusicGame
 
         private void pickWinner()
         {
+            int numAlreadyDone = 0;
+            foreach (SongPicks picks in pickedSongs)
+            {
+                if (picks.tried == true)
+                {
+                    numAlreadyDone++;
+                }
+            }
+            if (numAlreadyDone == 12)
+            {
+                //already tried each song, try picking new ones
+                pickSongList();
+                return;
+            }
             //picks a random song from the selected songs to be the winner
-            winningSong = pickedSongs[rand.Next(pickedSongs.Count)];
+            int randNum = rand.Next(pickedSongs.Count);
+            pickedSongs[randNum].tried = true;
+            winningSong = pickedSongs[randNum].song;
+
             if (alreadyPicked(winningSong))
             {
                 pickWinner();
@@ -358,9 +375,9 @@ namespace MusicGame
         private bool prevSelected(Song song)
         {
             //check whether a album has already been picked (so no repeats)
-            foreach (Song pickedSong in pickedSongs)
+            foreach (SongPicks pickedSong in pickedSongs)
             {
-                if (song.Album == pickedSong.Album)
+                if (song.Album == pickedSong.song.Album)
                 {
                     return true;
                 }
@@ -399,7 +416,7 @@ namespace MusicGame
             if (result.Result != null && result.Count > 0)
             {
                 Response<Product> prod = await getSongData(result);
-                if (performersAreArtists(prod.Result.Performers, winningSong.Artist.Name))
+                if (performersAreArtists(prod, winningSong))
                 {
                     setAlbumArt();
                     prodUri = prod.Result.WebUri;
@@ -423,16 +440,12 @@ namespace MusicGame
             }
         }
 
-        private bool performersAreArtists(Nokia.Music.Types.Artist[] artists, string p)
+        private bool performersAreArtists(Response<Product> nokMusic, Song winner)
         {
             //checks whether the performer from NokMixRadio is the same as the artist from XboxMusicLib
-            p = p.ToLowerInvariant();
-            foreach (Nokia.Music.Types.Artist nok in artists)
+            if (nokMusic.Result.Name.ToUpperInvariant() == winner.Name.ToUpperInvariant() && winner.Artist.Name.ToUpperInvariant() == nokMusic.Result.Performers[0].Name.ToUpperInvariant())
             {
-                if ((nok.Name.ToLowerInvariant() == p) || (("the " + nok.Name.ToLowerInvariant()) == p))
-                {
-                    return true;
-                }
+                return true;
             }
             return false;
         }
@@ -624,7 +637,7 @@ namespace MusicGame
             albumArtList = null;
             pickedSongs = null;
             albumArtList = new ObservableCollection<DataItemViewModel>();
-            pickedSongs = new ObservableCollection<Song>();
+            pickedSongs = new ObservableCollection<SongPicks>();
         }
 
         private void removeFromList(DataItemViewModel selected)

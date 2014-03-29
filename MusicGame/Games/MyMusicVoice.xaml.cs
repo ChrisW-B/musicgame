@@ -313,7 +313,7 @@ namespace MusicGame
             if (result.Result != null && result.Count > 0)
             {
                 Response<Product> prod = await getSongData(result);
-                if (performersAreArtists(prod.Result.Performers, winningSong.Artist.Name))
+                if (performersAreArtists(prod, winningSong))
                 {
                     prodUri = prod.Result.WebUri;
                     nokiaMusicUri = prod.Result.AppToAppUri;
@@ -346,16 +346,12 @@ namespace MusicGame
             await playForLimit();
         }
 
-        private bool performersAreArtists(Nokia.Music.Types.Artist[] artists, string p)
+        private bool performersAreArtists(Response<Product> nokMusic, Song winner)
         {
             //checks whether the performer from NokMixRadio is the same as the artist from XboxMusicLib
-            p = p.ToLowerInvariant();
-            foreach (Nokia.Music.Types.Artist nok in artists)
+            if (nokMusic.Result.Name.ToUpperInvariant() == winner.Name.ToUpperInvariant() && winner.Artist.Name.ToUpperInvariant() == nokMusic.Result.Performers[0].Name.ToUpperInvariant())
             {
-                if ((nok.Name.ToLowerInvariant() == p) || (("the " + nok.Name.ToLowerInvariant()) == p))
-                {
-                    return true;
-                }
+                return true;
             }
             return false;
         }
