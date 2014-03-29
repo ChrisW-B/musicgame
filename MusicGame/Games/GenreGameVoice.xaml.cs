@@ -1,75 +1,78 @@
-﻿using System;
+﻿using Microsoft.Phone.Controls;
+using Nokia.Music;
+using Nokia.Music.Types;
+using System;
+using System.Collections.ObjectModel;
+using System.IO.IsolatedStorage;
 using System.Linq;
-using System.Net;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Navigation;
-using Microsoft.Phone.Controls;
-using Windows.Phone.Speech.Recognition;
-using System.Collections.ObjectModel;
-using System.Windows.Threading;
-using Nokia.Music;
-using System.Threading.Tasks;
-using System.Windows.Media;
-using Nokia.Music.Types;
 using System.Windows.Input;
-using System.IO.IsolatedStorage;
-using Telerik.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Threading;
+using Windows.Phone.Speech.Recognition;
 
 namespace MusicGame
 {
     public partial class GenreGameVoice : PhoneApplicationPage
     {
-
         #region global variables
-        const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
-        MusicClient client;
-        Random rand;
-        ObservableCollection<Product> topSongs;
-        Product winningSong;
-        Product lastWinningSong;
-        int timesPlayed;
-        int points;
-        int numTimesWrong;
-        int numTicks;
-        bool speaking;
-        bool isRight;
-        DispatcherTimer playTime;
-        Grid grid;
-        Grid correctAnsGrid;
-        Grid wrongAnsGrid;
-        ProgressBar progBar;
-        int roundPoints;
-        bool gameOver;
-        IsolatedStorageSettings store;
-        ObservableCollection<SongData> winningSongList;
-        String genre;
 
-        bool openInNokiaMusic = true;
+        private const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
+        private MusicClient client;
+        private Random rand;
+        private ObservableCollection<Product> topSongs;
+        private Product winningSong;
+        private Product lastWinningSong;
+        private int timesPlayed;
+        private int points;
+        private int numTimesWrong;
+        private int numTicks;
+        private bool speaking;
+        private bool isRight;
+        private DispatcherTimer playTime;
+        private Grid grid;
+        private Grid correctAnsGrid;
+        private Grid wrongAnsGrid;
+        private ProgressBar progBar;
+        private int roundPoints;
+        private bool gameOver;
+        private IsolatedStorageSettings store;
+        private ObservableCollection<SongData> winningSongList;
+        private String genre;
 
-        #endregion
+        private bool openInNokiaMusic = true;
+
+        #endregion global variables
+
         private enum ProgBarStatus
         {
             On,
             Off
         }
+
         private enum TimerStatus
         {
             On,
             Off,
             Pause
         }
+
         private enum AnsVisibility
         {
             On,
             Off
         }
+
         public GenreGameVoice()
         {
             InitializeComponent();
             initialize();
         }
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
@@ -90,6 +93,7 @@ namespace MusicGame
             nokGenre.Name = name;
             return nokGenre;
         }
+
         //gets the list of top songs from a genre
         async private void setupGenre(Genre nokGenre)
         {
@@ -106,8 +110,6 @@ namespace MusicGame
                 topSongs.Add(prod);
             }
         }
-
-
 
         //Get library and other setup
         private void initialize()
@@ -171,6 +173,7 @@ namespace MusicGame
                 }
             }
         }
+
         async private Task displayData(bool win, AnsVisibility vis, Product song)
         {
             if (vis == AnsVisibility.On)
@@ -245,6 +248,7 @@ namespace MusicGame
                 progBar.IsIndeterminate = false;
             }
         }
+
         private BitmapImage getBitmap(Product prod)
         {
             return new BitmapImage(prod.Thumb320Uri);
@@ -266,6 +270,7 @@ namespace MusicGame
                 playWinner();
             }
         }
+
         private bool alreadyPicked(Product winningSong)
         {
             foreach (SongData song in winningSongList)
@@ -277,6 +282,7 @@ namespace MusicGame
             }
             return false;
         }
+
         async private void playWinner()
         {
             await toggleProgBar(ProgBarStatus.On);
@@ -287,16 +293,18 @@ namespace MusicGame
             player.MediaOpened += player_MediaOpened;
             player.MediaFailed += player_MediaFailed;
         }
-        async void player_MediaFailed(object sender, ExceptionRoutedEventArgs e)
+
+        private async void player_MediaFailed(object sender, ExceptionRoutedEventArgs e)
         {
             await toggleProgBar(ProgBarStatus.Off);
-
         }
-        async void player_MediaOpened(object sender, RoutedEventArgs e)
+
+        private async void player_MediaOpened(object sender, RoutedEventArgs e)
         {
             await toggleProgBar(ProgBarStatus.Off);
             playForLimit();
         }
+
         private bool performersAreArtists(Nokia.Music.Types.Artist[] artists, string p)
         {
             //checks whether the performer from NokMixRadio is the same as the artist from XboxMusicLib
@@ -307,10 +315,10 @@ namespace MusicGame
                 {
                     return true;
                 }
-
             }
             return false;
         }
+
         private void playForLimit()
         {
             numTimesWrong = 0;
@@ -341,7 +349,7 @@ namespace MusicGame
             }
         }
 
-        void playTime_Tick(object sender, EventArgs e)
+        private void playTime_Tick(object sender, EventArgs e)
         {
             timer.Content = numTicks;
             if (numTicks % 5 == 0 && numTicks != 25)
@@ -371,6 +379,7 @@ namespace MusicGame
                 wrongAns();
             }
         }
+
         private string removePunctuation(string songName)
         {
             while (songName.Contains('.'))
@@ -411,6 +420,7 @@ namespace MusicGame
             }
             return songName;
         }
+
         async private void wrongAns()
         {
             //handles incorrect answers
@@ -463,8 +473,8 @@ namespace MusicGame
                 wrongAnsGrid.Children.Clear();
                 ContentPanel.Children.Remove(wrongAnsGrid);
             }
-
         }
+
         private void correctAns()
         {
             //handles correct answers
@@ -473,12 +483,14 @@ namespace MusicGame
             points += (5 - timesPlayed);
             newBoard();
         }
+
         private void timeOut()
         {
             isRight = false;
             numTicks = 0;
             newBoard();
         }
+
         private void newBoard()
         {
             //clears the current board and creates a new one
@@ -515,23 +527,28 @@ namespace MusicGame
                 pickWinner();
             }
         }
+
         private void reInitialize()
         {
             player.Source = null;
         }
+
         private void giveUp_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
             newBoard();
         }
+
         private void go_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
             checkAnswer(yourAnswer.Text);
         }
+
         private void yourAnswer_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
             player.Pause();
             toggleClock(TimerStatus.Pause);
         }
+
         private void yourAnswer_LostFocus(object sender, RoutedEventArgs e)
         {
             if (!speaking)
@@ -540,6 +557,7 @@ namespace MusicGame
                 toggleClock(TimerStatus.On);
             }
         }
+
         private void yourAnswer_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -548,6 +566,7 @@ namespace MusicGame
                 checkAnswer(yourAnswer.Text);
             }
         }
+
         private async void RadTextBox_ActionButtonTap(object sender, EventArgs e)
         {
             speaking = true;
@@ -567,6 +586,7 @@ namespace MusicGame
                 player.Play();
             }
         }
+
         private string removeProfanityMarks(string p)
         {
             p = p.Replace("<profanity>", "");

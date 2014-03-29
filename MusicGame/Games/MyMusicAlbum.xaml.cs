@@ -22,40 +22,44 @@ namespace MusicGame
     public partial class MyMusicAlbum : PhoneApplicationPage
     {
         #region global variables
-        const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
-        int numTimesWrong;
-        int points;
-        int timesPlayed;
-        int numTicks;
-        int roundPoints;
-        bool isRight;
-        SongCollection allSongs;
-        ObservableCollection<DataItemViewModel> albumArtList;
-        ObservableCollection<Song> pickedSongs;
-        Song winningSong;
-        Song lastWinningSong;
-        DispatcherTimer playTime;
-        Random rand;
-        MusicClient client;
-        MediaLibrary songs;
-        ProgressBar progBar;
-        Grid grid;
-        Grid correctAnsGrid;
-        ObservableCollection<SongData> winningSongList;
-        IsolatedStorageSettings store;
-        Uri prodUri;
-        Uri nokiaMusicUri;
-        Uri albumUri;
-        bool gameOver;
 
-        bool openInNokiaMusic = true;
-        #endregion
+        private const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
+        private int numTimesWrong;
+        private int points;
+        private int timesPlayed;
+        private int numTicks;
+        private int roundPoints;
+        private bool isRight;
+        private SongCollection allSongs;
+        private ObservableCollection<DataItemViewModel> albumArtList;
+        private ObservableCollection<Song> pickedSongs;
+        private Song winningSong;
+        private Song lastWinningSong;
+        private DispatcherTimer playTime;
+        private Random rand;
+        private MusicClient client;
+        private MediaLibrary songs;
+        private ProgressBar progBar;
+        private Grid grid;
+        private Grid correctAnsGrid;
+        private ObservableCollection<SongData> winningSongList;
+        private IsolatedStorageSettings store;
+        private Uri prodUri;
+        private Uri nokiaMusicUri;
+        private Uri albumUri;
+        private bool gameOver;
+
+        private bool openInNokiaMusic = true;
+
+        #endregion global variables
+
         private enum TimerStatus
         {
             On,
             Off,
             Pause
         }
+
         // Constructor
         public MyMusicAlbum()
         {
@@ -64,16 +68,19 @@ namespace MusicGame
             setUpSongList();
             pickSongList();
         }
+
         private enum ProgBarStatus
         {
             On,
             Off
         }
+
         private enum AnsVisibility
         {
             On,
             Off
         }
+
         //Get library and other setup
         private void initialize()
         {
@@ -93,6 +100,7 @@ namespace MusicGame
             points = 0;
             roundPoints = 0;
         }
+
         private void setUpSongList()
         {
             allSongs = songs.Songs;
@@ -101,7 +109,6 @@ namespace MusicGame
         //check to make sure we have data
         private Task<bool> isConnected()
         {
-
             var completed = new TaskCompletionSource<bool>();
             WebClient client = new WebClient();
             client.DownloadStringCompleted += (s, e) =>
@@ -118,6 +125,7 @@ namespace MusicGame
             client.DownloadStringAsync(new Uri("http://www.google.com/"));
             return completed.Task;
         }
+
         async private void checkConnectionAndRun()
         {
             await toggleProgBar(ProgBarStatus.On);
@@ -182,6 +190,7 @@ namespace MusicGame
                 }
             }
         }
+
         async private Task displayData(bool win, AnsVisibility vis, Song song)
         {
             if (vis == AnsVisibility.On)
@@ -285,6 +294,7 @@ namespace MusicGame
                 ContentPanel.Children.Add(grid);
             }
         }
+
         private void pickSong()
         {
             //picks an idividual song from the list of all songs in library
@@ -310,6 +320,7 @@ namespace MusicGame
                 pickSong();
             }
         }
+
         private void setAlbumArt()
         {
             //sets up the grid of album art
@@ -317,6 +328,7 @@ namespace MusicGame
             albumArtGrid.SetValue(InteractionEffectManager.IsInteractionEnabledProperty, true);
             InteractionEffectManager.AllowedTypes.Add(typeof(RadDataBoundListBoxItem));
         }
+
         private void pickWinner()
         {
             //picks a random song from the selected songs to be the winner
@@ -355,6 +367,7 @@ namespace MusicGame
             }
             return false;
         }
+
         private BitmapImage getBitmap(Song song)
         {
             //get the album covers to add to the list
@@ -381,7 +394,7 @@ namespace MusicGame
         {
             //plays the winning song, unless there is a problem, in which it picks a new winner
             player.Resources.Clear();
-            
+
             ListResponse<MusicItem> result = await getPossibleSong();
             if (result.Result != null && result.Count > 0)
             {
@@ -409,6 +422,7 @@ namespace MusicGame
                 pickWinner();
             }
         }
+
         private bool performersAreArtists(Nokia.Music.Types.Artist[] artists, string p)
         {
             //checks whether the performer from NokMixRadio is the same as the artist from XboxMusicLib
@@ -419,18 +433,20 @@ namespace MusicGame
                 {
                     return true;
                 }
-
             }
             return false;
         }
-        async void player_MediaFailed(object sender, ExceptionRoutedEventArgs e)
+
+        private async void player_MediaFailed(object sender, ExceptionRoutedEventArgs e)
         {
             await toggleProgBar(ProgBarStatus.Off);
         }
-        async void player_MediaOpened(object sender, RoutedEventArgs e)
+
+        private async void player_MediaOpened(object sender, RoutedEventArgs e)
         {
             await playForLimit();
         }
+
         async private Task playForLimit()
         {
             numTimesWrong = 0;
@@ -462,7 +478,7 @@ namespace MusicGame
             }
         }
 
-        void playTime_Tick(object sender, EventArgs e)
+        private void playTime_Tick(object sender, EventArgs e)
         {
             timer.Content = numTicks;
             if (numTicks % 5 == 0 && numTicks != 25)
@@ -482,10 +498,12 @@ namespace MusicGame
         {
             return client.GetTrackSampleUri(prod.Result.Id);
         }
+
         async private Task<Response<Product>> getSongData(ListResponse<MusicItem> result)
         {
             return await client.GetProductAsync(result[0].Id);
         }
+
         async private Task<ListResponse<MusicItem>> getPossibleSong()
         {
             return await client.SearchAsync(winningSong.Name + " " + winningSong.Artist.Name, Category.Track, null, null, null, 0, 1);
@@ -513,6 +531,7 @@ namespace MusicGame
                 return;
             }
         }
+
         private void wrongAns()
         {
             //handles incorrect answers
@@ -526,6 +545,7 @@ namespace MusicGame
                 newBoard();
             }
         }
+
         private void correctAns()
         {
             //handles correct answers
@@ -534,12 +554,14 @@ namespace MusicGame
             points += (5 - timesPlayed);
             newBoard();
         }
+
         private void timeOut()
         {
             isRight = false;
             roundPoints = 0;
             newBoard();
         }
+
         private void newBoard()
         {
             //clears the current board and creates a new one
@@ -579,6 +601,7 @@ namespace MusicGame
                 pickSongList();
             }
         }
+
         private System.Windows.Media.Imaging.BitmapImage getAlbumArt(Stream stream)
         {
             if (stream == null)
@@ -594,6 +617,7 @@ namespace MusicGame
                 return albumArt;
             }
         }
+
         private void reInitialize()
         {
             player.Source = null;
@@ -602,6 +626,7 @@ namespace MusicGame
             albumArtList = new ObservableCollection<DataItemViewModel>();
             pickedSongs = new ObservableCollection<Song>();
         }
+
         private void removeFromList(DataItemViewModel selected)
         {
             int i = 0;

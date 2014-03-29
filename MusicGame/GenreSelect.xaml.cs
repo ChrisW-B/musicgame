@@ -1,30 +1,28 @@
 ﻿using Microsoft.Phone.Controls;
 using Nokia.Music;
-using Nokia.Music.Tasks;
 using Nokia.Music.Types;
 using System;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
-using System.Windows.Threading;
 using Telerik.Windows.Controls;
 using Windows.System;
-
 
 namespace MusicGame
 {
     public partial class GenreSelect : PhoneApplicationPage
     {
-        const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
-        bool isVoiceGame;
+        private const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
+        private bool isVoiceGame;
+
         public GenreSelect()
         {
             InitializeComponent();
             checkConnectionAndRun();
         }
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
@@ -41,7 +39,7 @@ namespace MusicGame
                 }
             }
         }
- 
+
         async private void checkConnectionAndRun()
         {
             ProgressBar progBar = new ProgressBar();
@@ -63,6 +61,7 @@ namespace MusicGame
             }
             ContentPanel.Children.Remove(progBar);
         }
+
         private Task<bool> isConnected()
         {
             var completed = new TaskCompletionSource<bool>();
@@ -98,7 +97,7 @@ namespace MusicGame
             }
         }
 
-        void button_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void button_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             Button button = (sender as Button);
             String buttonName = button.Content.ToString();
@@ -112,6 +111,5 @@ namespace MusicGame
                 NavigationService.Navigate(new Uri("/Games/GenreGameAlbum.xaml?genre=" + buttonTag + "&name=" + buttonName, UriKind.Relative));
             }
         }
-
     }
 }

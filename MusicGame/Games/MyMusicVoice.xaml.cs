@@ -1,57 +1,57 @@
-﻿using System;
+﻿using Microsoft.Phone.Controls;
+using Microsoft.Xna.Framework.Media;
+using Nokia.Music;
+using Nokia.Music.Types;
+using System;
+using System.Collections.ObjectModel;
+using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.Phone.Controls;
-using Windows.Phone.Speech.Recognition;
-using Microsoft.Xna.Framework.Media;
-using System.Collections.ObjectModel;
-using System.Windows.Threading;
-using Nokia.Music;
-using System.Threading.Tasks;
-using Telerik.Windows.Controls;
-using Windows.System;
-using System.Windows.Media;
-using Nokia.Music.Types;
 using System.Windows.Input;
-using System.IO.IsolatedStorage;
-using System.Threading;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using Telerik.Windows.Controls;
+using Windows.Phone.Speech.Recognition;
+using Windows.System;
 
 namespace MusicGame
 {
     public partial class MyMusicVoice : PhoneApplicationPage
     {
-
         #region global variables
-        const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
-        int numTimesWrong;
-        int points;
-        int roundPoints;
-        int timesPlayed;
-        int numTicks;
-        bool gameOver;
-        bool isRight;
-        Song winningSong;
-        Song lastWinningSong;
-        Random rand;
-        MusicClient client;
-        MediaLibrary songs;
-        ProgressBar progBar;
-        DispatcherTimer playTime;
-        Grid grid;
-        Grid correctAnsGrid;
-        Grid wrongAnsGrid;
-        Uri prodUri;
-        Uri nokiaMusicUri;
-        Uri albumUri;
-        bool speaking;
-        ObservableCollection<SongData> winningSongList;
-        IsolatedStorageSettings store;
 
-        bool openInNokiaMusic = true;
-        #endregion
+        private const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
+        private int numTimesWrong;
+        private int points;
+        private int roundPoints;
+        private int timesPlayed;
+        private int numTicks;
+        private bool gameOver;
+        private bool isRight;
+        private Song winningSong;
+        private Song lastWinningSong;
+        private Random rand;
+        private MusicClient client;
+        private MediaLibrary songs;
+        private ProgressBar progBar;
+        private DispatcherTimer playTime;
+        private Grid grid;
+        private Grid correctAnsGrid;
+        private Grid wrongAnsGrid;
+        private Uri prodUri;
+        private Uri nokiaMusicUri;
+        private Uri albumUri;
+        private bool speaking;
+        private ObservableCollection<SongData> winningSongList;
+        private IsolatedStorageSettings store;
+
+        private bool openInNokiaMusic = true;
+
+        #endregion global variables
 
         public MyMusicVoice()
         {
@@ -60,18 +60,19 @@ namespace MusicGame
             checkConnectionAndRun();
         }
 
-
         private enum ProgBarStatus
         {
             On,
             Off
         }
+
         private enum TimerStatus
         {
             On,
             Off,
             Pause
         }
+
         private enum AnsVisibility
         {
             On,
@@ -96,10 +97,10 @@ namespace MusicGame
             points = 0;
             roundPoints = 0;
         }
+
         //check to make sure we have data
         private Task<bool> isConnected()
         {
-
             var completed = new TaskCompletionSource<bool>();
             WebClient client = new WebClient();
             client.DownloadStringCompleted += (s, e) =>
@@ -116,6 +117,7 @@ namespace MusicGame
             client.DownloadStringAsync(new Uri("http://www.google.com/"));
             return completed.Task;
         }
+
         async private Task checkConnectionAndRun()
         {
             await toggleProgBar(ProgBarStatus.On);
@@ -134,6 +136,7 @@ namespace MusicGame
             }
             await toggleProgBar(ProgBarStatus.Off);
         }
+
         async private Task toggleProgBar(ProgBarStatus stat)
         {
             if (winningSongList.Count == 0)
@@ -178,6 +181,7 @@ namespace MusicGame
                 }
             }
         }
+
         async private Task displayData(bool win, AnsVisibility vis, Song song)
         {
             if (vis == AnsVisibility.On)
@@ -285,6 +289,7 @@ namespace MusicGame
                 ContentPanel.Children.Add(grid);
             }
         }
+
         private bool alreadyPicked(Song winningSong)
         {
             foreach (SongData song in winningSongList)
@@ -296,7 +301,6 @@ namespace MusicGame
             }
             return false;
         }
-
 
         //get and play a sample of a song
         //first ensuring that it is the right song
@@ -331,14 +335,17 @@ namespace MusicGame
                 pickWinner();
             }
         }
-        async void player_MediaFailed(object sender, ExceptionRoutedEventArgs e)
+
+        private async void player_MediaFailed(object sender, ExceptionRoutedEventArgs e)
         {
             await toggleProgBar(ProgBarStatus.Off);
         }
-        async void player_MediaOpened(object sender, RoutedEventArgs e)
+
+        private async void player_MediaOpened(object sender, RoutedEventArgs e)
         {
-           await playForLimit();
+            await playForLimit();
         }
+
         private bool performersAreArtists(Nokia.Music.Types.Artist[] artists, string p)
         {
             //checks whether the performer from NokMixRadio is the same as the artist from XboxMusicLib
@@ -349,10 +356,10 @@ namespace MusicGame
                 {
                     return true;
                 }
-
             }
             return false;
         }
+
         async private Task playForLimit()
         {
             numTimesWrong = 0;
@@ -384,7 +391,7 @@ namespace MusicGame
             }
         }
 
-        void playTime_Tick(object sender, EventArgs e)
+        private void playTime_Tick(object sender, EventArgs e)
         {
             timer.Content = numTicks;
             if (numTicks % 5 == 0 && numTicks != 25)
@@ -398,15 +405,18 @@ namespace MusicGame
             }
             numTicks--;
         }
+
         //breakup nokia music requests
         private Uri getSongUri(Response<Product> prod)
         {
             return client.GetTrackSampleUri(prod.Result.Id);
         }
+
         async private Task<Response<Product>> getSongData(ListResponse<MusicItem> result)
         {
             return await client.GetProductAsync(result[0].Id);
         }
+
         async private Task<ListResponse<MusicItem>> getPossibleSong()
         {
             return await client.SearchAsync(winningSong.Name + " " + winningSong.Artist.Name, Category.Track, null, null, null, 0, 1);
@@ -426,6 +436,7 @@ namespace MusicGame
                 wrongAns();
             }
         }
+
         private string removePunctuation(string songName)
         {
             while (songName.Contains('.'))
@@ -466,6 +477,7 @@ namespace MusicGame
             }
             return songName;
         }
+
         async private void wrongAns()
         {
             roundPoints--;
@@ -481,9 +493,8 @@ namespace MusicGame
             else
             {
                 await displayWrongAns(AnsVisibility.On);
-                await displayWrongAns(AnsVisibility.Off); 
+                await displayWrongAns(AnsVisibility.Off);
             }
-
         }
 
         async private Task displayWrongAns(AnsVisibility vis)
@@ -511,8 +522,8 @@ namespace MusicGame
                 wrongAnsGrid.Children.Clear();
                 ContentPanel.Children.Remove(wrongAnsGrid);
             }
-
         }
+
         private void correctAns()
         {
             //handles correct answers
@@ -522,17 +533,17 @@ namespace MusicGame
             newBoard();
         }
 
-
         private void timeOut()
         {
             isRight = false;
             numTicks = 0;
             newBoard();
         }
+
         private void newBoard()
         {
             //clears the current board and creates a new one
-            
+
             if (openInNokiaMusic)
             {
                 winningSongList.Add(new SongData() { albumUri = albumUri, points = roundPoints, correct = isRight, seconds = 25 - numTicks, songName = winningSong.Name, uri = nokiaMusicUri });
@@ -567,6 +578,7 @@ namespace MusicGame
                 pickWinner();
             }
         }
+
         private void reInitialize()
         {
             player.Source = null;
@@ -577,15 +589,18 @@ namespace MusicGame
             isRight = false;
             newBoard();
         }
+
         private void go_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
             checkAnswer(yourAnswer.Text);
         }
+
         private void yourAnswer_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
             player.Pause();
             toggleClock(TimerStatus.Pause);
         }
+
         private void yourAnswer_LostFocus(object sender, RoutedEventArgs e)
         {
             if (!speaking)
@@ -594,6 +609,7 @@ namespace MusicGame
                 toggleClock(TimerStatus.On);
             }
         }
+
         private void yourAnswer_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -602,6 +618,7 @@ namespace MusicGame
                 checkAnswer(yourAnswer.Text);
             }
         }
+
         private async void RadTextBox_ActionButtonTap(object sender, EventArgs e)
         {
             speaking = true;
@@ -624,8 +641,8 @@ namespace MusicGame
 
         private string removeProfanityMarks(string p)
         {
-                p = p.Replace("<profanity>", "");
-                p = p.Replace("</profanity>", "");
+            p = p.Replace("<profanity>", "");
+            p = p.Replace("</profanity>", "");
             return p;
         }
     }

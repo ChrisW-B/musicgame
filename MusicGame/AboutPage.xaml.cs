@@ -1,6 +1,6 @@
-﻿using System.Windows;
-using Microsoft.Phone.Controls;
+﻿using Microsoft.Phone.Controls;
 using Microsoft.Phone.Tasks;
+using System.Windows;
 
 namespace MusicGame
 {
@@ -15,7 +15,6 @@ namespace MusicGame
         {
             MarketplaceReviewTask marketplaceReviewTask = new MarketplaceReviewTask();
             marketplaceReviewTask.Show();
-
         }
     }
 }

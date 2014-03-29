@@ -12,13 +12,13 @@ namespace MusicGame
 {
     public partial class ResultsPage : PhoneApplicationPage
     {
-        IsolatedStorageSettings store;
-        ObservableCollection<SongData> results;
-        ObservableCollection<SongDataWithPicture> source;
-        const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
-        MusicClient client;
-        string gameStyle;
-        string gameGenre;
+        private IsolatedStorageSettings store;
+        private ObservableCollection<SongData> results;
+        private ObservableCollection<SongDataWithPicture> source;
+        private const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
+        private MusicClient client;
+        private string gameStyle;
+        private string gameGenre;
 
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
         {
@@ -35,7 +35,6 @@ namespace MusicGame
         public ResultsPage()
         {
             InitializeComponent();
-            
         }
 
         private void getResults()
@@ -200,7 +199,6 @@ namespace MusicGame
             }
         }
 
-
         private BitmapImage getAlbumArt(Uri uri)
         {
             //downloads album art for results
@@ -215,6 +213,7 @@ namespace MusicGame
             //opens result in browser
             await Launcher.LaunchUriAsync(((sender as StackPanel).DataContext as SongDataWithPicture).uri);
         }
+
         protected override void OnBackKeyPress(System.ComponentModel.CancelEventArgs e)
         {
             //override the back button to prevent it from going into the game again
@@ -225,6 +224,5 @@ namespace MusicGame
             }
             NavigationService.GoBack();
         }
-
     }
 }

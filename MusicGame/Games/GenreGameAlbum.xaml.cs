@@ -1,64 +1,67 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Navigation;
-using Microsoft.Phone.Controls;
+﻿using Microsoft.Phone.Controls;
+using MusicGame.ViewModels;
 using Nokia.Music;
 using Nokia.Music.Types;
+using System;
 using System.Collections.ObjectModel;
-using MusicGame.ViewModels;
-using Telerik.Windows.Controls;
-using System.Windows.Media.Imaging;
-using System.Threading.Tasks;
-using System.Windows.Threading;
-using System.Windows.Media;
 using System.IO.IsolatedStorage;
-using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Threading;
+using Telerik.Windows.Controls;
 
 namespace MusicGame
 {
     public partial class GenreGameAlbum : PhoneApplicationPage
     {
-        MusicClient client;
-        Random rand;
-        ObservableCollection<Product> topSongs;
-        ObservableCollection<Product> pickedSongs;
-        ObservableCollection<DataItemViewModel> albumArtList;
-        ObservableCollection<SongData> winningSongList;
-        bool gameOver;
-        int roundPoints;
-        IsolatedStorageSettings store;
-        Product winningSong;
-        Product lastWinningSong;
-        int timesPlayed;
-        int points;
-        int numTimesWrong;
-        int numTicks;
-        DispatcherTimer playTime;
-        Grid grid;
-        Grid correctAnsGrid;
-        ProgressBar progBar;
-        String genre;
-        bool isRight;
+        private MusicClient client;
+        private Random rand;
+        private ObservableCollection<Product> topSongs;
+        private ObservableCollection<Product> pickedSongs;
+        private ObservableCollection<DataItemViewModel> albumArtList;
+        private ObservableCollection<SongData> winningSongList;
+        private bool gameOver;
+        private int roundPoints;
+        private IsolatedStorageSettings store;
+        private Product winningSong;
+        private Product lastWinningSong;
+        private int timesPlayed;
+        private int points;
+        private int numTimesWrong;
+        private int numTicks;
+        private DispatcherTimer playTime;
+        private Grid grid;
+        private Grid correctAnsGrid;
+        private ProgressBar progBar;
+        private String genre;
+        private bool isRight;
 
-        bool openInNokiaMusic = true;
+        private bool openInNokiaMusic = true;
+
         private enum ProgBarStatus
         {
             On,
             Off
         }
+
         private enum TimerStatus
         {
             On,
             Off,
             Pause
         }
+
         private enum AnsVisibility
         {
             On,
             Off
         }
-        const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
+
+        private const string MUSIC_API_KEY = "987006b749496680a0af01edd5be6493";
 
         public GenreGameAlbum()
         {
@@ -83,7 +86,6 @@ namespace MusicGame
             points = 0;
             roundPoints = 0;
             gameOver = true;
-
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -168,6 +170,7 @@ namespace MusicGame
                 }
             }
         }
+
         async private Task displayData(bool win, AnsVisibility vis, Product song)
         {
             if (vis == AnsVisibility.On)
@@ -270,6 +273,7 @@ namespace MusicGame
             }
             return false;
         }
+
         async private void playWinner()
         {
             await toggleProgBar(ProgBarStatus.On);
@@ -281,15 +285,18 @@ namespace MusicGame
             player.MediaOpened += player_MediaOpened;
             player.MediaFailed += player_MediaFailed;
         }
-        async void player_MediaFailed(object sender, ExceptionRoutedEventArgs e)
+
+        private async void player_MediaFailed(object sender, ExceptionRoutedEventArgs e)
         {
             await toggleProgBar(ProgBarStatus.Off);
         }
-        async void player_MediaOpened(object sender, RoutedEventArgs e)
+
+        private async void player_MediaOpened(object sender, RoutedEventArgs e)
         {
             await toggleProgBar(ProgBarStatus.Off);
             playForLimit();
         }
+
         private void playForLimit()
         {
             numTimesWrong = 0;
@@ -320,7 +327,7 @@ namespace MusicGame
             }
         }
 
-        void playTime_Tick(object sender, EventArgs e)
+        private void playTime_Tick(object sender, EventArgs e)
         {
             timer.Content = numTicks;
             if (numTicks % 5 == 0 && numTicks != 25)
@@ -335,7 +342,6 @@ namespace MusicGame
             numTicks--;
         }
 
-
         //Get a list of 12 songs with album art
         private void pickSongs()
         {
@@ -344,6 +350,7 @@ namespace MusicGame
                 pickSong();
             }
         }
+
         private void pickSong()
         {
             //picks an idividual song from the list of all songs in library
@@ -369,10 +376,12 @@ namespace MusicGame
                 pickSong();
             }
         }
+
         private BitmapImage getBitmap(Product prod)
         {
             return new BitmapImage(prod.Thumb320Uri);
         }
+
         private void setAlbumArt()
         {
             //sets up the grid of album art
@@ -380,6 +389,7 @@ namespace MusicGame
             albumArtGrid.SetValue(InteractionEffectManager.IsInteractionEnabledProperty, true);
             InteractionEffectManager.AllowedTypes.Add(typeof(RadDataBoundListBoxItem));
         }
+
         private bool onList(Product prod)
         {
             foreach (Product picked in pickedSongs)
@@ -434,6 +444,7 @@ namespace MusicGame
             wrong.Title = MUSIC_API_KEY;
             albumArtList.Insert(i, wrong);
         }
+
         private void wrongAns()
         {
             //handles incorrect answers
@@ -447,6 +458,7 @@ namespace MusicGame
                 newBoard();
             }
         }
+
         private void correctAns()
         {
             //handles correct answers
@@ -455,12 +467,14 @@ namespace MusicGame
             points += (5 - timesPlayed);
             newBoard();
         }
+
         private void timeOut()
         {
             isRight = false;
             numTicks = 0;
             newBoard();
         }
+
         private void newBoard()
         {
             //clears the current board and creates a new one
@@ -500,6 +514,7 @@ namespace MusicGame
                 pickWinner();
             }
         }
+
         private void reInitialize()
         {
             player.Source = null;
@@ -509,5 +524,4 @@ namespace MusicGame
             pickedSongs = new ObservableCollection<Product>();
         }
     }
-
 }

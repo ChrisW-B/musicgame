@@ -1,22 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using Microsoft.Phone.Controls;
+using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Navigation;
-using Microsoft.Phone.Controls;
-using Microsoft.Phone.Shell;
 
 namespace MusicGame
 {
     public partial class CategorySelect : PhoneApplicationPage
     {
-        bool isVoiceGame;
+        private bool isVoiceGame;
+
         public CategorySelect()
         {
             InitializeComponent();
         }
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
@@ -45,6 +42,7 @@ namespace MusicGame
                 NavigationService.Navigate(new Uri("/Games/MyMusicAlbum.xaml", UriKind.Relative));
             }
         }
+
         private void genreGame_Click(object sender, RoutedEventArgs e)
         {
             if (isVoiceGame)

@@ -1,16 +1,12 @@
-﻿using System;
+﻿using Microsoft.Phone.Controls;
+using Microsoft.Phone.Shell;
+using MusicGame.Resources;
+using System;
 using System.Diagnostics;
-using System.Resources;
 using System.Windows;
 using System.Windows.Markup;
 using System.Windows.Navigation;
-using Microsoft.Phone.Controls;
-using Microsoft.Phone.Shell;
-using MusicGame.Resources;
 using Telerik.Windows.Controls;
-using System.Threading.Tasks;
-using System.Net;
-using Windows.System;
 
 namespace MusicGame
 {
@@ -58,7 +54,6 @@ namespace MusicGame
                 // and consume battery power when the user is not using the phone.
                 PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
             }
-
         }
 
         // Code to execute when the application is launching (eg, from Start)
@@ -172,7 +167,7 @@ namespace MusicGame
             }
         }
 
-        #endregion
+        #endregion Phone application initialization
 
         // Initialize the app's font and flow direction as defined in its localized resource strings.
         //

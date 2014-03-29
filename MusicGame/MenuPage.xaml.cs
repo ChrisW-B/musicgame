@@ -1,22 +1,18 @@
 ﻿using Microsoft.Phone.Controls;
 using Microsoft.Xna.Framework.Media;
 using System;
-using System.Collections.ObjectModel;
 using System.IO;
-using System.Net;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Telerik.Windows.Controls;
-using Windows.System;
 
 namespace MusicGame
 {
     public partial class MenuPage : PhoneApplicationPage
     {
-        AlbumCollection albums;
+        private AlbumCollection albums;
+
         public MenuPage()
         {
             InitializeComponent();
@@ -51,7 +47,7 @@ namespace MusicGame
 
         private Image getAlbumArt()
         {
-            WriteableBitmap album = new WriteableBitmap(500,500);
+            WriteableBitmap album = new WriteableBitmap(500, 500);
             album.SetSource(getRandomAlbumArt());
             album.Invalidate();
             Image finished = new Image() { Source = album };
@@ -73,7 +69,6 @@ namespace MusicGame
             }
             return art;
         }
-
 
         private void scores_Click(object sender, RoutedEventArgs e)
         {
