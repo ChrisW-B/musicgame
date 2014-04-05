@@ -7,384 +7,365 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:System="clr-namespace:System;assembly=mscorlib">
 
-  <!-- Common colors -->
+    <!-- Common colors -->
 
-<!-- 100 percent White -->
-<Color x:Key="PhoneForegroundColor">#FFFFFFFF</Color>
+    <!-- 100 percent White -->
+    <Color x:Key="PhoneForegroundColor">#FFFFFFFF</Color>
 
-<!-- 100 percent Black -->
-<Color x:Key="PhoneBackgroundColor">#FF000000</Color>
+    <!-- 100 percent Black -->
+    <Color x:Key="PhoneBackgroundColor">#FF000000</Color>
 
-<!-- 100 percent Black -->
-<Color x:Key="PhoneContrastForegroundColor">#FF000000</Color>
+    <!-- 100 percent Black -->
+    <Color x:Key="PhoneContrastForegroundColor">#FF000000</Color>
 
-<!-- 100 percent White -->
-<Color x:Key="PhoneContrastBackgroundColor">#FFFFFFFF</Color>
+    <!-- 100 percent White -->
+    <Color x:Key="PhoneContrastBackgroundColor">#FFFFFFFF</Color>
 
-<!-- 40 percent White -->
-<Color x:Key="PhoneDisabledColor">#66FFFFFF</Color>
+    <!-- 40 percent White -->
+    <Color x:Key="PhoneDisabledColor">#66FFFFFF</Color>
 
-<!-- 10 percent White -->
-<Color x:Key="PhoneProgressBarBackgroundColor">#19FFFFFF</Color>
+    <!-- 10 percent White -->
+    <Color x:Key="PhoneProgressBarBackgroundColor">#19FFFFFF</Color>
 
+    <!-- TextBox colors -->
 
-<!-- TextBox colors -->
+    <!-- 100 percent Black -->
+    <Color x:Key="PhoneTextCaretColor">#FF000000</Color>
 
-<!-- 100 percent Black -->
-<Color x:Key="PhoneTextCaretColor">#FF000000</Color>
+    <!-- 75 percent White -->
+    <Color x:Key="PhoneTextBoxColor">#BFFFFFFF</Color>
 
-<!-- 75 percent White -->
-<Color x:Key="PhoneTextBoxColor">#BFFFFFFF</Color>
+    <!-- 100 percent Black -->
+    <Color x:Key="PhoneTextBoxForegroundColor">#FF000000</Color>
 
-<!-- 100 percent Black -->
-<Color x:Key="PhoneTextBoxForegroundColor">#FF000000</Color>
+    <!-- 100 percent White -->
+    <Color x:Key="PhoneTextBoxEditBackgroundColor">#FFFFFFFF</Color>
 
-<!-- 100 percent White -->
-<Color x:Key="PhoneTextBoxEditBackgroundColor">#FFFFFFFF</Color>
+    <!-- 47 percent percent Black -->
+    <Color x:Key="PhoneTextBoxReadOnlyColor">#77000000</Color>
 
-<!-- 47 percent percent Black -->
-<Color x:Key="PhoneTextBoxReadOnlyColor">#77000000</Color>
+    <!-- 60 percent White -->
+    <Color x:Key="PhoneSubtleColor">#99FFFFFF</Color>
 
-<!-- 60 percent White -->
-<Color x:Key="PhoneSubtleColor">#99FFFFFF</Color>
+    <!-- 100 percent White -->
+    <Color x:Key="PhoneTextBoxSelectionForegroundColor">#FFFFFFFF</Color>
 
-<!-- 100 percent White -->
-<Color x:Key="PhoneTextBoxSelectionForegroundColor">#FFFFFFFF</Color>
+    <!-- ButtonBase colors -->
+    <Color x:Key="PhoneButtonBasePressedForegroundColor">#FFFFFFFF</Color>
 
+    <!--Windows Phone 8 Text Colors-->
 
-<!-- ButtonBase colors -->
-<Color x:Key="PhoneButtonBasePressedForegroundColor">#FFFFFFFF</Color>
+    <!-- 100 percent White -->
+    <Color x:Key="PhoneTextHighContrastColor">#FFFFFFFF</Color>
 
+    <!-- 60 percent White -->
+    <Color x:Key="PhoneTextMidContrastColor">#99FFFFFF</Color>
 
-<!--Windows Phone 8 Text Colors-->
+    <!-- 45 percent White -->
+    <Color x:Key="PhoneTextLowContrastColor">#73FFFFFF</Color>
 
-<!-- 100 percent White -->
-<Color x:Key="PhoneTextHighContrastColor">#FFFFFFFF</Color>
+    <!-- Special colors -->
 
-<!-- 60 percent White -->
-<Color x:Key="PhoneTextMidContrastColor">#99FFFFFF</Color>
+    <!-- 66 percent transparent -->
+    <Color x:Key="PhoneSemitransparentColor">#AA000000</Color>
 
-<!-- 45 percent White -->
-<Color x:Key="PhoneTextLowContrastColor">#73FFFFFF</Color>
+    <!-- System chrome color -->
+    <Color x:Key="PhoneChromeColor">#FF1F1F1F</Color>
 
+    <!-- Deprecated colors -->
 
-<!-- Special colors -->
+    <!-- 20 percent White -->
+    <Color x:Key="PhoneInactiveColor">#33FFFFFF</Color>
 
-<!-- 66 percent transparent -->
-<Color x:Key="PhoneSemitransparentColor">#AA000000</Color>
+    <!-- Inverse inactive background color -->
+    <Color x:Key="PhoneInverseInactiveColor">#FFCCCCCC</Color>
 
-<!-- System chrome color -->
-<Color x:Key="PhoneChromeColor">#FF1F1F1F</Color>
+    <!-- Inverse background color -->
+    <Color x:Key="PhoneInverseBackgroundColor">#FFFFFFFF</Color>
 
+    <!-- 75 percent White -->
+    <Color x:Key="PhoneBorderColor">#BFFFFFFF</Color>
 
+    <!-- Visibility -->
+    <Visibility x:Key="PhoneDarkThemeVisibility">Visible</Visibility>
+    <Visibility x:Key="PhoneLightThemeVisibility">Collapsed</Visibility>
 
-<!-- Deprecated colors -->
+    <!-- Opacity -->
+    <System:Double x:Key="PhoneDarkThemeOpacity">1</System:Double>
+    <System:Double x:Key="PhoneLightThemeOpacity">0</System:Double>
+    <System:Double x:Key="PhonePivotUnselectedItemOpacity">0.4</System:Double>
 
-<!-- 20 percent White -->
-<Color x:Key="PhoneInactiveColor">#33FFFFFF</Color>
+    <!-- Resolution-specific resources -->
 
-<!-- Inverse inactive background color -->
-<Color x:Key="PhoneInverseInactiveColor">#FFCCCCCC</Color>
+    <!--54pt-->
+    <System:Double x:Key="PivotHeaderFontSize">72</System:Double>
 
-<!-- Inverse background color -->
-<Color x:Key="PhoneInverseBackgroundColor">#FFFFFFFF</Color>
+    <Thickness x:Key="PivotItemMargin">12,28,12,0</Thickness>
 
-<!-- 75 percent White -->
-<Color x:Key="PhoneBorderColor">#BFFFFFFF</Color>
+    <SolidColorBrush x:Key="PhoneForegroundBrush" Color="{StaticResource PhoneForegroundColor}" />
 
+    <SolidColorBrush x:Key="PhoneBackgroundBrush" Color="{StaticResource PhoneBackgroundColor}" />
 
+    <SolidColorBrush x:Key="PhoneContrastForegroundBrush" Color="{StaticResource PhoneContrastForegroundColor}" />
 
-<!-- Visibility -->
-<Visibility x:Key="PhoneDarkThemeVisibility">Visible</Visibility>
-<Visibility x:Key="PhoneLightThemeVisibility">Collapsed</Visibility>
+    <SolidColorBrush x:Key="PhoneContrastBackgroundBrush" Color="{StaticResource PhoneContrastBackgroundColor}" />
 
+    <SolidColorBrush x:Key="PhoneTextCaretBrush" Color="{StaticResource PhoneTextCaretColor}" />
 
+    <SolidColorBrush x:Key="PhoneTextBoxBrush" Color="{StaticResource PhoneTextBoxColor}" />
 
-<!-- Opacity -->
-<System:Double x:Key="PhoneDarkThemeOpacity">1</System:Double>
-<System:Double x:Key="PhoneLightThemeOpacity">0</System:Double>
-<System:Double x:Key="PhonePivotUnselectedItemOpacity">0.4</System:Double>
+    <SolidColorBrush x:Key="PhoneTextBoxForegroundBrush" Color="{StaticResource PhoneTextBoxForegroundColor}" />
 
-<!-- Resolution-specific resources -->
+    <SolidColorBrush x:Key="PhoneTextBoxEditBackgroundBrush" Color="{StaticResource PhoneTextBoxEditBackgroundColor}" />
 
-<!--54pt-->
-<System:Double x:Key="PivotHeaderFontSize">72</System:Double>
+    <SolidColorBrush x:Key="PhoneTextBoxEditBorderBrush" Color="{StaticResource PhoneAccentColor}" />
 
-<Thickness x:Key="PivotItemMargin">12,28,12,0</Thickness>
+    <SolidColorBrush x:Key="PhoneTextBoxReadOnlyBrush" Color="{StaticResource PhoneTextBoxReadOnlyColor}" />
 
-<SolidColorBrush x:Key="PhoneForegroundBrush" Color="{StaticResource PhoneForegroundColor}"/>
+    <SolidColorBrush x:Key="PhoneTextBoxSelectionForegroundBrush" Color="{StaticResource PhoneTextBoxSelectionForegroundColor}" />
 
-<SolidColorBrush x:Key="PhoneBackgroundBrush" Color="{StaticResource PhoneBackgroundColor}"/>
+    <SolidColorBrush x:Key="PhoneSubtleBrush" Color="{StaticResource PhoneSubtleColor}" />
 
-<SolidColorBrush x:Key="PhoneContrastForegroundBrush" Color="{StaticResource PhoneContrastForegroundColor}"/>
+    <SolidColorBrush x:Key="PhoneButtonBasePressedForegroundBrush" Color="{StaticResource PhoneButtonBasePressedForegroundColor}" />
 
-<SolidColorBrush x:Key="PhoneContrastBackgroundBrush" Color="{StaticResource PhoneContrastBackgroundColor}"/>
+    <SolidColorBrush x:Key="PhoneRadioCheckBoxBrush" Color="Transparent" />
 
-<SolidColorBrush x:Key="PhoneTextCaretBrush" Color="{StaticResource PhoneTextCaretColor}"/>
+    <SolidColorBrush x:Key="PhoneRadioCheckBoxBorderBrush" Color="{StaticResource PhoneForegroundColor}" />
 
-<SolidColorBrush x:Key="PhoneTextBoxBrush" Color="{StaticResource PhoneTextBoxColor}"/>
+    <SolidColorBrush x:Key="PhoneRadioCheckBoxCheckBrush" Color="{StaticResource PhoneForegroundColor}" />
 
-<SolidColorBrush x:Key="PhoneTextBoxForegroundBrush" Color="{StaticResource PhoneTextBoxForegroundColor}"/>
+    <SolidColorBrush x:Key="PhoneRadioCheckBoxPressedBrush" Color="{StaticResource PhoneAccentColor}" />
 
-<SolidColorBrush x:Key="PhoneTextBoxEditBackgroundBrush" Color="{StaticResource PhoneTextBoxEditBackgroundColor}"/>
+    <SolidColorBrush x:Key="PhoneDisabledBrush" Color="{StaticResource PhoneDisabledColor}" />
 
-<SolidColorBrush x:Key="PhoneTextBoxEditBorderBrush" Color="{StaticResource PhoneAccentColor}"/>
+    <SolidColorBrush x:Key="TransparentBrush" Color="Transparent" />
 
-<SolidColorBrush x:Key="PhoneTextBoxReadOnlyBrush" Color="{StaticResource PhoneTextBoxReadOnlyColor}"/>
+    <SolidColorBrush x:Key="PhoneSemitransparentBrush" Color="{StaticResource PhoneSemitransparentColor}" />
 
-<SolidColorBrush x:Key="PhoneTextBoxSelectionForegroundBrush" Color="{StaticResource PhoneTextBoxSelectionForegroundColor}"/>
+    <SolidColorBrush x:Key="PhoneChromeBrush" Color="{StaticResource PhoneChromeColor}" />
 
-<SolidColorBrush x:Key="PhoneSubtleBrush" Color="{StaticResource PhoneSubtleColor}"/>
+    <SolidColorBrush x:Key="PhoneAccentBrush" Color="{StaticResource PhoneAccentColor}" />
 
-<SolidColorBrush x:Key="PhoneButtonBasePressedForegroundBrush" Color="{StaticResource PhoneButtonBasePressedForegroundColor}"/>
+    <SolidColorBrush x:Key="PhoneProgressBarBackgroundBrush" Color="{StaticResource PhoneProgressBarBackgroundColor}" />
 
-<SolidColorBrush x:Key="PhoneRadioCheckBoxBrush" Color="Transparent"/>
+    <!--Windows Phone 8 Text brushes-->
 
-<SolidColorBrush x:Key="PhoneRadioCheckBoxBorderBrush" Color="{StaticResource PhoneForegroundColor}"/>
+    <SolidColorBrush x:Key="PhoneTextHighContrastBrush" Color="{StaticResource PhoneTextHighContrastColor}" />
 
-<SolidColorBrush x:Key="PhoneRadioCheckBoxCheckBrush" Color="{StaticResource PhoneForegroundColor}"/>
+    <SolidColorBrush x:Key="PhoneTextMidContrastBrush" Color="{StaticResource PhoneTextMidContrastColor}" />
 
-<SolidColorBrush x:Key="PhoneRadioCheckBoxPressedBrush" Color="{StaticResource PhoneAccentColor}"/>
+    <SolidColorBrush x:Key="PhoneTextLowContrastBrush" Color="{StaticResource PhoneTextLowContrastColor}" />
 
-<SolidColorBrush x:Key="PhoneDisabledBrush" Color="{StaticResource PhoneDisabledColor}"/>
+    <!-- Deprecated brushes -->
 
-<SolidColorBrush x:Key="TransparentBrush" Color="Transparent"/>
+    <SolidColorBrush x:Key="PhoneInactiveBrush" Color="{StaticResource PhoneInactiveColor}" />
 
-<SolidColorBrush x:Key="PhoneSemitransparentBrush" Color="{StaticResource PhoneSemitransparentColor}"/>
+    <SolidColorBrush x:Key="PhoneInverseInactiveBrush" Color="{StaticResource PhoneInverseInactiveColor}" />
 
-<SolidColorBrush x:Key="PhoneChromeBrush" Color="{StaticResource PhoneChromeColor}"/>
+    <SolidColorBrush x:Key="PhoneInverseBackgroundBrush" Color="{StaticResource PhoneInverseBackgroundColor}" />
 
-<SolidColorBrush x:Key="PhoneAccentBrush" Color="{StaticResource PhoneAccentColor}"/>
+    <SolidColorBrush x:Key="PhoneBorderBrush" Color="{StaticResource PhoneBorderColor}" />
 
-<SolidColorBrush x:Key="PhoneProgressBarBackgroundBrush" Color="{StaticResource PhoneProgressBarBackgroundColor}"/>
+    <!-- Touch Target area -->
+    <Thickness x:Key="PhoneTouchTargetOverhang">12</Thickness>
 
+    <!-- Touch Target area for CheckBox / RadioButton -->
+    <Thickness x:Key="PhoneTouchTargetLargeOverhang">12,20</Thickness>
 
-<!--Windows Phone 8 Text brushes-->
+    <!-- Default margins for non-touch items -->
+    <Thickness x:Key="PhoneHorizontalMargin">12,0</Thickness>
+    <Thickness x:Key="PhoneVerticalMargin">0,12</Thickness>
+    <Thickness x:Key="PhoneMargin">12</Thickness>
 
-<SolidColorBrush x:Key="PhoneTextHighContrastBrush" Color="{StaticResource PhoneTextHighContrastColor}"/>
+    <!-- Inner margins for text controls -->
+    <Thickness x:Key="PhoneTextBoxInnerMargin">1,2</Thickness>
+    <Thickness x:Key="PhonePasswordBoxInnerMargin">3,2</Thickness>
 
-<SolidColorBrush x:Key="PhoneTextMidContrastBrush" Color="{StaticResource PhoneTextMidContrastColor}"/>
+    <!-- Default border size-->
+    <Thickness x:Key="PhoneBorderThickness">3</Thickness>
 
-<SolidColorBrush x:Key="PhoneTextLowContrastBrush" Color="{StaticResource PhoneTextLowContrastColor}"/>
+    <!-- Default stroke for RadioButton -->
+    <System:Double x:Key="PhoneStrokeThickness">3</System:Double>
 
+    <!-- Font names -->
+    <FontFamily x:Key="PhoneFontFamilyNormal">Segoe WP</FontFamily>
+    <FontFamily x:Key="PhoneFontFamilyLight">Segoe WP Light</FontFamily>
+    <FontFamily x:Key="PhoneFontFamilySemiLight">Segoe WP SemiLight</FontFamily>
+    <FontFamily x:Key="PhoneFontFamilySemiBold">Segoe WP Semibold</FontFamily>
+    <FontFamily x:Key="PhoneFontFamilyBold">Segoe WP Bold</FontFamily>
 
-<!-- Deprecated brushes -->
+    <!-- Font sizes -->
 
-<SolidColorBrush x:Key="PhoneInactiveBrush" Color="{StaticResource PhoneInactiveColor}"/>
+    <!--14pt-->
+    <System:Double x:Key="PhoneFontSizeSmall">18.667</System:Double>
+    <!--15pt-->
+    <System:Double x:Key="PhoneFontSizeNormal">20</System:Double>
+    <!--17pt-->
+    <System:Double x:Key="PhoneFontSizeMedium">22.667</System:Double>
+    <!--19pt-->
+    <System:Double x:Key="PhoneFontSizeMediumLarge">25.333</System:Double>
+    <!--24pt-->
+    <System:Double x:Key="PhoneFontSizeLarge">32</System:Double>
+    <!--32pt-->
+    <System:Double x:Key="PhoneFontSizeExtraLarge">42.667</System:Double>
+    <!--54pt-->
+    <System:Double x:Key="PhoneFontSizeExtraExtraLarge">72</System:Double>
+    <!--140pt-->
+    <System:Double x:Key="PhoneFontSizeHuge">186.667</System:Double>
 
-<SolidColorBrush x:Key="PhoneInverseInactiveBrush" Color="{StaticResource PhoneInverseInactiveColor}"/>
+    <!-- TextBlock styles -->
 
-<SolidColorBrush x:Key="PhoneInverseBackgroundBrush" Color="{StaticResource PhoneInverseBackgroundColor}"/>
+    <Style x:Key="PhoneTextBlockBase" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilyNormal}" />
+        <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeNormal}" />
+        <Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}" />
+        <Setter Property="Margin" Value="{StaticResource PhoneHorizontalMargin}" />
+    </Style>
 
-<SolidColorBrush x:Key="PhoneBorderBrush" Color="{StaticResource PhoneBorderColor}"/>
+    <Style x:Key="PhoneTextNormalStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}" />
 
+    <Style x:Key="PhoneTextSubtleStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
+        <Setter Property="Foreground" Value="{StaticResource PhoneSubtleBrush}" />
+    </Style>
 
-<!-- Touch Target area -->
-<Thickness x:Key="PhoneTouchTargetOverhang">12</Thickness>
+    <Style x:Key="PhoneTextTitle1Style" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
+        <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiLight}" />
+        <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeExtraExtraLarge}" />
+    </Style>
 
-<!-- Touch Target area for CheckBox / RadioButton -->
-<Thickness x:Key="PhoneTouchTargetLargeOverhang">12,20</Thickness>
+    <Style x:Key="PhoneTextTitle2Style" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
+        <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiLight}" />
+        <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeLarge}" />
+    </Style>
 
-<!-- Default margins for non-touch items -->
-<Thickness x:Key="PhoneHorizontalMargin">12,0</Thickness>
-<Thickness x:Key="PhoneVerticalMargin">0,12</Thickness>
-<Thickness x:Key="PhoneMargin">12</Thickness>
+    <Style x:Key="PhoneTextTitle3Style" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
+        <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiLight}" />
+        <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeMedium}" />
+    </Style>
 
-<!-- Inner margins for text controls -->
-<Thickness x:Key="PhoneTextBoxInnerMargin">1,2</Thickness>
-<Thickness x:Key="PhonePasswordBoxInnerMargin">3,2</Thickness>
+    <Style x:Key="PhoneTextExtraLargeStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
+        <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiLight}" />
+        <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeExtraLarge}" />
+    </Style>
 
-<!-- Default border size-->
-<Thickness x:Key="PhoneBorderThickness">3</Thickness>
+    <Style x:Key="PhoneTextGroupHeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
+        <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiLight}" />
+        <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeLarge}" />
+        <Setter Property="Foreground" Value="{StaticResource PhoneSubtleBrush}" />
+    </Style>
 
-<!-- Default stroke for RadioButton -->
-<System:Double x:Key="PhoneStrokeThickness">3</System:Double>
+    <Style x:Key="PhoneTextLargeStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
+        <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiLight}" />
+        <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeLarge}" />
+    </Style>
 
-<!-- Font names -->
-<FontFamily x:Key="PhoneFontFamilyNormal">Segoe WP</FontFamily>
-<FontFamily x:Key="PhoneFontFamilyLight">Segoe WP Light</FontFamily>
-<FontFamily x:Key="PhoneFontFamilySemiLight">Segoe WP SemiLight</FontFamily>
-<FontFamily x:Key="PhoneFontFamilySemiBold">Segoe WP Semibold</FontFamily>
-<FontFamily x:Key="PhoneFontFamilyBold">Segoe WP Bold</FontFamily>
+    <Style x:Key="PhoneTextSmallStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
+        <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeSmall}" />
+        <Setter Property="Foreground" Value="{StaticResource PhoneSubtleBrush}" />
+    </Style>
 
-<!-- Font sizes -->
+    <Style x:Key="PhoneTextContrastStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
+        <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiBold}" />
+        <Setter Property="Foreground" Value="{StaticResource PhoneContrastForegroundBrush}" />
+    </Style>
 
-<!--14pt-->
-<System:Double x:Key="PhoneFontSizeSmall">18.667</System:Double>
-<!--15pt-->
-<System:Double x:Key="PhoneFontSizeNormal">20</System:Double>
-<!--17pt-->
-<System:Double x:Key="PhoneFontSizeMedium">22.667</System:Double>
-<!--19pt-->
-<System:Double x:Key="PhoneFontSizeMediumLarge">25.333</System:Double>
-<!--24pt-->
-<System:Double x:Key="PhoneFontSizeLarge">32</System:Double>
-<!--32pt-->
-<System:Double x:Key="PhoneFontSizeExtraLarge">42.667</System:Double>
-<!--54pt-->
-<System:Double x:Key="PhoneFontSizeExtraExtraLarge">72</System:Double>
-<!--140pt-->
-<System:Double x:Key="PhoneFontSizeHuge">186.667</System:Double>
+    <Style x:Key="PhoneTextAccentStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
+        <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiBold}" />
+        <Setter Property="Foreground" Value="{StaticResource PhoneAccentBrush}" />
+    </Style>
 
+    <Style x:Key="PhoneTextHugeStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
+        <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilyLight}" />
+        <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeHuge}" />
+    </Style>
 
-<!-- TextBlock styles -->
+    <!-- Panorama -->
 
-<Style x:Key="PhoneTextBlockBase" TargetType="TextBlock">
-  <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilyNormal}"/>
-  <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeNormal}"/>
-  <Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
-  <Setter Property="Margin" Value="{StaticResource PhoneHorizontalMargin}"/>
-</Style>
+    <System:Double x:Key="PanoramaItemCharacterSpacing">-35</System:Double>
 
-<Style x:Key="PhoneTextNormalStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}" />
-  
-<Style x:Key="PhoneTextSubtleStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
-  <Setter Property="Foreground" Value="{StaticResource PhoneSubtleBrush}"/>
-</Style>
+    <!--50pt-->
+    <System:Double x:Key="PanoramaItemHeaderFontSize">66</System:Double>
 
-<Style x:Key="PhoneTextTitle1Style" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
-  <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiLight}"/>
-  <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeExtraExtraLarge}"/>
-</Style>
+    <Style x:Key="PanoramaItemHeaderTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiLight}" />
+        <Setter Property="FontSize" Value="{StaticResource PanoramaItemHeaderFontSize}" />
+        <Setter Property="CharacterSpacing" Value="{StaticResource PanoramaItemCharacterSpacing}" />
+    </Style>
 
-<Style x:Key="PhoneTextTitle2Style" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
-  <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiLight}"/>
-  <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeLarge}"/>
-</Style>
+    <!-- Pivot -->
 
-<Style x:Key="PhoneTextTitle3Style" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
-  <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiLight}"/>
-  <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeMedium}"/>
-</Style>
+    <!--17pt-->
+    <System:Double x:Key="PivotTitleFontSize">22.667</System:Double>
 
-<Style x:Key="PhoneTextExtraLargeStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
-  <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiLight}"/>
-  <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeExtraLarge}"/>
-</Style>
+    <Style x:Key="PivotTitleStyle" TargetType="ContentControl">
+        <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiBold}" />
+        <Setter Property="FontSize" Value="{StaticResource PivotTitleFontSize}" />
+    </Style>
 
-<Style x:Key="PhoneTextGroupHeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
-  <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiLight}"/>
-  <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeLarge}"/>
-  <Setter Property="Foreground" Value="{StaticResource PhoneSubtleBrush}"/>
-</Style>
+    <!-- LongListSelector -->
 
-<Style x:Key="PhoneTextLargeStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
-  <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiLight}"/>
-  <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeLarge}"/>
-</Style>
+    <!-- GroupHeader -->
 
-<Style x:Key="PhoneTextSmallStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
-  <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeSmall}"/>
-  <Setter Property="Foreground" Value="{StaticResource PhoneSubtleBrush}"/>
-</Style>
+    <!-- 22pt -->
+    <System:Double x:Key="LongListSelectorGroupHeaderFontSize">29.333</System:Double>
 
-<Style x:Key="PhoneTextContrastStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
-  <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiBold}"/>
-  <Setter Property="Foreground" Value="{StaticResource PhoneContrastForegroundBrush}"/>
-</Style>
+    <!-- 32pt -->
+    <System:Double x:Key="LongListSelectorGroupHeaderLetterTileFontSize">42.667</System:Double>
 
-<Style x:Key="PhoneTextAccentStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
-  <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiBold}"/>
-  <Setter Property="Foreground" Value="{StaticResource PhoneAccentBrush}"/>
-</Style>
+    <Style x:Key="LongListSelectorGroupHeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
+        <Setter Property="FontSize" Value="{StaticResource LongListSelectorGroupHeaderFontSize}" />
+        <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiLight}" />
+        <Setter Property="Foreground" Value="{StaticResource PhoneAccentBrush}" />
+    </Style>
 
-<Style x:Key="PhoneTextHugeStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
-  <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilyLight}"/>
-  <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeHuge}"/>
-</Style>
+    <Style x:Key="LongListSelectorGroupHeaderLetterTileStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
+        <Setter Property="FontSize" Value="{StaticResource LongListSelectorGroupHeaderLetterTileFontSize}" />
+        <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiLight}" />
+    </Style>
 
+    <!-- Jumplist -->
 
+    <!-- JumpList Strings -->
 
-<!-- Panorama -->
+    <!-- 20pt -->
+    <System:Double x:Key="JumpListStringFontSize">26.667</System:Double>
 
-<System:Double x:Key="PanoramaItemCharacterSpacing">-35</System:Double>
+    <Style x:Key="JumpListStringStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource JumpListStringFontSize}" />
+        <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiBold}" />
+        <Setter Property="Foreground" Value="{StaticResource PhoneTextHighContrastBrush}" />
+    </Style>
 
-<!--50pt-->
-<System:Double x:Key="PanoramaItemHeaderFontSize">66</System:Double>
+    <!-- JumpList Alphabet Small (for international text) -->
 
-<Style x:Key="PanoramaItemHeaderTextStyle" TargetType="TextBlock">
-  <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiLight}"/>
-  <Setter Property="FontSize" Value="{StaticResource PanoramaItemHeaderFontSize}"/>
-  <Setter Property="CharacterSpacing" Value="{StaticResource PanoramaItemCharacterSpacing}"/>
-</Style>
+    <!-- 28pt -->
+    <System:Double x:Key="JumpListAlphabetSmallFontSize">37.333</System:Double>
 
-<!-- Pivot -->
+    <Style x:Key="JumpListAlphabetSmallStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource JumpListAlphabetSmallFontSize}" />
+        <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilyBold}" />
+        <Setter Property="Foreground" Value="{StaticResource PhoneTextHighContrastBrush}" />
+    </Style>
 
-<!--17pt-->
-<System:Double x:Key="PivotTitleFontSize">22.667</System:Double>
+    <!-- JumpList Alphabet -->
 
-<Style x:Key="PivotTitleStyle" TargetType="ContentControl">
-  <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiBold}"/>
-  <Setter Property="FontSize" Value="{StaticResource PivotTitleFontSize}"/>
-</Style>
+    <!-- 36pt -->
+    <System:Double x:Key="JumpListAlphabetFontSize">48</System:Double>
 
+    <Style x:Key="JumpListAlphabetStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource JumpListAlphabetFontSize}" />
+        <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiBold}" />
+        <Setter Property="Foreground" Value="{StaticResource PhoneTextHighContrastBrush}" />
+    </Style>
 
-<!-- LongListSelector -->
+    <!--EmptyList -->
 
-<!-- GroupHeader -->
+    <!--24pt-->
+    <System:Double x:Key="EmptyListHeaderFontSize">32</System:Double>
 
-<!-- 22pt -->
-<System:Double x:Key="LongListSelectorGroupHeaderFontSize">29.333</System:Double>
-
-<!-- 32pt -->
-<System:Double x:Key="LongListSelectorGroupHeaderLetterTileFontSize">42.667</System:Double>
-
-<Style x:Key="LongListSelectorGroupHeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
-  <Setter Property="FontSize" Value="{StaticResource LongListSelectorGroupHeaderFontSize}"/>
-  <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiLight}"/>
-  <Setter Property="Foreground" Value="{StaticResource PhoneAccentBrush}"/>
-</Style>
-
-<Style x:Key="LongListSelectorGroupHeaderLetterTileStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
-  <Setter Property="FontSize" Value="{StaticResource LongListSelectorGroupHeaderLetterTileFontSize}"/>
-  <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiLight}"/>
-</Style>
-
-<!-- Jumplist -->
-
-<!-- JumpList Strings -->
-
-<!-- 20pt -->
-<System:Double x:Key="JumpListStringFontSize">26.667</System:Double>
-
-<Style x:Key="JumpListStringStyle" TargetType="TextBlock">
-  <Setter Property="FontSize" Value="{StaticResource JumpListStringFontSize}"/>
-  <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiBold}"/>
-  <Setter Property="Foreground" Value="{StaticResource PhoneTextHighContrastBrush}"/>
-</Style>
-
-<!-- JumpList Alphabet Small (for international text) -->
-
-<!-- 28pt -->
-<System:Double x:Key="JumpListAlphabetSmallFontSize">37.333</System:Double>
-
-<Style x:Key="JumpListAlphabetSmallStyle" TargetType="TextBlock">
-  <Setter Property="FontSize" Value="{StaticResource JumpListAlphabetSmallFontSize}"/>
-  <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilyBold}"/>
-  <Setter Property="Foreground" Value="{StaticResource PhoneTextHighContrastBrush}"/>
-</Style>
-
-<!-- JumpList Alphabet -->
-
-<!-- 36pt -->
-<System:Double x:Key="JumpListAlphabetFontSize">48</System:Double>
-
-<Style x:Key="JumpListAlphabetStyle" TargetType="TextBlock">
-  <Setter Property="FontSize" Value="{StaticResource JumpListAlphabetFontSize}"/>
-  <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiBold}"/>
-  <Setter Property="Foreground" Value="{StaticResource PhoneTextHighContrastBrush}"/>
-</Style>
-
-<!--EmptyList -->
-
-<!--24pt-->
-<System:Double x:Key="EmptyListHeaderFontSize">32</System:Double>
-
-<Style x:Key="EmptyListHeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
-  <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiLight}"/>
-  <Setter Property="FontSize" Value="{StaticResource EmptyListHeaderFontSize}"/>
-  <Setter Property="Foreground" Value="{StaticResource PhoneTextMidContrastColor}"/>
-</Style>
+    <Style x:Key="EmptyListHeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneTextBlockBase}">
+        <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiLight}" />
+        <Setter Property="FontSize" Value="{StaticResource EmptyListHeaderFontSize}" />
+        <Setter Property="Foreground" Value="{StaticResource PhoneTextMidContrastColor}" />
+    </Style>
 </ResourceDictionary>
-
-  

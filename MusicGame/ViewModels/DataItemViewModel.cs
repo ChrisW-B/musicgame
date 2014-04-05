@@ -1,17 +1,6 @@
-﻿
-using Microsoft.Xna.Framework.Media;
+﻿using Microsoft.Xna.Framework.Media;
 using Nokia.Music.Types;
-using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Telerik.Windows.Controls;
 
 namespace MusicGame.ViewModels
@@ -121,14 +110,14 @@ namespace MusicGame.ViewModels
             return this.title;
         }
 
-        /// <summary> 
-        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance. 
-        /// </summary> 
-        /// <param name="obj">The <see cref="System.Object"/> to compare with this instance.</param> 
-        /// <returns> 
-        ///   <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.  
+        /// <summary>
+        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
+        /// </summary>
+        /// <param name="obj">The <see cref="System.Object"/> to compare with this instance.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
 
-        /// </returns> 
+        /// </returns>
         public override bool Equals(object obj)
         {
             DataItemViewModel typedObject = obj as DataItemViewModel;
@@ -139,13 +128,13 @@ namespace MusicGame.ViewModels
             return this.Title == typedObject.Title && this.Information == typedObject.Information;
         }
 
-        /// <summary> 
-        /// Returns a hash code for this instance. 
-        /// </summary> 
-        /// <returns> 
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.   
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
 
-        /// </returns> 
+        /// </returns>
         public override int GetHashCode()
         {
             return this.Title.GetHashCode() ^ this.Information.GetHashCode();

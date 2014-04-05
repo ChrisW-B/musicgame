@@ -16,85 +16,84 @@
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Image Grid.RowSpan="2"  Source="/Assets/bg1.png" Stretch="UniformToFill"/>
+        <Image Grid.RowSpan="2"  Source="/Assets/bg1.png" Stretch="UniformToFill" />
         <Grid Grid.RowSpan="2" Background="Black" Opacity=".5"></Grid>
         <!--TitlePanel contains the name of the application and page title-->
         <StackPanel Grid.Row="0" Margin="12,0,0,28">
-            <TextBlock Text="about" Margin="9,-7,0,0" 
+            <TextBlock Text="about" Margin="9,-7,0,0"
                        Foreground="White"
                        FontSize="67"
-                       Style="{StaticResource PhoneTextTitle1Style}"/>
+                       Style="{StaticResource PhoneTextTitle1Style}" />
         </StackPanel>
 
         <!--ContentPanel - place additional content here-->
         <Grid Margin="0,115,0,10" Grid.RowSpan="2">
             <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
                 <StackPanel>
-                    <Button x:Name="review" BorderBrush="White" Foreground="White" Content="Review this app!" Click="review_Click"/>
+                    <Button x:Name="review" BorderBrush="White" Foreground="White" Content="Review this app!" Click="review_Click" />
                 </StackPanel>
                 <ScrollViewer Foreground="White" Margin="0,73,0,0">
                     <RichTextBox HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Left" VerticalAlignment="Top" Background="{x:Null}" Foreground="White">
                         <Paragraph>
-                            <Run Text="What's Spinning? was developed by Chris Barry "/>
+                            <Run Text="What's Spinning? was developed by Chris Barry " />
                         </Paragraph>
                         <Paragraph>
-                            <Run/>
+                            <Run />
                         </Paragraph>
                         <Paragraph>
-                            <Run Text="Contact me on:"/>
+                            <Run Text="Contact me on:" />
                         </Paragraph>
                         <Paragraph>
                             <Hyperlink NavigateUri="mailto:ChrisApps@outlook.com" TargetName="mailTo">
-                                <Run Text="Email"/>
+                                <Run Text="Email" />
                             </Hyperlink>
                         </Paragraph>
                         <Paragraph>
                             <Hyperlink NavigateUri="http://twitter.com/CB_27" TargetName="twitter">
-                                <Run Text="Twitter"/>
+                                <Run Text="Twitter" />
                             </Hyperlink>
                         </Paragraph>
-                        <Paragraph/>
+                        <Paragraph />
                         <Paragraph>
-                            <Run Text="Notes: This app is still under development, and features, design, and gameplay may improve as it is updated"/>
+                            <Run Text="Notes: This app is still under development, and features, design, and gameplay may improve as it is updated" />
                         </Paragraph>
-                        <Paragraph/>
+                        <Paragraph />
                         <Paragraph>
-                            <Run FontSize="30" Text="How the game works:"/>
-                        </Paragraph>
-                        <Paragraph>
-                            <Run Text="What's Spinning? has two modes, Pick an Album and Name that Song. "/>
+                            <Run FontSize="30" Text="How the game works:" />
                         </Paragraph>
                         <Paragraph>
-                            <Run/>
+                            <Run Text="What's Spinning? has two modes, Pick an Album and Name that Song. " />
                         </Paragraph>
                         <Paragraph>
-                            <Run FontSize="30" Text="Pick an Album!"/>
+                            <Run />
                         </Paragraph>
                         <Paragraph>
-                            <Run Text="Pick an Album plays a clip of a song, and asks you to choose from a grid of albums which song it is. The maximum amount of points you can get from an album is 5 points, and this value decreases by 1 every 5 seconds. Guessing wrong will subtract 1 point, and a maximum of 3 incorrect guesses are allowed, after which the song is skipped."/>
+                            <Run FontSize="30" Text="Pick an Album!" />
                         </Paragraph>
                         <Paragraph>
-                            <Run/>
+                            <Run Text="Pick an Album plays a clip of a song, and asks you to choose from a grid of albums which song it is. The maximum amount of points you can get from an album is 5 points, and this value decreases by 1 every 5 seconds. Guessing wrong will subtract 1 point, and a maximum of 3 incorrect guesses are allowed, after which the song is skipped." />
                         </Paragraph>
                         <Paragraph>
-                            <Run FontSize="30" Text="Name that Song!"/>
+                            <Run />
                         </Paragraph>
                         <Paragraph>
-                            <Run Text="Name that Song similarly plays a clip of a song, but instead asks for the name of the song. Tapping either the microphone or textbox to enter a song will pause the music, and allow you to speak or type the song. After speaking, what you said will be entered into the textbox for confirmation, to prevent errors. Press go to submit your answer, or skip if you are unsure."/>
+                            <Run FontSize="30" Text="Name that Song!" />
                         </Paragraph>
                         <Paragraph>
-                            <Run/>
+                            <Run Text="Name that Song similarly plays a clip of a song, but instead asks for the name of the song. Tapping either the microphone or textbox to enter a song will pause the music, and allow you to speak or type the song. After speaking, what you said will be entered into the textbox for confirmation, to prevent errors. Press go to submit your answer, or skip if you are unsure." />
                         </Paragraph>
                         <Paragraph>
-                            <Run Text="All music is played through Nokia Music, and it is possible to play either your own music or Nokia Music's music when playing either mode. Tap any of the songs at the end of the game to view it in Nokia Music"/>
+                            <Run />
+                        </Paragraph>
+                        <Paragraph>
+                            <Run Text="All music is played through Nokia Music, and it is possible to play either your own music or Nokia Music's music when playing either mode. Tap any of the songs at the end of the game to view it in Nokia Music" />
                         </Paragraph>
                     </RichTextBox>
                 </ScrollViewer>
             </Grid>
         </Grid>
     </Grid>
-
 </phone:PhoneApplicationPage>

@@ -304,7 +304,7 @@ namespace MusicGame
             {
                 if (!prevSelected(song))
                 {
-                    pickedSongs.Add(new SongPicks {song =song, tried = false });
+                    pickedSongs.Add(new SongPicks { song = song, tried = false });
                     DataItemViewModel album = new DataItemViewModel();
                     album.ImageSource = albumArt;
                     album.Song = song;

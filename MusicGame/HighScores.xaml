@@ -16,31 +16,28 @@
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Image Grid.RowSpan="2"  Source="/Assets/bg1.png" Stretch="UniformToFill"/>
+        <Image Grid.RowSpan="2"  Source="/Assets/bg1.png" Stretch="UniformToFill" />
         <Grid Grid.RowSpan="2" Background="Black" Opacity=".5"></Grid>
 
         <!--TitlePanel contains the name of the application and page title-->
         <StackPanel Grid.Row="0" Margin="12,17,0,28">
-            <TextBlock Text="high scores" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}" Foreground="White"/>
-            <TextBlock Text="PICK A STYLE" Style="{StaticResource PhoneTextSubtleStyle}" Foreground="White"/>
+            <TextBlock Text="high scores" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}" Foreground="White" />
+            <TextBlock Text="PICK A STYLE" Style="{StaticResource PhoneTextSubtleStyle}" Foreground="White" />
         </StackPanel>
 
         <!--ContentPanel - place additional content here-->
         <Grid Margin="0,10" Grid.Row="1">
-        <StackPanel x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
+            <StackPanel x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
 
-            
-            <Button x:Name="voice" Content="Name that Song!" Foreground="White" BorderBrush="White"  Tap="voice_Tap"></Button>
-            <Button x:Name="album" Content="Pick an Album!" Foreground="White" BorderBrush="White" Tap="album_Tap"></Button>
-            
-        </StackPanel>
+                <Button x:Name="voice" Content="Name that Song!" Foreground="White" BorderBrush="White"  Tap="voice_Tap"></Button>
+                <Button x:Name="album" Content="Pick an Album!" Foreground="White" BorderBrush="White" Tap="album_Tap"></Button>
+            </StackPanel>
             <StackPanel VerticalAlignment="Bottom" Margin="12,0">
-        <Button x:Name="clear" Content="Delete High Scores" Foreground="White" BorderBrush="White" Tap="clear_Tap"></Button>
+                <Button x:Name="clear" Content="Delete High Scores" Foreground="White" BorderBrush="White" Tap="clear_Tap"></Button>
             </StackPanel>
         </Grid>
     </Grid>
-
 </phone:PhoneApplicationPage>

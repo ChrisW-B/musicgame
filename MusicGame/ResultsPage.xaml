@@ -18,8 +18,8 @@ xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.Resources>
             <DataTemplate x:Key="SongData">
@@ -34,33 +34,33 @@ xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik
                 </StackPanel>
             </DataTemplate>
         </Grid.Resources>
-        <Image Grid.RowSpan="2"  Source="/Assets/bg1.png" Stretch="UniformToFill"/>
+        <Image Grid.RowSpan="2"  Source="/Assets/bg1.png" Stretch="UniformToFill" />
         <Grid Grid.RowSpan="2" Background="Black" Opacity=".5"></Grid>
         <!--TitlePanel contains the name of the application and page title-->
         <StackPanel Grid.Row="0" Margin="12,17,0,28" Orientation="Horizontal">
-            <TextBlock Text="total" Foreground="White" Style="{StaticResource PhoneTextTitle1Style}"/>
+            <TextBlock Text="total" Foreground="White" Style="{StaticResource PhoneTextTitle1Style}" />
             <TextBlock x:Name="totalScore" Foreground="White" Style="{StaticResource PhoneTextTitle1Style}"></TextBlock>
-            <TextBlock x:Name="percentage" Foreground="White" Style="{StaticResource PhoneTextTitle1Style}" HorizontalAlignment="Right"/>
+            <TextBlock x:Name="percentage" Foreground="White" Style="{StaticResource PhoneTextTitle1Style}" HorizontalAlignment="Right" />
         </StackPanel>
 
         <!--ContentPanel - place additional content here-->
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="0,0,0,0">
-            <MediaElement x:Name="player" AutoPlay="True"/>
+            <MediaElement x:Name="player" AutoPlay="True" />
             <Grid Margin="0,0,0,0">
                 <telerikPrimitives:RadDataBoundListBox x:Name="resultsList" Margin="0,0,0,0"
                                                        ItemTemplate="{StaticResource SongData}" Height="640" EmptyContent="Loading Results..." ItemAddedAnimationInterval="0:0:0.1">
-                   
+
                     <telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
                         <telerikCore:RadFadeAnimation Duration="0:0:0.5" StartOpacity="0" EndOpacity="1">
                             <telerikCore:RadFadeAnimation.Easing>
-                                <CubicEase EasingMode="EaseOut"/>
+                                <CubicEase EasingMode="EaseOut" />
                             </telerikCore:RadFadeAnimation.Easing>
                         </telerikCore:RadFadeAnimation>
                     </telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
                     <telerikPrimitives:RadDataBoundListBox.ItemRemovedAnimation>
                         <telerikCore:RadFadeAnimation Duration="0:0:.7" StartOpacity="1" EndOpacity="0">
                             <telerikCore:RadFadeAnimation.Easing>
-                                <CubicEase EasingMode="EaseOut"/>
+                                <CubicEase EasingMode="EaseOut" />
                             </telerikCore:RadFadeAnimation.Easing>
                         </telerikCore:RadFadeAnimation>
                     </telerikPrimitives:RadDataBoundListBox.ItemRemovedAnimation>
@@ -68,5 +68,4 @@ xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik
             </Grid>
         </Grid>
     </Grid>
-
 </phone:PhoneApplicationPage>

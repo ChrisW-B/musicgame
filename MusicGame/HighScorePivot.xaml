@@ -12,24 +12,21 @@
     Foreground="White"
     SupportedOrientations="Portrait"  Orientation="Portrait"
     shell:SystemTray.IsVisible="False">
-    
 
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
 
-
-        <Image Grid.RowSpan="2"  Source="/Assets/bg1.png" Stretch="UniformToFill"/>
+        <Image Grid.RowSpan="2"  Source="/Assets/bg1.png" Stretch="UniformToFill" />
         <Grid Grid.RowSpan="2" Background="Black" Opacity=".5"></Grid>
         <phone:Pivot x:Name="GenresPivot" Foreground="White"   Title="HIGH SCORES">
-            
+
             <phone:Pivot.HeaderTemplate>
                 <DataTemplate>
                     <Grid>
-                        <TextBlock FontSize="50" Text="{Binding}"/>
+                        <TextBlock FontSize="50" Text="{Binding}" />
                     </Grid>
                 </DataTemplate>
             </phone:Pivot.HeaderTemplate>
         </phone:Pivot>
     </Grid>
-    
 </phone:PhoneApplicationPage>
